@@ -10,6 +10,7 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     public DbSet<VehicleStatusEntity> VehicleStatuses => Set<VehicleStatusEntity>();
     public DbSet<TruckEntity> Trucks => Set<TruckEntity>();
 
+    public DbSet<TrailerEntity> Trailers => Set<TrailerEntity>();
     private readonly TimeProvider _clock;
     public DatabaseContext(DbContextOptions<DatabaseContext> options, TimeProvider clock) : base(options)
     {
