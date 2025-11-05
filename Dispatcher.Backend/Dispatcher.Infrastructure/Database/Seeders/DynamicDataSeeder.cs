@@ -29,39 +29,41 @@ public static class DynamicDataSeeder
         if (await context.Users.AnyAsync())
             return;
 
-        var hasher = new PasswordHasher<MarketUserEntity>();
+        var hasher = new PasswordHasher<UserEntity>();
 
-        var admin = new MarketUserEntity
+        var admin = new UserEntity
         {
-            Email = "admin@market.local",
+            Email = "admin@dispatcher.local",
             PasswordHash = hasher.HashPassword(null!, "Admin123!"),
-            IsAdmin = true,
+            Role = UserRole.Admin,
             IsEnabled = true,
         };
 
-        var user = new MarketUserEntity
+        var dispatcher = new UserEntity
         {
-            Email = "manager@market.local",
-            PasswordHash = hasher.HashPassword(null!, "User123!"),
-            IsManager = true,
+            Email = "dispatcher@dispatcher.local",
+            PasswordHash = hasher.HashPassword(null!, "Dispatcher123!"),
+            Role = UserRole.Dispatcher,
             IsEnabled = true,
         };
 
-        var dummyForSwagger = new MarketUserEntity
+        var driver = new UserEntity
+        {
+            Email = "driver@dispatcher.local",
+            PasswordHash = hasher.HashPassword(null!, "Driver123!"),
+            Role = UserRole.Driver,
+            IsEnabled = true,
+        };
+
+        var client = new UserEntity
         {
             Email = "string",
             PasswordHash = hasher.HashPassword(null!, "string"),
-            IsEmployee = true,
+            Role = UserRole.Client,
             IsEnabled = true,
         };
-        var dummyForTests = new MarketUserEntity
-        {
-            Email = "test",
-            PasswordHash = hasher.HashPassword(null!, "test123"),
-            IsEmployee = true,
-            IsEnabled = true,
-        };
-        context.Users.AddRange(admin, user, dummyForSwagger, dummyForTests);
+
+        context.Users.AddRange(admin, dispatcher, driver, client);
         await context.SaveChangesAsync();
 
         Console.WriteLine("✅ Dynamic seed: demo users added.");

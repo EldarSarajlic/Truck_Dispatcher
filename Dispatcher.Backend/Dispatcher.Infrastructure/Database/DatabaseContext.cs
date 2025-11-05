@@ -5,7 +5,7 @@ namespace Dispatcher.Infrastructure.Database;
 
 public partial class DatabaseContext : DbContext, IAppDbContext
 {
-    public DbSet<MarketUserEntity> Users => Set<MarketUserEntity>();
+    public DbSet<UserEntity> Users => Set<UserEntity>();
     public DbSet<RefreshTokenEntity> RefreshTokens => Set<RefreshTokenEntity>();
     public DbSet<VehicleStatusEntity> VehicleStatuses => Set<VehicleStatusEntity>();
     public DbSet<TruckEntity> Trucks => Set<TruckEntity>();

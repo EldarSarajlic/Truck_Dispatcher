@@ -26,12 +26,17 @@ public interface IAppCurrentUser
     bool IsAdmin { get; }
 
     /// <summary>
-    /// Indicates whether the user is a manager.
+    /// Indicates whether the user is a dispatcher.
     /// </summary>
-    bool IsManager { get; }
+    bool IsDispatcher { get; }
 
     /// <summary>
-    /// Indicates whether the user is a regular employee.
+    /// Indicates whether the user is a regular driver.
     /// </summary>
-    bool IsEmployee { get; }
+    bool IsDriver { get; }
+
+    /// <summary>
+    /// Indicates whether the user is a regular client.
+    /// </summary>
+    bool IsClient { get; }
 }

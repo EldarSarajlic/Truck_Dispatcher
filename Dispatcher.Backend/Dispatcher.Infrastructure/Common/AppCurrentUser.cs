@@ -23,12 +23,9 @@ public sealed class AppCurrentUser(IHttpContextAccessor httpContextAccessor)
     public bool IsAuthenticated =>
         _user?.Identity?.IsAuthenticated ?? false;
 
-    public bool IsAdmin =>
-        _user?.FindFirstValue("is_admin")?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
-
-    public bool IsManager =>
-        _user?.FindFirstValue("is_manager")?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
-
-    public bool IsEmployee =>
-        _user?.FindFirstValue("is_employee")?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
+    private string? UserRole => _user?.FindFirstValue(ClaimTypes.Role);
+    public bool IsAdmin => UserRole == "Admin";
+    public bool IsDispatcher => UserRole == "Dispatcher";
+    public bool IsDriver => UserRole == "Driver";
+    public bool IsClient => UserRole == "Client";
 }

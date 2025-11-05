@@ -1,8 +1,8 @@
 ﻿namespace Dispatcher.Infrastructure.Database.Configurations.Identity;
 
-public sealed class UserEntityConfiguration : IEntityTypeConfiguration<MarketUserEntity>
+public sealed class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
 {
-    public void Configure(EntityTypeBuilder<MarketUserEntity> b)
+    public void Configure(EntityTypeBuilder<UserEntity> b)
     {
         b.ToTable("Users");
 
@@ -19,14 +19,8 @@ public sealed class UserEntityConfiguration : IEntityTypeConfiguration<MarketUse
             .IsRequired();
 
         // Roles
-        b.Property(x => x.IsAdmin)
-            .HasDefaultValue(false);
-
-        b.Property(x => x.IsManager)
-            .HasDefaultValue(false);
-
-        b.Property(x => x.IsEmployee)
-            .HasDefaultValue(true); // Default: regular user
+        b.Property(x => x.Role)
+       .HasDefaultValue(UserRole.Client);
 
         b.Property(x => x.TokenVersion)
             .HasDefaultValue(0);
