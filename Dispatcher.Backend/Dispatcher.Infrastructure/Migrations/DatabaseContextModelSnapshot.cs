@@ -22,7 +22,7 @@ namespace Dispatcher.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Market.Domain.Entities.Identity.MarketUserEntity", b =>
+            modelBuilder.Entity("Dispatcher.Domain.Entities.Identity.MarketUserEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -81,7 +81,7 @@ namespace Dispatcher.Infrastructure.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Market.Domain.Entities.Identity.RefreshTokenEntity", b =>
+            modelBuilder.Entity("Dispatcher.Domain.Entities.Identity.RefreshTokenEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -128,9 +128,9 @@ namespace Dispatcher.Infrastructure.Migrations
                     b.ToTable("RefreshTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Market.Domain.Entities.Identity.RefreshTokenEntity", b =>
+            modelBuilder.Entity("Dispatcher.Domain.Entities.Identity.RefreshTokenEntity", b =>
                 {
-                    b.HasOne("Market.Domain.Entities.Identity.MarketUserEntity", "User")
+                    b.HasOne("Dispatcher.Domain.Entities.Identity.MarketUserEntity", "User")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -139,7 +139,7 @@ namespace Dispatcher.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Market.Domain.Entities.Identity.MarketUserEntity", b =>
+            modelBuilder.Entity("Dispatcher.Domain.Entities.Identity.MarketUserEntity", b =>
                 {
                     b.Navigation("RefreshTokens");
                 });
