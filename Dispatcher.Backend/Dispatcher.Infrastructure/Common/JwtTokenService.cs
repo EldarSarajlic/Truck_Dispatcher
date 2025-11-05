@@ -34,12 +34,21 @@ public sealed class JwtTokenService : IJwtTokenService
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(ClaimTypes.NameIdentifier,   user.Id.ToString()),
             new(ClaimTypes.Email,            user.Email),
-            new(ClaimTypes.Role, user.Role.ToString()),
-            new("ver",         user.TokenVersion.ToString()),
+            new(ClaimTypes.GivenName,        user.FirstName),
+            new(ClaimTypes.Surname,          user.LastName),
+            new("display_name",              user.DisplayName),
+            new(ClaimTypes.Role,             user.Role.ToString()),
+            new("ver",                       user.TokenVersion.ToString()),
             new(JwtRegisteredClaimNames.Iat, ToUnixTimeSeconds(nowInstant).ToString(), ClaimValueTypes.Integer64),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
             new(JwtRegisteredClaimNames.Aud, _jwt.Audience)
         };
+
+        // Add optional claims
+        if (!string.IsNullOrEmpty(user.PhoneNumber))
+        {
+            claims.Add(new(ClaimTypes.MobilePhone, user.PhoneNumber));
+        }
 
         // --- Signature ---
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Key));

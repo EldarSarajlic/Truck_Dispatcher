@@ -12,13 +12,7 @@ public static class DynamicDataSeeder
         // Osiguraj da baza postoji (bez migracija)
         await context.Database.EnsureCreatedAsync();
 
-        await SeedProductCategoriesAsync(context);
         await SeedUsersAsync(context);
-    }
-
-    private static async Task SeedProductCategoriesAsync(DatabaseContext context)
-    {
-       
     }
 
     /// <summary>
@@ -33,34 +27,66 @@ public static class DynamicDataSeeder
 
         var admin = new UserEntity
         {
+            FirstName = "Admin",
+            LastName = "User",
+            DisplayName = "Admin User",
+            NormalizedDisplayName = "ADMIN USER",
             Email = "admin@dispatcher.local",
+            PhoneNumber = "+387 61 123 456",
+            DateOfBirth = new DateTime(1980, 1, 1),
             PasswordHash = hasher.HashPassword(null!, "Admin123!"),
             Role = UserRole.Admin,
             IsEnabled = true,
+            TwoFactorEnabled = false,
+            AccessFailedCount = 0
         };
 
         var dispatcher = new UserEntity
         {
+            FirstName = "John",
+            LastName = "Dispatcher",
+            DisplayName = "John Dispatcher",
+            NormalizedDisplayName = "JOHN DISPATCHER",
             Email = "dispatcher@dispatcher.local",
+            PhoneNumber = "+387 61 234 567",
+            DateOfBirth = new DateTime(1985, 5, 15),
             PasswordHash = hasher.HashPassword(null!, "Dispatcher123!"),
             Role = UserRole.Dispatcher,
             IsEnabled = true,
+            TwoFactorEnabled = false,
+            AccessFailedCount = 0
         };
 
         var driver = new UserEntity
         {
+            FirstName = "Mike",
+            LastName = "Driver",
+            DisplayName = "Mike Driver",
+            NormalizedDisplayName = "MIKE DRIVER",
             Email = "driver@dispatcher.local",
+            PhoneNumber = "+387 61 345 678",
+            DateOfBirth = new DateTime(1990, 8, 20),
             PasswordHash = hasher.HashPassword(null!, "Driver123!"),
             Role = UserRole.Driver,
             IsEnabled = true,
+            TwoFactorEnabled = false,
+            AccessFailedCount = 0
         };
 
         var client = new UserEntity
         {
+            FirstName = "Test",
+            LastName = "Client",
+            DisplayName = "Test Client",
+            NormalizedDisplayName = "TEST CLIENT",
             Email = "string",
+            PhoneNumber = "+387 61 456 789",
+            DateOfBirth = new DateTime(1995, 12, 10),
             PasswordHash = hasher.HashPassword(null!, "string"),
             Role = UserRole.Client,
             IsEnabled = true,
+            TwoFactorEnabled = false,
+            AccessFailedCount = 0
         };
 
         context.Users.AddRange(admin, dispatcher, driver, client);

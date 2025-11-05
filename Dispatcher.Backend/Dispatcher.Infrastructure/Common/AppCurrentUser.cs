@@ -20,6 +20,18 @@ public sealed class AppCurrentUser(IHttpContextAccessor httpContextAccessor)
     public string? Email =>
         _user?.FindFirstValue(ClaimTypes.Email);
 
+    public string? FirstName =>
+        _user?.FindFirstValue(ClaimTypes.GivenName);
+
+    public string? LastName =>
+        _user?.FindFirstValue(ClaimTypes.Surname);
+
+    public string? DisplayName =>
+        _user?.FindFirstValue("display_name");
+
+    public string? PhoneNumber =>
+        _user?.FindFirstValue(ClaimTypes.MobilePhone);
+
     public bool IsAuthenticated =>
         _user?.Identity?.IsAuthenticated ?? false;
 

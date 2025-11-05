@@ -11,9 +11,29 @@ public interface IAppCurrentUser
     int? UserId { get; }
 
     /// <summary>
-    /// User Email. (optional)
+    /// User Email.
     /// </summary>
     string? Email { get; }
+
+    /// <summary>
+    /// User's first name.
+    /// </summary>
+    string? FirstName { get; }
+
+    /// <summary>
+    /// User's last name.
+    /// </summary>
+    string? LastName { get; }
+
+    /// <summary>
+    /// User's display name.
+    /// </summary>
+    string? DisplayName { get; }
+
+    /// <summary>
+    /// User's phone number.
+    /// </summary>
+    string? PhoneNumber { get; }
 
     /// <summary>
     /// Indicates whether the user is logged in.
