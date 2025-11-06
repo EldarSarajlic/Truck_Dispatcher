@@ -9,7 +9,6 @@ namespace Dispatcher.Application.Modules.Vehicles.Trucks.Queries.List
 {
     public class ListTruckQueryHandler(IAppDbContext ctx) : IRequestHandler<ListTruckQuery, List<ListTruckQueryDto>>
     {
-
         public async Task<List<ListTruckQueryDto>> Handle(ListTruckQuery request, CancellationToken cancellationToken)
         {
             var query = ctx.Trucks
@@ -26,10 +25,11 @@ namespace Dispatcher.Application.Modules.Vehicles.Trucks.Queries.List
                 );
             }
 
-            //if (request.OnlyEnabled)
-            //{
-            //    query = query.Where(x => x.VehicleStatus != null && x.VehicleStatus.IsEnabled);
-            //}
+            // Filtriraj samo enabled kamione ako je traženo
+            if ((bool)request.OnlyEnabled)//???
+            {
+                query = query.Where(x => x.VehicleStatus != null && x.VehicleStatus.StatusName == "Enabled");
+            }
 
             var list = await query
                 .Select(x => new ListTruckQueryDto
@@ -47,7 +47,6 @@ namespace Dispatcher.Application.Modules.Vehicles.Trucks.Queries.List
                     InsuranceExpiration = x.InsuranceExpiration,
                     GPSDeviceId = x.GPSDeviceId,
                     VehicleStatusId = x.VehicleStatusId,
-                   // VehicleStatusName = x.VehicleStatus != null ? x.VehicleStatus.Name : string.Empty,
                     EngineCapacity = x.EngineCapacity,
                     KW = x.KW
                 })

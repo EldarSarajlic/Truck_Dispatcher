@@ -1,8 +1,14 @@
-﻿//using Dispatcher.Application.Modules.Vehicles.Trucks.Commands;
-//using Dispatcher.Application.Modules.Vehicles.TruckStatuses.Queries;
-//using MediatR; // tj. ISender
-
+﻿using Dispatcher.Application.Modules.Vehicles.Trucks.Commands;
+using Dispatcher.Application.Modules.Vehicles.Trucks.Commands.Create;
+using Dispatcher.Application.Modules.Vehicles.Trucks.Commands.Delete;
+using Dispatcher.Application.Modules.Vehicles.Trucks.Commands.Status.Disable;
+using Dispatcher.Application.Modules.Vehicles.Trucks.Commands.Status.Enable;
+using Dispatcher.Application.Modules.Vehicles.Trucks.Commands.Update;
+using Dispatcher.Application.Modules.Vehicles.Trucks.Queries.GetById;
+using Dispatcher.Application.Modules.Vehicles.Trucks.Queries.List;
 using Dispatcher.Application.Modules.Vehicles.Trucks.Querries.GetById;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Dispatcher.API.Controllers;
 
@@ -10,16 +16,15 @@ namespace Dispatcher.API.Controllers;
 [Route("[controller]")]
 public class TrucksController(ISender sender) : ControllerBase
 {
-    /// <summary>
-    /// Create a new truck.
-    /// </summary>
-    //[HttpPost]
-    //public async Task<ActionResult<int>> CreateTruck(CreateTruckCommand command, CancellationToken ct)
-    //{
-    //    int id = await sender.Send(command, ct);
-    //    return CreatedAtAction(nameof(GetById), new { id }, new { id });
-    //}
+    /// <summary>Create a new truck.</summary>
+    [HttpPost]
+    public async Task<ActionResult<int>> CreateTruck(CreateTruckCommand command, CancellationToken ct)
+    {
+        int id = await sender.Send(command, ct);
+        return CreatedAtAction(nameof(GetById), new { id }, new { id });
+    }
 
+    /// <summary>Get truck by ID.</summary>
     [HttpGet("{id:int}")]
     public async Task<ActionResult<GetTruckByIdQueryDto>> GetById(int id, CancellationToken ct)
     {
@@ -28,4 +33,44 @@ public class TrucksController(ISender sender) : ControllerBase
         return Ok(truck);
     }
 
+    /// <summary>List all trucks, with optional search/filter.</summary>
+    [HttpGet]
+    public async Task<ActionResult<List<ListTruckQueryDto>>> List([FromQuery] ListTruckQuery query, CancellationToken ct)
+    {
+        var trucks = await sender.Send(query, ct);
+        return Ok(trucks);
+    }
+
+    /// <summary>Update an existing truck by ID.</summary>
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Update(int id, UpdateTruckCommand command, CancellationToken ct)
+    {
+        if (id != command.Id) return BadRequest();
+        await sender.Send(command, ct);
+        return NoContent();
+    }
+
+    /// <summary>Delete a truck by ID.</summary>
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> Delete(int id, CancellationToken ct)
+    {
+        await sender.Send(new DeleteTruckCommand { Id = id }, ct);
+        return NoContent();
+    }
+
+    /// <summary>Enable a truck (change status).</summary>
+    [HttpPost("{id:int}/enable")]
+    public async Task<ActionResult> Enable(int id, CancellationToken ct)
+    {
+        await sender.Send(new EnableTruckCommand { Id = id }, ct);
+        return NoContent();
+    }
+
+    /// <summary>Disable a truck (change status).</summary>
+    [HttpPost("{id:int}/disable")]
+    public async Task<ActionResult> Disable(int id, CancellationToken ct)
+    {
+        await sender.Send(new DisableTruckCommand { Id = id }, ct);
+        return NoContent();
+    }
 }
