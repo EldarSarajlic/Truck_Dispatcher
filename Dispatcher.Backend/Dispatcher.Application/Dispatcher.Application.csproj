@@ -21,7 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\Vehicles\Trucks\Commands\" />
+    <Folder Include="Modules\Vehicles\Trucks\Commands\Status\Enable\" />
+    <Folder Include="Modules\Vehicles\Trucks\Querries\List\Status\" />
   </ItemGroup>
 
 </Project>
