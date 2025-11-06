@@ -1,4 +1,5 @@
-﻿using Dispatcher.Domain.Entities.Vehicles;
+﻿using Dispatcher.Domain.Entities.Chat;
+using Dispatcher.Domain.Entities.Vehicles;
 
 namespace Dispatcher.Application.Abstractions;
 
@@ -10,5 +11,7 @@ public interface IAppDbContext
      DbSet<TruckEntity> Trucks { get; }
     DbSet<VehicleStatusEntity> VehicleStatuses { get; }
     DbSet<TrailerEntity> Trailers { get; }
+
+    DbSet<MessageEntity> Messages { get; }
     Task<int> SaveChangesAsync(CancellationToken ct);
 }

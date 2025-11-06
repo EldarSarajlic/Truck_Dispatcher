@@ -1,4 +1,5 @@
 ﻿using Dispatcher.Application.Abstractions;
+using Dispatcher.Domain.Entities.Chat;
 using Dispatcher.Domain.Entities.Location;
 using Dispatcher.Domain.Entities.Services;
 using Dispatcher.Domain.Entities.Vehicles;
@@ -18,7 +19,7 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     public DbSet<TruckServiceAssignmentEntity> TruckServiceAssignment => Set<TruckServiceAssignmentEntity>();
     public DbSet<ServiceCompanyEntity> ServiceCompanies => Set<ServiceCompanyEntity>();
 
-
+    public DbSet<MessageEntity> Messages => Set<MessageEntity>();
 
     private readonly TimeProvider _clock;
     public DatabaseContext(DbContextOptions<DatabaseContext> options, TimeProvider clock) : base(options)
