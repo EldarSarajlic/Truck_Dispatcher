@@ -1,5 +1,7 @@
 ﻿// MarketUserEntity.cs
 using Dispatcher.Domain.Common;
+using Dispatcher.Domain.Entities.Location;
+using Dispatcher.Domain.Entities.Media;
 
 namespace Dispatcher.Domain.Entities.Identity;
 
@@ -34,15 +36,21 @@ public sealed class UserEntity : BaseEntity
     public int TokenVersion { get; set; } = 0;
 
     // Foreign Keys (commented until related entities are created)
-    // public int? CityId { get; set; }
-    // public string? ProfilePhotoUrl { get; set; } // Reference to Photos table
+    public int? CityId { get; set; }
+    public string? ProfilePhotoUrl { get; set; } // Reference to Photos table
 
     // Navigation Properties
     public ICollection<RefreshTokenEntity> RefreshTokens { get; private set; }
         = new List<RefreshTokenEntity>();
 
-    // public CityEntity? City { get; set; }
-    // public PhotoEntity? ProfilePhoto { get; set; }
+    public CityEntity? City { get; set; }
+    public PhotoEntity? ProfilePhoto { get; set; }
+
+    /// <summary>
+    /// Photos uploaded by this user (only admins can upload)
+    /// </summary>
+    public IReadOnlyCollection<PhotoEntity> UploadedPhotos { get; private set; }
+        = new List<PhotoEntity>();
 
     public static class Constraints
     {

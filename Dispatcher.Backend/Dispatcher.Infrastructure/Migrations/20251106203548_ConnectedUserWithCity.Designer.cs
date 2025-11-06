@@ -4,6 +4,7 @@ using Dispatcher.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dispatcher.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20251106203548_ConnectedUserWithCity")]
+    partial class ConnectedUserWithCity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,10 +188,6 @@ namespace Dispatcher.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("ProfilePhotoUrl")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
                     b.Property<int>("Role")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -297,92 +296,6 @@ namespace Dispatcher.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Country", (string)null);
-                });
-
-            modelBuilder.Entity("Dispatcher.Domain.Entities.Media.PhotoEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AltText")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<long>("FileSizeBytes")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("Height")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModifiedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("OriginalFileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("PhotoCategory")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("ProfilePhotoForUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StoredFileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("ThumbnailUrl")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("UploadedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int?>("Width")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PhotoCategory");
-
-                    b.HasIndex("ProfilePhotoForUserId")
-                        .IsUnique()
-                        .HasFilter("[ProfilePhotoForUserId] IS NOT NULL");
-
-                    b.HasIndex("StoredFileName")
-                        .IsUnique();
-
-                    b.HasIndex("UploadedByUserId");
-
-                    b.ToTable("Photos", (string)null);
                 });
 
             modelBuilder.Entity("Dispatcher.Domain.Entities.Services.ServiceCompanyEntity", b =>
@@ -703,24 +616,6 @@ namespace Dispatcher.Infrastructure.Migrations
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("Dispatcher.Domain.Entities.Media.PhotoEntity", b =>
-                {
-                    b.HasOne("Dispatcher.Domain.Entities.Identity.UserEntity", "ProfilePhotoForUser")
-                        .WithOne("ProfilePhoto")
-                        .HasForeignKey("Dispatcher.Domain.Entities.Media.PhotoEntity", "ProfilePhotoForUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Dispatcher.Domain.Entities.Identity.UserEntity", "UploadedBy")
-                        .WithMany("UploadedPhotos")
-                        .HasForeignKey("UploadedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ProfilePhotoForUser");
-
-                    b.Navigation("UploadedBy");
-                });
-
             modelBuilder.Entity("Dispatcher.Domain.Entities.Services.ServiceCompanyEntity", b =>
                 {
                     b.HasOne("Dispatcher.Domain.Entities.Location.CityEntity", "City")
@@ -775,11 +670,7 @@ namespace Dispatcher.Infrastructure.Migrations
 
             modelBuilder.Entity("Dispatcher.Domain.Entities.Identity.UserEntity", b =>
                 {
-                    b.Navigation("ProfilePhoto");
-
                     b.Navigation("RefreshTokens");
-
-                    b.Navigation("UploadedPhotos");
                 });
 
             modelBuilder.Entity("Dispatcher.Domain.Entities.Location.CountryEntity", b =>

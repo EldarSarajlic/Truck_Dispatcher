@@ -1,4 +1,6 @@
-﻿namespace Dispatcher.Infrastructure.Database.Configurations.Identity;
+﻿using Dispatcher.Domain.Entities.Media;
+
+namespace Dispatcher.Infrastructure.Database.Configurations.Identity;
 
 public sealed class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
 {
@@ -64,8 +66,8 @@ public sealed class UserEntityConfiguration : IEntityTypeConfiguration<UserEntit
             .HasDefaultValue(true);
 
         // Foreign Keys (commented until related entities are created)
-        // b.Property(x => x.CityId);
-        // b.Property(x => x.ProfilePhotoUrl);
+        b.Property(x => x.CityId);
+        b.Property(x => x.ProfilePhotoUrl).HasMaxLength(1000);
 
         // Navigation
         b.HasMany(x => x.RefreshTokens)
@@ -73,14 +75,20 @@ public sealed class UserEntityConfiguration : IEntityTypeConfiguration<UserEntit
             .HasForeignKey(x => x.UserId);
 
         // Relationships (commented until related entities are created)
-        // b.HasOne(x => x.City)
-        //     .WithMany()
-        //     .HasForeignKey(x => x.CityId)
-        //     .OnDelete(DeleteBehavior.SetNull);
+        b.HasOne(x => x.City)
+            .WithMany()
+            .HasForeignKey(x => x.CityId)
+            .OnDelete(DeleteBehavior.SetNull);
 
-        // b.HasOne(x => x.ProfilePhoto)
-        //     .WithMany()
-        //     .HasForeignKey(x => x.ProfilePhotoUrl)
-        //     .OnDelete(DeleteBehavior.SetNull);
+        b.HasOne(x => x.ProfilePhoto)
+            .WithOne(x => x.ProfilePhotoForUser)
+            .HasForeignKey<PhotoEntity>(x => x.ProfilePhotoForUserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Uploaded photos relationship
+        b.HasMany(x => x.UploadedPhotos)
+            .WithOne(x => x.UploadedBy)
+            .HasForeignKey(x => x.UploadedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
