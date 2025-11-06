@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Dispatcher.Shared\Dispatcher.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Modules\Vehicles\Trucks\Commands\" />
+  </ItemGroup>
+
 </Project>
