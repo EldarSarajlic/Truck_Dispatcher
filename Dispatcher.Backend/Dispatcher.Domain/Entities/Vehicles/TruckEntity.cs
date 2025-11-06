@@ -1,4 +1,5 @@
 using Dispatcher.Domain.Common;
+using Dispatcher.Domain.Entities.Services;
 using System;
 
 namespace Dispatcher.Domain.Entities.Vehicles
@@ -91,6 +92,9 @@ namespace Dispatcher.Domain.Entities.Vehicles
         /// <summary>
         /// Validation constraints.
         /// </summary>
+        /// 
+        // Added afterwards to support navigation to TruckServiceAssignmentEntity
+        public IReadOnlyCollection<TruckServiceAssignmentEntity> TruckServiceAssignments { get; private set; } = new List<TruckServiceAssignmentEntity>();
         public static class Constraints
         {
             public const int LicensePlateMaxLength = 15;

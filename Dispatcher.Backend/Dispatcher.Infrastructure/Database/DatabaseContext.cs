@@ -1,5 +1,6 @@
 ﻿using Dispatcher.Application.Abstractions;
 using Dispatcher.Domain.Entities.Location;
+using Dispatcher.Domain.Entities.Services;
 using Dispatcher.Domain.Entities.Vehicles;
 
 namespace Dispatcher.Infrastructure.Database;
@@ -14,6 +15,9 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     public DbSet<TrailerEntity> Trailers => Set<TrailerEntity>();
     public DbSet<CountryEntity> Country => Set<CountryEntity>();
     public DbSet<CityEntity> City => Set<CityEntity>();
+    public DbSet<TruckServiceAssignmentEntity> TruckServiceAssignment => Set<TruckServiceAssignmentEntity>();
+    public DbSet<ServiceCompanyEntity> ServiceCompanies => Set<ServiceCompanyEntity>();
+
 
 
     private readonly TimeProvider _clock;
