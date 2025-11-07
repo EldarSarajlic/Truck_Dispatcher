@@ -1,4 +1,5 @@
-﻿using Dispatcher.Application.Modules.Vehicles.Trucks.Querries.GetById;
+﻿using Dispatcher.Application.Modules.Shipments.Shipment.Querries.GetById;
+using Dispatcher.Application.Modules.Vehicles.Trucks.Querries.GetById;
 
 
 namespace Dispatcher.Application.Modules.Vehicles.Trucks.Queries.GetById

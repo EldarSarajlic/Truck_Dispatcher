@@ -3,6 +3,7 @@ using Dispatcher.Domain.Entities.Chat;
 using Dispatcher.Domain.Entities.Location;
 using Dispatcher.Domain.Entities.Media;
 using Dispatcher.Domain.Entities.Services;
+using Dispatcher.Domain.Entities.Shipments;
 using Dispatcher.Domain.Entities.Vehicles;
 
 namespace Dispatcher.Infrastructure.Database;
@@ -20,6 +21,10 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     public DbSet<ServiceCompanyEntity> ServiceCompanies => Set<ServiceCompanyEntity>();
     public DbSet<MessageEntity> Messages => Set<MessageEntity>();
     public DbSet<PhotoEntity> Photos => Set<PhotoEntity>();
+    public DbSet<ShipmentEntity> Shipments => Set<ShipmentEntity>();
+
+
+
     private readonly TimeProvider _clock;
     public DatabaseContext(DbContextOptions<DatabaseContext> options, TimeProvider clock) : base(options)
     {

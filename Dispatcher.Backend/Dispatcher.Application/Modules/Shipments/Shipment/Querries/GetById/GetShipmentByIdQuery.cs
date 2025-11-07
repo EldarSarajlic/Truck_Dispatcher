@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dispatcher.Application.Modules.Vehicles.Trucks.Querries.GetById
+namespace Dispatcher.Application.Modules.Shipments.Shipment.Querries.GetById
 {
-    public class GetTruckByIdQuery : IRequest<GetTruckByIdQueryDto?>
+    public class GetShipmentByIdQuery:IRequest<GetShipmentByIdQueryDto?>
     {
         public int Id { get; set; }
     }
