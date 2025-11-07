@@ -14,7 +14,7 @@ public sealed class DisableTruckCommandHandler(IAppDbContext ctx)
             throw new MarketNotFoundException("Truck not found.");
 
         // Pretpostavljamo da postoji status Disabled u bazi sa ID-em npr. 3
-        int disabledStatusId = 3; // ovo postavi prema tvojoj aplikaciji
+        int disabledStatusId = 5; // ovo postavi prema tvojoj aplikaciji
 
         truck.VehicleStatusId = disabledStatusId;
 

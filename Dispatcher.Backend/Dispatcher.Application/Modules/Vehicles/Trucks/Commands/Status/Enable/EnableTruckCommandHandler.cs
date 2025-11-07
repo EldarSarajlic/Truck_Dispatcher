@@ -12,7 +12,7 @@ public sealed class EnableTruckCommandHandler(IAppDbContext ctx) : IRequestHandl
             throw new MarketNotFoundException("Truck not found.");
 
         // Pretpostavljamo da status s ID-em 1 (ili drugi prema tvojoj aplikaciji) znači Enabled
-        int enabledStatusId = 1; // Postavi prema svojoj tabeli/statusima.
+        int enabledStatusId = 4; // Postavi prema svojoj tabeli/statusima.
 
         truck.VehicleStatusId = enabledStatusId;
 
