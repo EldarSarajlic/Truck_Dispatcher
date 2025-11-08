@@ -3,6 +3,7 @@
 /// <summary>
 /// Represents the currently logged-in user in the system.
 /// </summary>
+
 public interface IAppCurrentUser
 {
     /// <summary>
@@ -41,22 +42,7 @@ public interface IAppCurrentUser
     bool IsAuthenticated { get; }
 
     /// <summary>
-    /// Indicates whether the user is an administrator.
+    /// User's role as enum.
     /// </summary>
-    bool IsAdmin { get; }
-
-    /// <summary>
-    /// Indicates whether the user is a dispatcher.
-    /// </summary>
-    bool IsDispatcher { get; }
-
-    /// <summary>
-    /// Indicates whether the user is a regular driver.
-    /// </summary>
-    bool IsDriver { get; }
-
-    /// <summary>
-    /// Indicates whether the user is a regular client.
-    /// </summary>
-    bool IsClient { get; }
+    UserRole? Role { get; }
 }

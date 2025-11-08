@@ -8,6 +8,9 @@ public class DeleteVehicleStatusCommandHandler(IAppDbContext context,IAppCurrent
         if (appCurrentUser.UserId is null)
             throw new MarketBusinessRuleException("123", "Korisnik nije autentifikovan.");
 
+        if (appCurrentUser.Role != UserRole.Admin)
+            throw new MarketBusinessRuleException("Permission denied", "Only administators can delete vehicle status");
+
         var status = await context.VehicleStatuses
            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 

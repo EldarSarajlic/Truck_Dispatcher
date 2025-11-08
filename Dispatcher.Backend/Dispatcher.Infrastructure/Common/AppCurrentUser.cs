@@ -35,9 +35,8 @@ public sealed class AppCurrentUser(IHttpContextAccessor httpContextAccessor)
     public bool IsAuthenticated =>
         _user?.Identity?.IsAuthenticated ?? false;
 
-    private string? UserRole => _user?.FindFirstValue(ClaimTypes.Role);
-    public bool IsAdmin => UserRole == "Admin";
-    public bool IsDispatcher => UserRole == "Dispatcher";
-    public bool IsDriver => UserRole == "Driver";
-    public bool IsClient => UserRole == "Client";
+    public UserRole? Role =>
+    Enum.TryParse<UserRole>(_user?.FindFirstValue(ClaimTypes.Role), ignoreCase: true, out var role)
+        ? role
+        : null;
 }
