@@ -19,6 +19,8 @@ public class ShipmentsController(ISender sender) : ControllerBase
 {
     // <summary>Create a new shipment.</summary>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
+
     public async Task<ActionResult<int>> CreateShipment(CreateShipmentCommand command, CancellationToken ct)
     {
         int id = await sender.Send(command, ct);
@@ -27,6 +29,7 @@ public class ShipmentsController(ISender sender) : ControllerBase
 
    //  <summary>Get shipment by ID.</summary>
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<GetShipmentByIdQueryDto>> GetById(int id, CancellationToken ct)
     {
         var shipment = await sender.Send(new GetShipmentByIdQuery { Id = id }, ct);
@@ -36,6 +39,8 @@ public class ShipmentsController(ISender sender) : ControllerBase
 
     /// <summary>List all shipments with optional filters.</summary>
     [HttpGet]
+    [Authorize(Roles = "Admin")]
+
     public async Task<ActionResult<List<ListShipmentQueryDto>>> List([FromQuery] ListShipmentQuery query, CancellationToken ct)
     {
         var shipments = await sender.Send(query, ct);

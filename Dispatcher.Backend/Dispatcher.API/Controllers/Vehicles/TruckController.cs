@@ -18,6 +18,8 @@ public class TrucksController(ISender sender) : ControllerBase
 {
     /// <summary>Create a new truck.</summary>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
+
     public async Task<ActionResult<int>> CreateTruck(CreateTruckCommand command, CancellationToken ct)
     {
         int id = await sender.Send(command, ct);
@@ -26,6 +28,8 @@ public class TrucksController(ISender sender) : ControllerBase
 
     /// <summary>Get truck by ID.</summary>
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "Admin")]
+
     public async Task<ActionResult<GetTruckByIdQueryDto>> GetById(int id, CancellationToken ct)
     {
         var truck = await sender.Send(new GetTruckByIdQuery { Id = id }, ct);
@@ -35,6 +39,8 @@ public class TrucksController(ISender sender) : ControllerBase
 
     /// <summary>List all trucks, with optional search/filter.</summary>
     [HttpGet]
+    [Authorize(Roles = "Admin")]
+
     public async Task<ActionResult<List<ListTruckQueryDto>>> List([FromQuery] ListTruckQuery query, CancellationToken ct)
     {
         var trucks = await sender.Send(query, ct);
@@ -43,6 +49,8 @@ public class TrucksController(ISender sender) : ControllerBase
 
     /// <summary>Update an existing truck by ID.</summary>
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
+
     public async Task<ActionResult> Update(int id, UpdateTruckCommand command, CancellationToken ct)
     {
         if (id != command.Id) return BadRequest();
@@ -52,6 +60,8 @@ public class TrucksController(ISender sender) : ControllerBase
 
     /// <summary>Delete a truck by ID.</summary>
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
+
     public async Task<ActionResult> Delete(int id, CancellationToken ct)
     {
         await sender.Send(new DeleteTruckCommand { Id = id }, ct);
@@ -60,6 +70,8 @@ public class TrucksController(ISender sender) : ControllerBase
 
     /// <summary>Enable a truck (change status).</summary>
     [HttpPost("{id:int}/enable")]
+    [Authorize(Roles = "Admin")]
+
     public async Task<ActionResult> Enable(int id, CancellationToken ct)
     {
         await sender.Send(new EnableTruckCommand { Id = id }, ct);
@@ -68,6 +80,8 @@ public class TrucksController(ISender sender) : ControllerBase
 
     /// <summary>Disable a truck (change status).</summary>
     [HttpPost("{id:int}/disable")]
+    [Authorize(Roles = "Admin")]
+
     public async Task<ActionResult> Disable(int id, CancellationToken ct)
     {
         await sender.Send(new DisableTruckCommand { Id = id }, ct);
