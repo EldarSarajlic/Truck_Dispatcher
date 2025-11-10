@@ -16,5 +16,6 @@ public interface IAppDbContext
     DbSet<MessageEntity> Messages { get; }
     DbSet<PhotoEntity> Photos { get; }
     DbSet<ShipmentEntity> Shipments { get; }
+    DbSet<RouteEntity> Routes { get; }
     Task<int> SaveChangesAsync(CancellationToken ct);
 }

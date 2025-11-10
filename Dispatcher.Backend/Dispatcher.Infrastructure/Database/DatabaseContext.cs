@@ -23,6 +23,7 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     public DbSet<PhotoEntity> Photos => Set<PhotoEntity>();
     public DbSet<ShipmentEntity> Shipments => Set<ShipmentEntity>();
 
+    public DbSet<RouteEntity> Routes => Set<RouteEntity>();
 
 
     private readonly TimeProvider _clock;
