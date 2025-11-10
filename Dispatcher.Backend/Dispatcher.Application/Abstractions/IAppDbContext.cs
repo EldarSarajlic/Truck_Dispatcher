@@ -14,6 +14,7 @@ public interface IAppDbContext
     DbSet<VehicleStatusEntity> VehicleStatuses { get; }
     DbSet<TrailerEntity> Trailers { get; }
     DbSet<MessageEntity> Messages { get; }
+    DbSet<NotificationEntity> Notifications { get; }
     DbSet<PhotoEntity> Photos { get; }
     DbSet<ShipmentEntity> Shipments { get; }
     DbSet<RouteEntity> Routes { get; }

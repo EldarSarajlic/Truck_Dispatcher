@@ -20,9 +20,9 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     public DbSet<TruckServiceAssignmentEntity> TruckServiceAssignment => Set<TruckServiceAssignmentEntity>();
     public DbSet<ServiceCompanyEntity> ServiceCompanies => Set<ServiceCompanyEntity>();
     public DbSet<MessageEntity> Messages => Set<MessageEntity>();
+    public DbSet<NotificationEntity> Notifications => Set<NotificationEntity>();
     public DbSet<PhotoEntity> Photos => Set<PhotoEntity>();
     public DbSet<ShipmentEntity> Shipments => Set<ShipmentEntity>();
-
     public DbSet<RouteEntity> Routes => Set<RouteEntity>();
 
 
