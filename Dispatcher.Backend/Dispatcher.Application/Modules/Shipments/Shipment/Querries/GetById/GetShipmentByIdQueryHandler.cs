@@ -11,11 +11,16 @@ namespace Dispatcher.Application.Modules.Shipments.Shipment.Queries.GetById
         public async Task<GetShipmentByIdQueryDto?> Handle(GetShipmentByIdQuery request, CancellationToken cancellationToken)
         {
             var shipment = await ctx.Shipments
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+    .AsNoTracking()
+    .Include(s => s.Route)
+        .ThenInclude(r => r.StartLocation)
+    .Include(s => s.Route)
+        .ThenInclude(r => r.EndLocation)
+    .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (shipment == null)
                 return null;
+
 
             return new GetShipmentByIdQueryDto
             {
@@ -25,6 +30,11 @@ namespace Dispatcher.Application.Modules.Shipments.Shipment.Queries.GetById
                 PickupLocation = shipment.PickupLocation,
                 Status = shipment.Status,
                 Description = shipment.Description,
+                Notes = shipment.Notes,
+                OrderId = shipment.OrderId,
+                RouteId = shipment.RouteId,
+                RouteStartLocation = shipment.Route.StartLocation.Name,
+                RouteEndLocation = shipment.Route.EndLocation.Name,
                 CreatedAtUtc = shipment.CreatedAtUtc,
                 ModifiedAtUtc = shipment.ModifiedAtUtc,
                 IsDeleted = shipment.IsDeleted

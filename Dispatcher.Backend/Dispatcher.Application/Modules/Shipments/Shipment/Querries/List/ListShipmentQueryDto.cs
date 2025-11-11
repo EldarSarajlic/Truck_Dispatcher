@@ -8,8 +8,19 @@
         public string PickupLocation { get; set; }
         public string Status { get; set; }
         public string Description { get; set; }
+
+        public string? Notes { get; set; }
+        // Reference for mapping 
+        public int OrderId { get; set; }
+        public int RouteId { get; set; } 
+
+        // City names from routes
+        public string RouteStartLocation { get; set; }
+        public string RouteEndLocation { get; set; }
+
         public DateTime CreatedAtUtc { get; set; }
         public DateTime? ModifiedAtUtc { get; set; }
         public bool IsDeleted { get; set; }
+
     }
 }

@@ -29,6 +29,9 @@ namespace Dispatcher.Application.Modules.Shipments.Shipment.Querries.List
             if (!string.IsNullOrWhiteSpace(request.PickupLocation))
                 query = query.Where(x => x.PickupLocation == request.PickupLocation);
 
+            query=query.Include(s=> s.Route).ThenInclude(r=> r.StartLocation)
+                       .Include(s=> s.Route).ThenInclude(r=> r.EndLocation);
+
             var result = await query
                 .Select(x => new ListShipmentQueryDto
                 {
@@ -38,6 +41,11 @@ namespace Dispatcher.Application.Modules.Shipments.Shipment.Querries.List
                     PickupLocation = x.PickupLocation,
                     Status = x.Status,
                     Description = x.Description,
+                    Notes = x.Notes,
+                    OrderId = x.OrderId,
+                    RouteId = x.RouteId,
+                    RouteStartLocation = x.Route.StartLocation.Name,
+                    RouteEndLocation = x.Route.EndLocation.Name,
                     CreatedAtUtc = x.CreatedAtUtc,
                     ModifiedAtUtc = x.ModifiedAtUtc,
                     IsDeleted = x.IsDeleted
