@@ -31,8 +31,8 @@ public static class DynamicDataSeeder
         await SeedTrailersAsync(context);
         await SeedServiceCompaniesAsync(context);
         await SeedTruckServiceAssignmentsAsync(context);
-        await SeedShipmentsAsync(context);
         await SeedRoutesAsync(context);
+        await SeedShipmentsAsync(context);
         await SeedMessagesAsync(context);
         await SeedNotificationsAsync(context);
         await SeedPhotosAsync(context);
@@ -878,10 +878,25 @@ public static class DynamicDataSeeder
             return;
         }
 
+
+            var sarajevoToZagreb = await context.Routes
+        .FirstOrDefaultAsync(r => r.StartLocation.Name == "Sarajevo" && r.EndLocation.Name == "Zagreb");
+
+    var sarajevoToBelgrade = await context.Routes
+        .FirstOrDefaultAsync(r => r.StartLocation.Name == "Sarajevo" && r.EndLocation.Name == "Belgrade");
+
+    if (sarajevoToZagreb == null || sarajevoToBelgrade == null)
+    {
+        Console.WriteLine("⚠️ Required routes not found, skipping shipment seed.");
+        return;
+    }
+
+
         // Create shipment for first order (Approved order - ready for dispatch)
         var shipment1 = new ShipmentEntity
         {
-            OrderId = order1.Id,  // Links to ORD-2024-001
+            OrderId = order1.Id,
+            RouteId = sarajevoToZagreb.Id,// Links to ORD-2024-001
             Weight = 5.6m,        // Total weight from order items (2 laptops + 2 phones)
             Volume = 0.032m,      // Total volume
             PickupLocation = "Sarajevo Central Warehouse, Butmirska cesta 100",
@@ -892,7 +907,8 @@ public static class DynamicDataSeeder
         // Create shipment for second order (Pending order - not yet ready)
         var shipment2 = new ShipmentEntity
         {
-            OrderId = order2.Id,  // Links to ORD-2024-002
+            OrderId = order2.Id,
+            RouteId = sarajevoToBelgrade.Id,// Links to ORD-2024-002
             Weight = 93.0m,       // Total weight (5 batteries + 1 chair)
             Volume = 0.575m,      // Total volume
             PickupLocation = "Sarajevo South Warehouse, Industrija BB",

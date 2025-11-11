@@ -25,22 +25,32 @@ public class ShipmentEntityConfiguration : IEntityTypeConfiguration<ShipmentEnti
         builder.Property(s => s.Description)
             .HasMaxLength(ShipmentEntity.Constraints.DescriptionMaxLength);
 
-        // Unique index to enforce one-to-one
-        builder.Property(x => x.OrderId)
-           .IsRequired();
+        builder.Property(s => s.Notes)
+            .HasMaxLength(ShipmentEntity.Constraints.NotesMaxLength);
 
-        builder.HasIndex(x => x.OrderId).IsUnique();
+        builder.Property(s => s.ScheduledPickupDate)
+            .IsRequired();
 
-        builder.HasOne(x => x.Order)
-            .WithOne(x => x.Shipment)
-            .HasForeignKey<ShipmentEntity>(x => x.OrderId)
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.Property(s => s.ScheduledDeliveryDate)
+            .IsRequired();    
 
-        builder.HasOne(x => x.Order)
-            .WithOne(x => x.Shipment)
-            .HasForeignKey<ShipmentEntity>(x => x.OrderId)
+         // Jedan Shipment -> jedna Order (1:1)
+        builder.HasOne(s => s.Order)
+            .WithOne(o => o.Shipment)
+            .HasForeignKey<ShipmentEntity>(s => s.OrderId)
             .OnDelete(DeleteBehavior.Restrict)
-            .IsRequired();  
+            .IsRequired();
+
+        // Jedan Route -> više Shipments (1:N)
+        builder.HasOne(s => s.Route)
+            .WithMany(r => r.Shipments)
+            .HasForeignKey(s => s.RouteId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired();
+
+        // Indeksi
+        builder.HasIndex(s => s.OrderId).IsUnique();
+        builder.HasIndex(s => s.RouteId);
 
     }
 }

@@ -13,6 +13,8 @@ namespace Dispatcher.Domain.Entities.Shipments
         public CityEntity StartLocation { get; set; }
         public CityEntity EndLocation { get; set; }
 
+        public bool IsActive { get; set; }
+        public IReadOnlyCollection<ShipmentEntity> Shipments { get; private set; } = new List<ShipmentEntity>();
         public static class Constraints
         {
 

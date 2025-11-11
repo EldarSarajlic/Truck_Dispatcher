@@ -25,5 +25,10 @@ public class RouteEntityConfiguration : IEntityTypeConfiguration<RouteEntity>
         // EstimatedDuration
         builder.Property(r => r.EstimatedDuration)
                .IsRequired();
+
+        builder.HasMany(r => r.Shipments)
+        .WithOne(s => s.Route)
+        .HasForeignKey(s => s.RouteId)
+       .OnDelete(DeleteBehavior.Restrict);       
     }
 }
