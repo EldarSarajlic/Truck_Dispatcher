@@ -7,52 +7,64 @@ using MediatR;
 
 namespace Dispatcher.Application.Modules.Vehicles.Trucks.Queries.List
 {
-    public class ListTruckQueryHandler(IAppDbContext ctx) : IRequestHandler<ListTruckQuery, List<ListTruckQueryDto>>
+    public class ListTruckQueryHandler : IRequestHandler<ListTruckQuery, List<ListTruckQueryDto>>
     {
+        private readonly IAppDbContext _ctx;
+
+        public ListTruckQueryHandler(IAppDbContext ctx)
+        {
+            _ctx = ctx;
+        }
+
         public async Task<List<ListTruckQueryDto>> Handle(ListTruckQuery request, CancellationToken cancellationToken)
         {
-            var query = ctx.Trucks
-                .Include(x => x.VehicleStatus)
+            var query = _ctx.Trucks
+                .Include(t => t.VehicleStatus)
                 .AsQueryable();
 
+            // Search filter
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
-                query = query.Where(x =>
-                    x.LicensePlateNumber.Contains(request.Search) ||
-                    x.VinNumber.Contains(request.Search) ||
-                    x.Make.Contains(request.Search) ||
-                    x.Model.Contains(request.Search)
+                var search = request.Search.Trim().ToLower();
+                query = query.Where(t =>
+                    t.LicensePlateNumber.ToLower().Contains(search) ||
+                    t.VinNumber.ToLower().Contains(search) ||
+                    t.Make.ToLower().Contains(search) ||
+                    t.Model.ToLower().Contains(search)
                 );
             }
 
-            // Filtriraj samo enabled kamione ako je traženo
-            if ((bool)request.OnlyEnabled)//???
+            // Status filter (po int vrijednosti)
+            if (request.Status.HasValue)
             {
-                query = query.Where(x => x.VehicleStatus != null && x.VehicleStatus.StatusName == "Enabled");
+                query = query.Where(t => t.VehicleStatusId == request.Status.Value);
             }
 
-            var list = await query
-                .Select(x => new ListTruckQueryDto
+            var projectedQuery = query
+                .OrderBy(t => t.LicensePlateNumber)
+                .ThenBy(t => t.Make)
+                .Select(t => new ListTruckQueryDto
                 {
-                    Id = x.Id,
-                    LicensePlateNumber = x.LicensePlateNumber,
-                    VinNumber = x.VinNumber,
-                    Make = x.Make,
-                    Model = x.Model,
-                    Year = x.Year,
-                    Capacity = x.Capacity,
-                    LastMaintenanceDate = x.LastMaintenanceDate,
-                    NextMaintenanceDate = x.NextMaintenanceDate,
-                    RegistrationExpiration = x.RegistrationExpiration,
-                    InsuranceExpiration = x.InsuranceExpiration,
-                    GPSDeviceId = x.GPSDeviceId,
-                    VehicleStatusId = x.VehicleStatusId,
-                    EngineCapacity = x.EngineCapacity,
-                    KW = x.KW
-                })
-                .ToListAsync(cancellationToken);
+                    Id = t.Id,
+                    LicensePlateNumber = t.LicensePlateNumber,
+                    VinNumber = t.VinNumber,
+                    Make = t.Make,
+                    Model = t.Model,
+                    Year = t.Year,
+                    Capacity = t.Capacity,
+                    LastMaintenanceDate = t.LastMaintenanceDate,
+                    NextMaintenanceDate = t.NextMaintenanceDate,
+                    RegistrationExpiration = t.RegistrationExpiration,
+                    InsuranceExpiration = t.InsuranceExpiration,
+                    GPSDeviceId = t.GPSDeviceId,
+                    // Status se prikazuje kao ime iz navigacije
+                    VehicleStatusName = t.VehicleStatus != null ? t.VehicleStatus.StatusName : null,
+                    EngineCapacity = t.EngineCapacity,
+                    KW = t.KW
+                });
 
-            return list;
+            return await projectedQuery.ToListAsync(cancellationToken);
         }
+
     }
 }

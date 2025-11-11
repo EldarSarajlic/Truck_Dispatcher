@@ -14,7 +14,7 @@
         public DateTime? RegistrationExpiration { get; set; }
         public DateTime? InsuranceExpiration { get; set; }
         public string? GPSDeviceId { get; set; }
-        public int VehicleStatusId { get; set; }
+        public int? VehicleStatusId { get; set; }
         public string VehicleStatusName { get; set; }
         public int EngineCapacity { get; set; }
         public int KW { get; set; }

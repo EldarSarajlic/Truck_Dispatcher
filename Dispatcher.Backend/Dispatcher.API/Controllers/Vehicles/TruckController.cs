@@ -39,7 +39,7 @@ public class TrucksController(ISender sender) : ControllerBase
 
     /// <summary>List all trucks, with optional search/filter.</summary>
     [HttpGet]
-    [Authorize(Roles = "Admin")]
+
 
     public async Task<ActionResult<List<ListTruckQueryDto>>> List([FromQuery] ListTruckQuery query, CancellationToken ct)
     {
