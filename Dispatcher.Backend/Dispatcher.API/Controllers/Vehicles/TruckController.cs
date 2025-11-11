@@ -28,7 +28,7 @@ public class TrucksController(ISender sender) : ControllerBase
 
     /// <summary>Get truck by ID.</summary>
     [HttpGet("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Dispatcher")]
 
     public async Task<ActionResult<GetTruckByIdQueryDto>> GetById(int id, CancellationToken ct)
     {
@@ -40,7 +40,7 @@ public class TrucksController(ISender sender) : ControllerBase
     /// <summary>List all trucks, with optional search/filter.</summary>
     [HttpGet]
 
-
+    [Authorize(Roles = "Admin,Dispatcher")]
     public async Task<ActionResult<List<ListTruckQueryDto>>> List([FromQuery] ListTruckQuery query, CancellationToken ct)
     {
         var trucks = await sender.Send(query, ct);
@@ -70,7 +70,7 @@ public class TrucksController(ISender sender) : ControllerBase
 
     /// <summary>Enable a truck (change status).</summary>
     [HttpPost("{id:int}/enable")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Dispatcher")]
 
     public async Task<ActionResult> Enable(int id, CancellationToken ct)
     {
@@ -80,7 +80,7 @@ public class TrucksController(ISender sender) : ControllerBase
 
     /// <summary>Disable a truck (change status).</summary>
     [HttpPost("{id:int}/disable")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Dispatcher")]
 
     public async Task<ActionResult> Disable(int id, CancellationToken ct)
     {

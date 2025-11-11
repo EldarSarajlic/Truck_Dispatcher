@@ -15,6 +15,7 @@ public class VehicleStatusesController(ISender sender) : ControllerBase
     /// Create a new vehicle status.
     /// </summary>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<int>> CreateVehicleStatus(CreateVehicleStatusCommand command, CancellationToken ct)
     {
         int id = await sender.Send(command, ct);
@@ -25,6 +26,7 @@ public class VehicleStatusesController(ISender sender) : ControllerBase
 
 
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "Admin,Dispatcher")]
     public Task<GetVehicleStatusByIdQueryDto> GetById(int id,CancellationToken ct)
     {
         var status=sender.Send(new GetVehicleStatusByIdQuery { Id = id }, ct);
@@ -32,6 +34,7 @@ public class VehicleStatusesController(ISender sender) : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Dispatcher")]
     public async Task<PageResult<ListVehicleStatusQueryDto>> List([FromQuery] ListVehicleStatusQuery query, CancellationToken ct)
     {
         var result = await sender.Send(query, ct);
@@ -40,6 +43,7 @@ public class VehicleStatusesController(ISender sender) : ControllerBase
 
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task Delete(int id, CancellationToken ct)
     {
         await sender.Send(new DeleteVehicleStatusCommand { Id = id }, ct);
@@ -47,6 +51,7 @@ public class VehicleStatusesController(ISender sender) : ControllerBase
 
 
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task Update(int id, UpdateVehicleStatusCommand command, CancellationToken ct)
     {
         command.Id = id;
