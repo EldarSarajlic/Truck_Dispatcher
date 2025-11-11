@@ -3,10 +3,21 @@ using System.Collections.Generic;
 
 namespace Dispatcher.Application.Modules.Shipments.Shipment.Querries.List
 {
-    public class ListShipmentQuery : IRequest<List<ListShipmentQueryDto>>
+    public sealed class ListShipmentQuery : BasePagedQuery<ListShipmentQueryDto>
     {
-        // dodati filtere po potrebi, npr. status, pickup location itd.
-        public string? Status { get; set; }
-        public string? PickupLocation { get; set; }
+        /// <summary>
+        /// Filter by shipment status (e.g., "Pending", "ReadyForDispatch", "InTransit")
+        /// </summary>
+        public string? Status { get; init; }
+
+        /// <summary>
+        /// Filter by client's first or last name
+        /// </summary>
+        public string? ClientName { get; init; }
+
+        /// <summary>
+        /// Filter by delivery city name
+        /// </summary>
+        public string? DeliveryCityName { get; init; }
     }
 }

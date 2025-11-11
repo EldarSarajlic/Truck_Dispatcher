@@ -40,8 +40,7 @@ public class ShipmentsController(ISender sender) : ControllerBase
     /// <summary>List all shipments with optional filters.</summary>
     [HttpGet]
     [Authorize(Roles = "Admin")]
-
-    public async Task<ActionResult<List<ListShipmentQueryDto>>> List([FromQuery] ListShipmentQuery query, CancellationToken ct)
+    public async Task<ActionResult<PageResult<ListShipmentQueryDto>>> List([FromQuery] ListShipmentQuery query, CancellationToken ct)
     {
         var shipments = await sender.Send(query, ct);
         return Ok(shipments);
