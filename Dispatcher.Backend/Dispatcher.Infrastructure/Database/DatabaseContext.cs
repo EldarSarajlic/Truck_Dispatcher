@@ -1,7 +1,9 @@
 ﻿using Dispatcher.Application.Abstractions;
 using Dispatcher.Domain.Entities.Chat;
+using Dispatcher.Domain.Entities.Inventory;
 using Dispatcher.Domain.Entities.Location;
 using Dispatcher.Domain.Entities.Media;
+using Dispatcher.Domain.Entities.Orders;
 using Dispatcher.Domain.Entities.Services;
 using Dispatcher.Domain.Entities.Shipments;
 using Dispatcher.Domain.Entities.Vehicles;
@@ -24,7 +26,9 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     public DbSet<PhotoEntity> Photos => Set<PhotoEntity>();
     public DbSet<ShipmentEntity> Shipments => Set<ShipmentEntity>();
     public DbSet<RouteEntity> Routes => Set<RouteEntity>();
-
+    public DbSet<InventoryEntity> Inventory => Set<InventoryEntity>();
+    public DbSet<OrderEntity> Orders => Set<OrderEntity>();
+    public DbSet<OrderItemEntity> OrderItems => Set<OrderItemEntity>();
 
     private readonly TimeProvider _clock;
     public DatabaseContext(DbContextOptions<DatabaseContext> options, TimeProvider clock) : base(options)

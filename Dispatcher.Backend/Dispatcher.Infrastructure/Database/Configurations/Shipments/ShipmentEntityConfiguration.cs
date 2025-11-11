@@ -25,6 +25,22 @@ public class ShipmentEntityConfiguration : IEntityTypeConfiguration<ShipmentEnti
         builder.Property(s => s.Description)
             .HasMaxLength(ShipmentEntity.Constraints.DescriptionMaxLength);
 
-      
+        // Unique index to enforce one-to-one
+        builder.Property(x => x.OrderId)
+           .IsRequired();
+
+        builder.HasIndex(x => x.OrderId).IsUnique();
+
+        builder.HasOne(x => x.Order)
+            .WithOne(x => x.Shipment)
+            .HasForeignKey<ShipmentEntity>(x => x.OrderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.Order)
+            .WithOne(x => x.Shipment)
+            .HasForeignKey<ShipmentEntity>(x => x.OrderId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired();  
+
     }
 }

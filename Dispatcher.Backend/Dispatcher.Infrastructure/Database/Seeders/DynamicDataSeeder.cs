@@ -1,6 +1,8 @@
 ﻿using Dispatcher.Domain.Entities.Chat;
+using Dispatcher.Domain.Entities.Inventory;
 using Dispatcher.Domain.Entities.Location;
 using Dispatcher.Domain.Entities.Media;
+using Dispatcher.Domain.Entities.Orders;
 using Dispatcher.Domain.Entities.Services;
 using Dispatcher.Domain.Entities.Shipments;
 using Dispatcher.Domain.Entities.Vehicles;
@@ -22,6 +24,8 @@ public static class DynamicDataSeeder
         await SeedCountriesAsync(context);
         await SeedCitiesAsync(context);
         await SeedUsersAsync(context);
+        await SeedInventoryAsync(context);        
+        await SeedOrdersAsync(context);
         await SeedVehicleStatusesAsync(context);
         await SeedTrucksAsync(context);
         await SeedTrailersAsync(context);
@@ -273,6 +277,232 @@ public static class DynamicDataSeeder
     }
 
     #endregion
+
+    // <summary>
+    /// Seeds inventory items
+    /// </summary>
+    private static async Task SeedInventoryAsync(DatabaseContext context)
+    {
+        if (await context.Inventory.AnyAsync())
+            return;
+
+        var inventory = new List<InventoryEntity>
+    {
+        new InventoryEntity
+        {
+            SKU = "ELEC-001",
+            Name = "Laptop Dell XPS 15",
+            Description = "15.6\" laptop with Intel i7 processor, 16GB RAM, 512GB SSD",
+            Category = "Electronics",
+            UnitOfMeasure = "pcs",
+            UnitPrice = 1500.00m,
+            UnitWeight = 2.5m,
+            UnitVolume = 0.015m,
+            IsActive = true
+        },
+        new InventoryEntity
+        {
+            SKU = "ELEC-002",
+            Name = "Smartphone Samsung Galaxy S23",
+            Description = "Latest Samsung flagship phone",
+            Category = "Electronics",
+            UnitOfMeasure = "pcs",
+            UnitPrice = 800.00m,
+            UnitWeight = 0.3m,
+            UnitVolume = 0.001m,
+            IsActive = true
+        },
+        new InventoryEntity
+        {
+            SKU = "FOOD-001",
+            Name = "Olive Oil Extra Virgin",
+            Description = "1L bottle premium olive oil",
+            Category = "Food",
+            UnitOfMeasure = "liters",
+            UnitPrice = 15.00m,
+            UnitWeight = 1.0m,
+            UnitVolume = 0.001m,
+            IsActive = true
+        },
+        new InventoryEntity
+        {
+            SKU = "AUTO-001",
+            Name = "Car Battery 12V 60Ah",
+            Description = "Standard car battery for most vehicles",
+            Category = "Automotive",
+            UnitOfMeasure = "pcs",
+            UnitPrice = 120.00m,
+            UnitWeight = 15.0m,
+            UnitVolume = 0.025m,
+            IsActive = true
+        },
+        new InventoryEntity
+        {
+            SKU = "AUTO-002",
+            Name = "Engine Oil 5W-30",
+            Description = "Synthetic engine oil, 5L canister",
+            Category = "Automotive",
+            UnitOfMeasure = "liters",
+            UnitPrice = 45.00m,
+            UnitWeight = 5.0m,
+            UnitVolume = 0.005m,
+            IsActive = true
+        },
+        new InventoryEntity
+        {
+            SKU = "FURN-001",
+            Name = "Office Chair Ergonomic",
+            Description = "Adjustable ergonomic office chair with lumbar support",
+            Category = "Furniture",
+            UnitOfMeasure = "pcs",
+            UnitPrice = 350.00m,
+            UnitWeight = 18.0m,
+            UnitVolume = 0.45m,
+            IsActive = true
+        }
+    };
+
+        context.Inventory.AddRange(inventory);
+        await context.SaveChangesAsync();
+
+        Console.WriteLine("✅ Seeded inventory items.");
+    }
+
+    /// <summary>
+    /// Seeds sample orders with order items
+    /// </summary>
+    private static async Task SeedOrdersAsync(DatabaseContext context)
+    {
+        if (await context.Orders.AnyAsync())
+            return;
+
+        // Get test client user
+        var client = await context.Users.FirstOrDefaultAsync(u => u.Email == "string");
+        if (client == null)
+        {
+            Console.WriteLine("⚠️ Client user not found, skipping order seed.");
+            return;
+        }
+
+        // Get delivery city
+        var munich = await context.City.FirstOrDefaultAsync(c => c.Name == "Munich");
+        var berlin = await context.City.FirstOrDefaultAsync(c => c.Name == "Berlin");
+
+        if (munich == null || berlin == null)
+        {
+            Console.WriteLine("⚠️ Required cities not found, skipping order seed.");
+            return;
+        }
+
+        // Get inventory items
+        var laptop = await context.Inventory.FirstAsync(i => i.SKU == "ELEC-001");
+        var phone = await context.Inventory.FirstAsync(i => i.SKU == "ELEC-002");
+        var battery = await context.Inventory.FirstAsync(i => i.SKU == "AUTO-001");
+        var chair = await context.Inventory.FirstAsync(i => i.SKU == "FURN-001");
+
+        // Order 1: Electronics order
+        var order1 = new OrderEntity
+        {
+            OrderNumber = "ORD-2024-001",
+            ClientUserId = client.Id,
+            DeliveryAddress = "Hauptstraße 123, Munich Tech Center",
+            DeliveryCityId = munich.Id,
+            DeliveryContactPerson = "Hans Müller",
+            DeliveryContactPhone = "+49 89 123 4567",
+            OrderDate = DateTime.UtcNow.AddDays(-5),
+            RequestedDeliveryDate = DateTime.UtcNow.AddDays(7),
+            Status = "Approved",
+            Priority = "High",
+            TotalAmount = 4600.00m,
+            Currency = "EUR",
+            SpecialInstructions = "Handle with care - fragile electronics",
+            Notes = "Client requested morning delivery"
+        };
+
+        context.Orders.Add(order1);
+        await context.SaveChangesAsync();
+
+        // Order 1 Items
+        var order1Items = new List<OrderItemEntity>
+    {
+        new OrderItemEntity
+        {
+            OrderId = order1.Id,
+            InventoryId = laptop.Id,
+            Quantity = 2,
+            UnitPriceAtTime = laptop.UnitPrice,
+            TotalPrice = 2 * laptop.UnitPrice,
+            TotalWeight = 2 * laptop.UnitWeight,
+            TotalVolume = 2 * laptop.UnitVolume,
+            Notes = "Latest model with extended warranty"
+        },
+        new OrderItemEntity
+        {
+            OrderId = order1.Id,
+            InventoryId = phone.Id,
+            Quantity = 2,
+            UnitPriceAtTime = phone.UnitPrice,
+            TotalPrice = 2 * phone.UnitPrice,
+            TotalWeight = 2 * phone.UnitWeight,
+            TotalVolume = 2 * phone.UnitVolume
+        }
+    };
+
+        context.OrderItems.AddRange(order1Items);
+
+        // Order 2: Mixed order
+        var order2 = new OrderEntity
+        {
+            OrderNumber = "ORD-2024-002",
+            ClientUserId = client.Id,
+            DeliveryAddress = "Berliner Straße 45, Warehouse B",
+            DeliveryCityId = berlin.Id,
+            DeliveryContactPerson = "Maria Schmidt",
+            DeliveryContactPhone = "+49 30 234 5678",
+            OrderDate = DateTime.UtcNow.AddDays(-3),
+            RequestedDeliveryDate = DateTime.UtcNow.AddDays(10),
+            Status = "Pending",
+            Priority = "Normal",
+            TotalAmount = 950.00m,
+            Currency = "EUR",
+            SpecialInstructions = null,
+            Notes = null
+        };
+
+        context.Orders.Add(order2);
+        await context.SaveChangesAsync();
+
+        // Order 2 Items
+        var order2Items = new List<OrderItemEntity>
+    {
+        new OrderItemEntity
+        {
+            OrderId = order2.Id,
+            InventoryId = battery.Id,
+            Quantity = 5,
+            UnitPriceAtTime = battery.UnitPrice,
+            TotalPrice = 5 * battery.UnitPrice,
+            TotalWeight = 5 * battery.UnitWeight,
+            TotalVolume = 5 * battery.UnitVolume
+        },
+        new OrderItemEntity
+        {
+            OrderId = order2.Id,
+            InventoryId = chair.Id,
+            Quantity = 1,
+            UnitPriceAtTime = chair.UnitPrice,
+            TotalPrice = chair.UnitPrice,
+            TotalWeight = chair.UnitWeight,
+            TotalVolume = chair.UnitVolume,
+            Notes = "Black color preferred"
+        }
+    };
+
+        context.OrderItems.AddRange(order2Items);
+        await context.SaveChangesAsync();
+
+        Console.WriteLine("✅ Seeded orders with items.");
+    }
 
     #region Vehicle Entities
 
@@ -635,70 +865,45 @@ public static class DynamicDataSeeder
         if (await context.Shipments.AnyAsync())
             return;
 
-        var shipments = new List<ShipmentEntity>
+        // Get orders
+        var order1 = await context.Orders
+            .FirstOrDefaultAsync(o => o.OrderNumber == "ORD-2024-001");
+
+        var order2 = await context.Orders
+            .FirstOrDefaultAsync(o => o.OrderNumber == "ORD-2024-002");
+
+        if (order1 == null || order2 == null)
         {
-            new ShipmentEntity
-            {
-                Weight = 18500m,
-                Volume = 75.5m,
-                PickupLocation = "Sarajevo Warehouse District",
-                Status = "In Transit",
-                Description = "Electronics and consumer goods for German market"
-            },
-            new ShipmentEntity
-            {
-                Weight = 22000m,
-                Volume = 82.0m,
-                PickupLocation = "Zagreb Industrial Zone",
-                Status = "Pending",
-                Description = "Automotive parts shipment"
-            },
-            new ShipmentEntity
-            {
-                Weight = 15750m,
-                Volume = 68.3m,
-                PickupLocation = "Belgrade Distribution Center",
-                Status = "Delivered",
-                Description = "Food and beverage products"
-            },
-            new ShipmentEntity
-            {
-                Weight = 24500m,
-                Volume = 90.0m,
-                PickupLocation = "Munich Loading Dock",
-                Status = "In Transit",
-                Description = "Machinery and industrial equipment"
-            },
-            new ShipmentEntity
-            {
-                Weight = 12300m,
-                Volume = 55.5m,
-                PickupLocation = "Vienna Logistics Hub",
-                Status = "Pending",
-                Description = "Medical supplies and equipment"
-            },
-            new ShipmentEntity
-            {
-                Weight = 19800m,
-                Volume = 78.0m,
-                PickupLocation = "Split Port Terminal",
-                Status = "In Transit",
-                Description = "Construction materials"
-            },
-            new ShipmentEntity
-            {
-                Weight = 21000m,
-                Volume = 85.0m,
-                PickupLocation = "Frankfurt Freight Center",
-                Status = "Delivered",
-                Description = "Textiles and clothing"
-            }
+            Console.WriteLine("⚠️ Orders not found, skipping shipment seed.");
+            return;
+        }
+
+        // Create shipment for first order (Approved order - ready for dispatch)
+        var shipment1 = new ShipmentEntity
+        {
+            OrderId = order1.Id,  // Links to ORD-2024-001
+            Weight = 5.6m,        // Total weight from order items (2 laptops + 2 phones)
+            Volume = 0.032m,      // Total volume
+            PickupLocation = "Sarajevo Central Warehouse, Butmirska cesta 100",
+            Status = "ReadyForDispatch",
+            Description = "Electronics shipment - laptops and smartphones for Munich Tech Center"
         };
 
-        context.Shipments.AddRange(shipments);
+        // Create shipment for second order (Pending order - not yet ready)
+        var shipment2 = new ShipmentEntity
+        {
+            OrderId = order2.Id,  // Links to ORD-2024-002
+            Weight = 93.0m,       // Total weight (5 batteries + 1 chair)
+            Volume = 0.575m,      // Total volume
+            PickupLocation = "Sarajevo South Warehouse, Industrija BB",
+            Status = "Pending",
+            Description = "Mixed shipment - automotive batteries and office furniture for Berlin"
+        };
+
+        context.Shipments.AddRange(shipment1, shipment2);
         await context.SaveChangesAsync();
 
-        Console.WriteLine("✅ Seeded shipments.");
+        Console.WriteLine("✅ Seeded shipments linked to orders.");
     }
 
     /// <summary>

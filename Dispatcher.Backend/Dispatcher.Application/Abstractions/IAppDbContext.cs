@@ -1,5 +1,7 @@
 ﻿using Dispatcher.Domain.Entities.Chat;
+using Dispatcher.Domain.Entities.Inventory;
 using Dispatcher.Domain.Entities.Media;
+using Dispatcher.Domain.Entities.Orders;
 using Dispatcher.Domain.Entities.Shipments;
 using Dispatcher.Domain.Entities.Vehicles;
 
@@ -18,5 +20,8 @@ public interface IAppDbContext
     DbSet<PhotoEntity> Photos { get; }
     DbSet<ShipmentEntity> Shipments { get; }
     DbSet<RouteEntity> Routes { get; }
+    DbSet<InventoryEntity> Inventory { get; }
+    DbSet<OrderEntity> Orders { get; }
+    DbSet<OrderItemEntity> OrderItems { get; }
     Task<int> SaveChangesAsync(CancellationToken ct);
 }

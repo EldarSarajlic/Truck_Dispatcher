@@ -1,4 +1,5 @@
 ﻿using Dispatcher.Domain.Common;
+using Dispatcher.Domain.Entities.Orders;
 
 namespace Dispatcher.Domain.Entities.Shipments
 {
@@ -9,6 +10,12 @@ namespace Dispatcher.Domain.Entities.Shipments
         public string PickupLocation { get; set; }
         public string Status { get; set; }
         public string Description { get; set; }
+
+        /// <summary>
+        /// Parent order (one-to-one)
+        /// </summary>
+        public int OrderId { get; set; }
+        public OrderEntity Order { get; set; }
 
         public static class Constraints
         {
