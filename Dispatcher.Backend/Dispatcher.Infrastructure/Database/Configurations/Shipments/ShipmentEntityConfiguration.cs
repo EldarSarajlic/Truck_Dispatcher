@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Dispatcher.Domain.Entities.Dispatches;
 using Dispatcher.Domain.Entities.Shipments;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 
 public class ShipmentEntityConfiguration : IEntityTypeConfiguration<ShipmentEntity>
 {
@@ -47,7 +49,7 @@ public class ShipmentEntityConfiguration : IEntityTypeConfiguration<ShipmentEnti
             .HasForeignKey(s => s.RouteId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired();
-
+        
         // Indeksi
         builder.HasIndex(s => s.OrderId).IsUnique();
         builder.HasIndex(s => s.RouteId);

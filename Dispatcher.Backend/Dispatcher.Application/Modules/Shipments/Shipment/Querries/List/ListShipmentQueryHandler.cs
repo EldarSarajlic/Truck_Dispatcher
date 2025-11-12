@@ -59,7 +59,7 @@ namespace Dispatcher.Application.Modules.Shipments.Shipment.Querries.List
                     ScheduledDeliveryDate = x.ScheduledDeliveryDate,
                     Notes = x.Notes,
 
-                    OrderId = x.OrderId,
+                    OrderId = (int)x.OrderId,
                     OrderNumber = x.Order.OrderNumber,
 
                     ClientId = x.Order.ClientUserId,

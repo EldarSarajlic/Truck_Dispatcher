@@ -1,4 +1,5 @@
 ﻿using Dispatcher.Domain.Entities.Chat;
+using Dispatcher.Domain.Entities.Dispatches;
 using Dispatcher.Domain.Entities.Inventory;
 using Dispatcher.Domain.Entities.Location;
 using Dispatcher.Domain.Entities.Media;
@@ -24,7 +25,7 @@ public static class DynamicDataSeeder
         await SeedCountriesAsync(context);
         await SeedCitiesAsync(context);
         await SeedUsersAsync(context);
-        await SeedInventoryAsync(context);        
+        await SeedInventoryAsync(context);
         await SeedOrdersAsync(context);
         await SeedVehicleStatusesAsync(context);
         await SeedTrucksAsync(context);
@@ -36,7 +37,7 @@ public static class DynamicDataSeeder
         await SeedMessagesAsync(context);
         await SeedNotificationsAsync(context);
         await SeedPhotosAsync(context);
-
+        await SeedDispatchesAsync(context);
         Console.WriteLine("✅ Dynamic seed completed: All test data added.");
     }
 
@@ -879,17 +880,17 @@ public static class DynamicDataSeeder
         }
 
 
-            var sarajevoToZagreb = await context.Routes
-        .FirstOrDefaultAsync(r => r.StartLocation.Name == "Sarajevo" && r.EndLocation.Name == "Zagreb");
+        var sarajevoToZagreb = await context.Routes
+    .FirstOrDefaultAsync(r => r.StartLocation.Name == "Sarajevo" && r.EndLocation.Name == "Zagreb");
 
-    var sarajevoToBelgrade = await context.Routes
-        .FirstOrDefaultAsync(r => r.StartLocation.Name == "Sarajevo" && r.EndLocation.Name == "Belgrade");
+        var sarajevoToBelgrade = await context.Routes
+            .FirstOrDefaultAsync(r => r.StartLocation.Name == "Sarajevo" && r.EndLocation.Name == "Belgrade");
 
-    if (sarajevoToZagreb == null || sarajevoToBelgrade == null)
-    {
-        Console.WriteLine("⚠️ Required routes not found, skipping shipment seed.");
-        return;
-    }
+        if (sarajevoToZagreb == null || sarajevoToBelgrade == null)
+        {
+            Console.WriteLine("⚠️ Required routes not found, skipping shipment seed.");
+            return;
+        }
 
 
         // Create shipment for first order (Approved order - ready for dispatch)
@@ -1232,4 +1233,41 @@ public static class DynamicDataSeeder
     }
 
     #endregion
+
+    public static async Task SeedDispatchesAsync(DatabaseContext context)
+    {
+        if (await context.Dispatches.AnyAsync())
+            return;
+
+  
+        var shipment = await context.Shipments.FirstOrDefaultAsync();
+        var truck = await context.Trucks.FirstOrDefaultAsync();
+        var trailer = await context.Trailers.FirstOrDefaultAsync();
+        var driver = await context.Users.FirstOrDefaultAsync(u => u.Role == UserRole.Driver);
+        var dispatcherUser = await context.Users.FirstOrDefaultAsync(u => u.Role == UserRole.Dispatcher);
+
+        
+        var dispatch = new DispatchEntity
+        {
+            ShipmentId = shipment.Id,
+            Shipment = shipment,
+            TruckId = truck.Id,
+            Truck = truck,
+            DriverId = driver.Id,
+            Driver = driver,
+            TrailerId = trailer?.Id,                 
+            Trailer = trailer,
+            AssignedAt = DateTime.UtcNow,
+            AssignedByUserId = dispatcherUser.Id,
+            AssignedBy = dispatcherUser,
+            Status = "Scheduled",
+            Notes = "Demo dispatch seeder"
+        };
+
+        await context.Dispatches.AddAsync(dispatch);
+        await context.SaveChangesAsync();
+    }
+
+
+
 }

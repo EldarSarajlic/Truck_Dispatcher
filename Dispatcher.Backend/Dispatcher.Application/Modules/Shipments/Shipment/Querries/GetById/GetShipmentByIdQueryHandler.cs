@@ -31,7 +31,7 @@ namespace Dispatcher.Application.Modules.Shipments.Shipment.Queries.GetById
                 Status = shipment.Status,
                 Description = shipment.Description,
                 Notes = shipment.Notes,
-                OrderId = shipment.OrderId,
+                OrderId = (int)shipment.OrderId,
                 RouteId = shipment.RouteId,
                 RouteStartLocation = shipment.Route.StartLocation.Name,
                 RouteEndLocation = shipment.Route.EndLocation.Name,

@@ -1,4 +1,5 @@
 ﻿using Dispatcher.Domain.Entities.Chat;
+using Dispatcher.Domain.Entities.Dispatches;
 using Dispatcher.Domain.Entities.Inventory;
 using Dispatcher.Domain.Entities.Media;
 using Dispatcher.Domain.Entities.Orders;
@@ -23,5 +24,6 @@ public interface IAppDbContext
     DbSet<InventoryEntity> Inventory { get; }
     DbSet<OrderEntity> Orders { get; }
     DbSet<OrderItemEntity> OrderItems { get; }
+    DbSet<DispatchEntity> Dispatches { get; }
     Task<int> SaveChangesAsync(CancellationToken ct);
 }

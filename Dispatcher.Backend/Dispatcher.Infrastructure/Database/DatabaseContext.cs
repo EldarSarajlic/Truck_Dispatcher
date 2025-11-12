@@ -1,5 +1,6 @@
 ﻿using Dispatcher.Application.Abstractions;
 using Dispatcher.Domain.Entities.Chat;
+using Dispatcher.Domain.Entities.Dispatches;
 using Dispatcher.Domain.Entities.Inventory;
 using Dispatcher.Domain.Entities.Location;
 using Dispatcher.Domain.Entities.Media;
@@ -29,6 +30,7 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     public DbSet<InventoryEntity> Inventory => Set<InventoryEntity>();
     public DbSet<OrderEntity> Orders => Set<OrderEntity>();
     public DbSet<OrderItemEntity> OrderItems => Set<OrderItemEntity>();
+    public DbSet<DispatchEntity> Dispatches => Set<DispatchEntity>();
 
     private readonly TimeProvider _clock;
     public DatabaseContext(DbContextOptions<DatabaseContext> options, TimeProvider clock) : base(options)

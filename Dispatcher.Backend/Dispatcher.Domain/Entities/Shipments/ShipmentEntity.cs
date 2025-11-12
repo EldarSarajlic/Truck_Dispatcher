@@ -1,4 +1,5 @@
 ﻿using Dispatcher.Domain.Common;
+using Dispatcher.Domain.Entities.Dispatches;
 using Dispatcher.Domain.Entities.Orders;
 
 namespace Dispatcher.Domain.Entities.Shipments
@@ -6,7 +7,7 @@ namespace Dispatcher.Domain.Entities.Shipments
     public class ShipmentEntity : BaseEntity
     {
 
-        public int OrderId { get; set; }
+        public int? OrderId { get; set; }
         public OrderEntity Order { get; set; }
 
         public int RouteId { get; set; }
@@ -21,6 +22,11 @@ namespace Dispatcher.Domain.Entities.Shipments
 
         public string? Notes { get; set; }
 
+        public DispatchEntity Dispatch { get; set; }
+        
+        
+        
+        
         //public IReadOnlyCollection<DispatchEntity> Dispatches { get; private set; } = new List<DispatchEntity>();
         public static class Constraints
         {
