@@ -37,7 +37,7 @@ public sealed class JwtTokenService : IJwtTokenService
             new(ClaimTypes.GivenName,        user.FirstName),
             new(ClaimTypes.Surname,          user.LastName),
             new("display_name",              user.DisplayName),
-            new(ClaimTypes.Role,             user.Role.ToString()),
+            new("role",                      user.Role.ToString()),
             new("ver",                       user.TokenVersion.ToString()),
             new(JwtRegisteredClaimNames.Iat, ToUnixTimeSeconds(nowInstant).ToString(), ClaimValueTypes.Integer64),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
