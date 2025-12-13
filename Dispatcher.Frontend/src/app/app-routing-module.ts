@@ -25,7 +25,7 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () =>
-      import('./modules/public/public-module').then(m => m.PublicModule)
+      import('./modules/auth/auth-module').then(m => m.AuthModule)
   },
   // fallback 404
   { path: '**', redirectTo: '' }

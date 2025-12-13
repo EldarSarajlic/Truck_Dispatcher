@@ -1,7 +1,6 @@
-<!-- src/app/pages/auth/login/login.component.html -->
 <div class="auth-container">
+  <!-- Background decorations -->
   <div class="auth-background">
-    <!-- Decorative elements -->
     <div class="bg-shape shape-1"></div>
     <div class="bg-shape shape-2"></div>
     <div class="bg-shape shape-3"></div>
@@ -10,48 +9,52 @@
   <div class="auth-content">
     <!-- Logo & Brand -->
     <div class="auth-brand">
-      <mat-icon class="brand-icon">storefront</mat-icon>
-      <h1 class="brand-name">FIT Market</h1>
-      <p class="brand-tagline">Dobrodošli nazad</p>
+      <mat-icon class="brand-icon">local_shipping</mat-icon>
+      <h1 class="brand-name">Dispatcher System</h1>
+      <p class="brand-tagline">Welcome Back</p>
     </div>
 
     <!-- Login Card -->
     <mat-card class="auth-card mat-elevation-z8">
       <mat-card-header>
-        <mat-card-title>{{ 'AUTH.LOGIN.TITLE' | translate }}</mat-card-title>
-        <mat-card-subtitle>Unesite vaše podatke za pristup</mat-card-subtitle>
+        <mat-card-title>Sign In</mat-card-title>
+        <mat-card-subtitle>Enter your credentials to continue</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
-        <!-- Error message -->
-        <div *ngIf="errorMessage" class="error-message" @fadeIn>
-          <mat-icon>error_outline</mat-icon>
-          <span>{{ errorMessage }}</span>
-        </div>
+        <!-- Error Message -->
+        @if (errorMessage) {
+          <div class="error-banner">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ errorMessage }}</span>
+          </div>
+        }
 
+        <!-- Login Form -->
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <!-- Email -->
+
+          <!-- Email Field -->
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>{{ 'AUTH.LOGIN.EMAIL_LABEL' | translate }}</mat-label>
+            <mat-label>Email</mat-label>
             <input
               matInput
               formControlName="email"
               type="email"
-              placeholder="vasa.email@primjer.com"
+              placeholder="your.email@example.com"
               autocomplete="email"
             />
             <mat-icon matPrefix>person</mat-icon>
-            <mat-error *ngIf="form.get('email')?.hasError('required')">
-              Email je obavezan
-            </mat-error>
-            <mat-error *ngIf="form.get('email')?.hasError('email')">
-              Unesite validan email
-            </mat-error>
+            @if (form.get('email')?.hasError('required')) {
+              <mat-error>Email is required</mat-error>
+            }
+            @if (form.get('email')?.hasError('email')) {
+              <mat-error>Please enter a valid email</mat-error>
+            }
           </mat-form-field>
 
-          <!-- Password -->
+          <!-- Password Field -->
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>{{ 'AUTH.LOGIN.PASSWORD_LABEL' | translate }}</mat-label>
+            <mat-label>Password</mat-label>
             <input
               matInput
               formControlName="password"
@@ -64,22 +67,24 @@
               mat-icon-button
               matSuffix
               type="button"
-              (click)="hidePassword = !hidePassword"
-              [attr.aria-label]="'Hide password'"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="'Toggle password visibility'"
             >
               <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
-            <mat-error *ngIf="form.get('password')?.hasError('required')">
-              Lozinka je obavezna
-            </mat-error>
+            @if (form.get('password')?.hasError('required')) {
+              <mat-error>Password is required</mat-error>
+            }
           </mat-form-field>
 
           <!-- Remember Me & Forgot Password -->
           <div class="form-row">
             <mat-checkbox formControlName="rememberMe" color="primary">
-              {{ 'AUTH.LOGIN.REMEMBER_ME' | translate }}
+              Remember me
             </mat-checkbox>
-            <a href="#" class="forgot-link">Zaboravili ste lozinku?</a>
+            <a routerLink="/auth/forgot-password" class="forgot-link">
+              Forgot password?
+            </a>
           </div>
 
           <!-- Submit Button -->
@@ -91,30 +96,18 @@
               class="submit-button"
               [disabled]="form.invalid || isLoading"
             >
-              <ng-container *ngIf="!isLoading; else loadingTpl">
+              @if (!isLoading) {
                 <mat-icon>login</mat-icon>
-                {{ 'AUTH.LOGIN.BUTTON' | translate }}
-              </ng-container>
-              <ng-template #loadingTpl>
+                <span>Sign In</span>
+              } @else {
                 <mat-progress-spinner
                   mode="indeterminate"
                   diameter="20"
                   strokeWidth="3"
                 ></mat-progress-spinner>
-                <span>Prijava u toku...</span>
-              </ng-template>
+                <span>Signing in...</span>
+              }
             </button>
-          </div>
-
-          <!-- Divider -->
-          <div class="divider">
-            <span>ili</span>
-          </div>
-
-          <!-- Register Link -->
-          <div class="register-prompt">
-            <span>Nemate nalog?</span>
-            <a routerLink="/auth/register" class="register-link">Registrujte se</a>
           </div>
         </form>
       </mat-card-content>
@@ -124,7 +117,7 @@
     <div class="auth-footer">
       <a routerLink="/" class="back-link">
         <mat-icon>arrow_back</mat-icon>
-        Nazad na početnu
+        Back to homepage
       </a>
     </div>
   </div>

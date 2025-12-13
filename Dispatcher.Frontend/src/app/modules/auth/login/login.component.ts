@@ -20,8 +20,8 @@ export class LoginComponent extends BaseComponent {
   hidePassword = true;
 
   form = this.fb.group({
-    email: ['admin@dispatcher.local', [Validators.required, Validators.email]], // FIXED
-    password: ['Admin123!', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]], // FIXED
+    password: ['', [Validators.required]],
     rememberMe: [false],
   });
 
@@ -47,5 +47,9 @@ export class LoginComponent extends BaseComponent {
         console.error('Login error:', err);
       },
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.hidePassword = !this.hidePassword;
   }
 }
