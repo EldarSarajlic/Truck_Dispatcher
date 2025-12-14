@@ -17,7 +17,7 @@ public partial class Program
 
         try
         {
-            Log.Information("Starting Market API...");
+            Log.Information("Starting Dispatcher API...");
 
             //
             // 1) Standard builder (includes appsettings.json, appsettings.{ENV}.json,
@@ -49,9 +49,18 @@ public partial class Program
                 .AddInfrastructure(builder.Configuration, builder.Environment)
                 .AddApplication();
 
-
-
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularDev",
+                    policy =>
+                    {
+                        policy
+                            .WithOrigins("http://localhost:4200") // kao string array može i više URL-ova
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials();
+                    });
+            });
 
             var app = builder.Build();
 
@@ -70,6 +79,7 @@ public partial class Program
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseCors("AllowAngularDev");
             app.UseAuthorization();
 
             app.MapControllers();
@@ -77,7 +87,7 @@ public partial class Program
             // Database migrations + seeding
             await app.Services.InitializeDatabaseAsync(app.Environment);
 
-            Log.Information("Market API started successfully.");
+            Log.Information("Dispatcher API started successfully.");
             app.Run();
         }
         catch (HostAbortedException)
@@ -89,7 +99,7 @@ public partial class Program
         catch (Exception ex)
         {
             // Any startup failure will be logged here
-            Log.Fatal(ex, "Market API terminated unexpectedly.");
+            Log.Fatal(ex, "Dispatcher API terminated unexpectedly.");
         }
         finally
         {

@@ -1,0 +1,124 @@
+<div class="auth-container">
+  <!-- Background decorations -->
+  <div class="auth-background">
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+  </div>
+
+  <div class="auth-content">
+    <!-- Logo & Brand -->
+    <div class="auth-brand">
+      <mat-icon class="brand-icon">local_shipping</mat-icon>
+      <h1 class="brand-name">Dispatcher System</h1>
+      <p class="brand-tagline">Welcome Back</p>
+    </div>
+
+    <!-- Login Card -->
+    <mat-card class="auth-card mat-elevation-z8">
+      <mat-card-header>
+        <mat-card-title>Sign In</mat-card-title>
+        <mat-card-subtitle>Enter your credentials to continue</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- Error Message -->
+        @if (errorMessage) {
+          <div class="error-banner">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ errorMessage }}</span>
+          </div>
+        }
+
+        <!-- Login Form -->
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+          <!-- Email Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input
+              matInput
+              formControlName="email"
+              type="email"
+              placeholder="your.email@example.com"
+              autocomplete="email"
+            />
+            <mat-icon matPrefix>person</mat-icon>
+            @if (form.get('email')?.hasError('required')) {
+              <mat-error>Email is required</mat-error>
+            }
+            @if (form.get('email')?.hasError('email')) {
+              <mat-error>Please enter a valid email</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Password Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input
+              matInput
+              formControlName="password"
+              [type]="hidePassword ? 'password' : 'text'"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+            <mat-icon matPrefix>lock</mat-icon>
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="'Toggle password visibility'"
+            >
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            @if (form.get('password')?.hasError('required')) {
+              <mat-error>Password is required</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Remember Me & Forgot Password -->
+          <div class="form-row">
+            <mat-checkbox formControlName="rememberMe" color="primary">
+              Remember me
+            </mat-checkbox>
+            <a routerLink="/auth/forgot-password" class="forgot-link">
+              Forgot password?
+            </a>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="actions">
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              class="submit-button"
+              [disabled]="form.invalid || isLoading"
+            >
+              @if (!isLoading) {
+                <mat-icon>login</mat-icon>
+                <span>Sign In</span>
+              } @else {
+                <mat-progress-spinner
+                  mode="indeterminate"
+                  diameter="20"
+                  strokeWidth="3"
+                ></mat-progress-spinner>
+                <span>Signing in...</span>
+              }
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Footer -->
+    <div class="auth-footer">
+      <a routerLink="/" class="back-link">
+        <mat-icon>arrow_back</mat-icon>
+        Back to homepage
+      </a>
+    </div>
+  </div>
+</div>
