@@ -1,12 +1,10 @@
-﻿using Dispatcher.Application.Modules.Vehicles.VehicleStatus.Commands.Create;
-using Dispatcher.Domain.Entities.Vehicles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Dispatcher.Application.Modules.Vehicles.VehicleStatus.Commands.Create;
+using Dispatcher.Application.Abstractions;
+using Dispatcher.Application.Modules.Vehicles.VehicleStatus.Commands.Create;
+using Dispatcher.Domain.Entities.Vehicles;
+using Microsoft.EntityFrameworkCore;
+
+namespace Dispatcher.Application.Modules.Vehicles.TruckStatuses.Commands.Create;
 
 public class CreateVehicleStatusCommandHandler(IAppDbContext context)
     : IRequestHandler<CreateVehicleStatusCommand, int>
@@ -17,7 +15,7 @@ public class CreateVehicleStatusCommandHandler(IAppDbContext context)
 
         if (string.IsNullOrWhiteSpace(normalized))
             throw new ValidationException("StatusName is required.");
-        
+
         // Provjera da li status već postoji
         bool exists = await context.VehicleStatuses
             .AnyAsync(x => x.StatusName == normalized, cancellationToken);
@@ -27,7 +25,7 @@ public class CreateVehicleStatusCommandHandler(IAppDbContext context)
             throw new MarketConflictException("StatusName already exists.");
         }
 
-
+        
         var entity = new VehicleStatusEntity
         {
             StatusName = normalized,
@@ -41,9 +39,3 @@ public class CreateVehicleStatusCommandHandler(IAppDbContext context)
         return entity.Id;
     }
 }
-
-
-
-
-
-

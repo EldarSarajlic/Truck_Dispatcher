@@ -49,6 +49,10 @@ public partial class Program
                 .AddInfrastructure(builder.Configuration, builder.Environment)
                 .AddApplication();
 
+
+
+
+
             var app = builder.Build();
 
             // ---------------------------------------------------------
