@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Renderer2 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthFacadeService } from '../../../core/services/auth/auth-facade.service';
 
@@ -10,6 +10,7 @@ import { AuthFacadeService } from '../../../core/services/auth/auth-facade.servi
 })
 export class AdminLayoutComponent {
   private translate = inject(TranslateService);
+  private renderer = inject(Renderer2);
   auth = inject(AuthFacadeService);
 
   currentLang: string;
@@ -21,6 +22,10 @@ export class AdminLayoutComponent {
 
   constructor() {
     this.currentLang = this.translate.currentLang || 'bs';
+
+    // ✅ APPLY DAISY THEME
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    this.renderer.setAttribute(document.documentElement, 'data-theme', savedTheme);
   }
 
   switchLanguage(langCode: string): void {
