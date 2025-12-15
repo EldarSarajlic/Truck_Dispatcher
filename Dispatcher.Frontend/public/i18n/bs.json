@@ -28,6 +28,12 @@
       "EMPLOYEE": "Zaposlenik"
     },
     "MENU": {
+      "MENADŽMENT": "Menadžment",
+      "DASHBOARD": "Dashboard",
+      "KORISNICI": "Korisnici",
+      "VOZILA": "Vozila",
+      "MAPA": "Mapa",
+
       "CATALOG": "KATALOG",
       "CATEGORIES": "Kategorije Proizvoda",
       "PRODUCTS": "Proizvodi",
