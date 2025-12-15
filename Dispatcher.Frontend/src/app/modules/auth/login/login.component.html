@@ -1,124 +1,530 @@
-<div class="auth-container">
-  <!-- Background decorations -->
-  <div class="auth-background">
-    <div class="bg-shape shape-1"></div>
-    <div class="bg-shape shape-2"></div>
-    <div class="bg-shape shape-3"></div>
-  </div>
+<div class="relative min-h-screen overflow-hidden">
+  <!-- Animated Background Scene -->
+  <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <!-- Animated truck scene - blurred background -->
+    <div class="absolute inset-0 blur-sm opacity-40">
+      <!-- Sky gradient -->
+      <div class="absolute inset-0 bg-gradient-to-b from-blue-950 via-blue-900 to-slate-800"></div>
 
-  <div class="auth-content">
-    <!-- Logo & Brand -->
-    <div class="auth-brand">
-      <mat-icon class="brand-icon">local_shipping</mat-icon>
-      <h1 class="brand-name">Dispatcher System</h1>
-      <p class="brand-tagline">Welcome Back</p>
+      <!-- Stars/dots for depth -->
+      <div class="stars-container">
+        <div class="star" style="top: 10%; left: 20%; animation-delay: 0s;"></div>
+        <div class="star" style="top: 20%; left: 60%; animation-delay: 1s;"></div>
+        <div class="star" style="top: 15%; left: 80%; animation-delay: 2s;"></div>
+        <div class="star" style="top: 30%; left: 30%; animation-delay: 1.5s;"></div>
+        <div class="star" style="top: 25%; left: 70%; animation-delay: 0.5s;"></div>
+        <div class="star" style="top: 35%; left: 50%; animation-delay: 2.5s;"></div>
+      </div>
+
+      <!-- City skyline silhouette -->
+      <div class="absolute bottom-32 left-0 right-0 h-64 opacity-30">
+        <svg class="w-full h-full" viewBox="0 0 1200 200" preserveAspectRatio="none">
+          <path d="M0,200 L0,100 L80,100 L80,60 L120,60 L120,100 L200,100 L200,80 L240,80 L240,50 L280,50 L280,80 L360,80 L360,100 L440,100 L440,70 L480,70 L480,100 L560,100 L560,40 L600,40 L600,100 L680,100 L680,90 L720,90 L720,100 L800,100 L800,60 L840,60 L840,100 L920,100 L920,80 L960,80 L960,100 L1040,100 L1040,50 L1080,50 L1080,100 L1200,100 L1200,200 Z"
+                fill="currentColor" class="text-slate-700"/>
+        </svg>
+      </div>
+
+      <!-- Road with perspective -->
+      <div class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-b from-gray-700/50 to-gray-800">
+        <!-- Road markings with perspective -->
+        <div class="road-markings">
+          <!-- Center dashed line -->
+          <div class="center-line"></div>
+          <!-- Side lines -->
+          <div class="absolute top-8 left-0 right-0 h-0.5 bg-gray-400/30"></div>
+          <div class="absolute bottom-8 left-0 right-0 h-0.5 bg-gray-400/30"></div>
+        </div>
+      </div>
+
+      <!-- Multiple trucks at different depths and speeds -->
+      <div class="trucks-layer">
+        <!-- Far trucks (smaller, slower) -->
+        <div class="truck-wrapper truck-far-1">
+          <svg class="truck-svg" viewBox="0 0 24 24">
+            <path d="M18,18.5A1.5,1.5 0 0,1 16.5,17A1.5,1.5 0 0,1 18,15.5A1.5,1.5 0 0,1 19.5,17A1.5,1.5 0 0,1 18,18.5M19.5,9.5L21.46,12H17V9.5M6,18.5A1.5,1.5 0 0,1 4.5,17A1.5,1.5 0 0,1 6,15.5A1.5,1.5 0 0,1 7.5,17A1.5,1.5 0 0,1 6,18.5M20,8H17V4H3C1.89,4 1,4.89 1,6V17H3A3,3 0 0,0 6,20A3,3 0 0,0 9,17H15A3,3 0 0,0 18,20A3,3 0 0,0 21,17H23V12L20,8Z"/>
+          </svg>
+          <!-- Headlights -->
+          <div class="headlight"></div>
+        </div>
+
+        <div class="truck-wrapper truck-far-2">
+          <svg class="truck-svg" viewBox="0 0 24 24">
+            <path d="M18,18.5A1.5,1.5 0 0,1 16.5,17A1.5,1.5 0 0,1 18,15.5A1.5,1.5 0 0,1 19.5,17A1.5,1.5 0 0,1 18,18.5M19.5,9.5L21.46,12H17V9.5M6,18.5A1.5,1.5 0 0,1 4.5,17A1.5,1.5 0 0,1 6,15.5A1.5,1.5 0 0,1 7.5,17A1.5,1.5 0 0,1 6,18.5M20,8H17V4H3C1.89,4 1,4.89 1,6V17H3A3,3 0 0,0 6,20A3,3 0 0,0 9,17H15A3,3 0 0,0 18,20A3,3 0 0,0 21,17H23V12L20,8Z"/>
+          </svg>
+          <div class="headlight"></div>
+        </div>
+
+        <!-- Mid-distance trucks -->
+        <div class="truck-wrapper truck-mid-1">
+          <svg class="truck-svg" viewBox="0 0 24 24">
+            <path d="M18,18.5A1.5,1.5 0 0,1 16.5,17A1.5,1.5 0 0,1 18,15.5A1.5,1.5 0 0,1 19.5,17A1.5,1.5 0 0,1 18,18.5M19.5,9.5L21.46,12H17V9.5M6,18.5A1.5,1.5 0 0,1 4.5,17A1.5,1.5 0 0,1 6,15.5A1.5,1.5 0 0,1 7.5,17A1.5,1.5 0 0,1 6,18.5M20,8H17V4H3C1.89,4 1,4.89 1,6V17H3A3,3 0 0,0 6,20A3,3 0 0,0 9,17H15A3,3 0 0,0 18,20A3,3 0 0,0 21,17H23V12L20,8Z"/>
+          </svg>
+          <div class="headlight"></div>
+        </div>
+
+        <div class="truck-wrapper truck-mid-2">
+          <svg class="truck-svg" viewBox="0 0 24 24">
+            <path d="M18,18.5A1.5,1.5 0 0,1 16.5,17A1.5,1.5 0 0,1 18,15.5A1.5,1.5 0 0,1 19.5,17A1.5,1.5 0 0,1 18,18.5M19.5,9.5L21.46,12H17V9.5M6,18.5A1.5,1.5 0 0,1 4.5,17A1.5,1.5 0 0,1 6,15.5A1.5,1.5 0 0,1 7.5,17A1.5,1.5 0 0,1 6,18.5M20,8H17V4H3C1.89,4 1,4.89 1,6V17H3A3,3 0 0,0 6,20A3,3 0 0,0 9,17H15A3,3 0 0,0 18,20A3,3 0 0,0 21,17H23V12L20,8Z"/>
+          </svg>
+          <div class="headlight"></div>
+        </div>
+
+        <!-- Near trucks (larger, faster) -->
+        <div class="truck-wrapper truck-near-1">
+          <svg class="truck-svg" viewBox="0 0 24 24">
+            <path d="M18,18.5A1.5,1.5 0 0,1 16.5,17A1.5,1.5 0 0,1 18,15.5A1.5,1.5 0 0,1 19.5,17A1.5,1.5 0 0,1 18,18.5M19.5,9.5L21.46,12H17V9.5M6,18.5A1.5,1.5 0 0,1 4.5,17A1.5,1.5 0 0,1 6,15.5A1.5,1.5 0 0,1 7.5,17A1.5,1.5 0 0,1 6,18.5M20,8H17V4H3C1.89,4 1,4.89 1,6V17H3A3,3 0 0,0 6,20A3,3 0 0,0 9,17H15A3,3 0 0,0 18,20A3,3 0 0,0 21,17H23V12L20,8Z"/>
+          </svg>
+          <div class="headlight"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- Login Card -->
-    <mat-card class="auth-card mat-elevation-z8">
-      <mat-card-header>
-        <mat-card-title>Sign In</mat-card-title>
-        <mat-card-subtitle>Enter your credentials to continue</mat-card-subtitle>
-      </mat-card-header>
+    <!-- Atmospheric overlay for depth -->
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-slate-900/40"></div>
 
-      <mat-card-content>
-        <!-- Error Message -->
-        @if (errorMessage) {
-          <div class="error-banner">
-            <mat-icon>error_outline</mat-icon>
-            <span>{{ errorMessage }}</span>
-          </div>
-        }
+    <!-- Subtle light rays -->
+    <div class="absolute inset-0 opacity-10">
+      <div class="light-ray ray-1"></div>
+      <div class="light-ray ray-2"></div>
+      <div class="light-ray ray-3"></div>
+    </div>
+  </div>
 
-        <!-- Login Form -->
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <!-- Main Content - Sharp and in Focus -->
+  <div class="relative flex items-center justify-center min-h-screen px-4 py-12 z-10">
+    <div class="w-full max-w-md">
+      <!-- Logo & Brand -->
+      <div class="text-center mb-8 space-y-4 animate-fade-in-down">
+        <div>
+          <h1 class="text-5xl font-bold text-white mb-2 tracking-tight">Dispatcher System</h1>
+          <p class="text-blue-300 text-xl font-light">Welcome Back</p>
+        </div>
+      </div>
 
-          <!-- Email Field -->
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email</mat-label>
-            <input
-              matInput
-              formControlName="email"
-              type="email"
-              placeholder="your.email@example.com"
-              autocomplete="email"
-            />
-            <mat-icon matPrefix>person</mat-icon>
-            @if (form.get('email')?.hasError('required')) {
-              <mat-error>Email is required</mat-error>
-            }
-            @if (form.get('email')?.hasError('email')) {
-              <mat-error>Please enter a valid email</mat-error>
-            }
-          </mat-form-field>
+      <!-- Login Card with Logo Background -->
+      <div class="relative card bg-white/95 backdrop-blur-xl shadow-2xl border border-white/20 animate-fade-in-up hover:shadow-blue-500/20 transition-all duration-300">
+        <!-- Logo Watermark -->
+<!--        <div class="absolute inset-0 flex items-center justify-center rounded-2xl pointer-events-none">-->
+<!--          <img src="assets/images/logo.png" alt="Logo" class="brand-icon" style="width: 60px; height: 60px; object-fit: contain;">-->
+<!--        </div>-->
 
-          <!-- Password Field -->
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Password</mat-label>
-            <input
-              matInput
-              formControlName="password"
-              [type]="hidePassword ? 'password' : 'text'"
-              placeholder="••••••••"
-              autocomplete="current-password"
-            />
-            <mat-icon matPrefix>lock</mat-icon>
-            <button
-              mat-icon-button
-              matSuffix
-              type="button"
-              (click)="togglePasswordVisibility()"
-              [attr.aria-label]="'Toggle password visibility'"
-            >
-              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
-            @if (form.get('password')?.hasError('required')) {
-              <mat-error>Password is required</mat-error>
-            }
-          </mat-form-field>
-
-          <!-- Remember Me & Forgot Password -->
-          <div class="form-row">
-            <mat-checkbox formControlName="rememberMe" color="primary">
-              Remember me
-            </mat-checkbox>
-            <a routerLink="/auth/forgot-password" class="forgot-link">
-              Forgot password?
-            </a>
+        <div class="card-body p-8 relative z-10">
+          <div class="mb-6">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">Sign In</h2>
+            <p class="text-slate-500">Enter your credentials to continue</p>
           </div>
 
-          <!-- Submit Button -->
-          <div class="actions">
-            <button
-              mat-raised-button
-              color="primary"
-              type="submit"
-              class="submit-button"
-              [disabled]="form.invalid || isLoading"
-            >
-              @if (!isLoading) {
-                <mat-icon>login</mat-icon>
-                <span>Sign In</span>
-              } @else {
-                <mat-progress-spinner
-                  mode="indeterminate"
-                  diameter="20"
-                  strokeWidth="3"
-                ></mat-progress-spinner>
-                <span>Signing in...</span>
-              }
-            </button>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
+          <!-- Error Message -->
+          @if (errorMessage) {
+            <div class="alert alert-error mb-6 animate-shake shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span class="text-white">{{ errorMessage }}</span>
+            </div>
+          }
 
-    <!-- Footer -->
-    <div class="auth-footer">
-      <a routerLink="/" class="back-link">
-        <mat-icon>arrow_back</mat-icon>
-        Back to homepage
-      </a>
+          <!-- Login Form -->
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+            <!-- Email Field -->
+            <div class="form-control min-h-[100px]">
+              <label class="label">
+                <span class="label-text font-semibold text-slate-700 text-sm uppercase tracking-wide">Email Address</span>
+              </label>
+              <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors">
+                  <mat-icon class="!text-xl !w-5 !h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors">person</mat-icon>
+                </div>
+                <input
+                  type="email"
+                  formControlName="email"
+                  placeholder="your.email@example.com"
+                  autocomplete="email"
+                  (focus)="emailFocused = true"
+                  (blur)="emailFocused = false"
+                  class="input input-bordered w-full pl-12 pr-4 h-12 text-base transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                  [class.input-error]="form.controls.email.invalid && form.controls.email.touched && !emailFocused"
+                />
+              </div>
+              <div class="min-h-[24px]">
+                @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+                  <label class="label pt-1 pb-0 animate-fade-in">
+                  <span class="label-text-alt text-error flex items-center gap-1">
+                    <svg class="w-4 h-4" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                    Email is required
+                  </span>
+                  </label>
+                }
+                @if (form.controls.email.hasError('email') && form.controls.email.touched) {
+                  <label class="label pt-1 pb-0 animate-fade-in">
+                  <span class="label-text-alt text-error flex items-center gap-1">
+                    <svg class="w-4 h-4" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                    Please enter a valid email address
+                  </span>
+                  </label>
+                }
+              </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-control min-h-[100px]">
+              <label class="label">
+                <span class="label-text font-semibold text-slate-700 text-sm uppercase tracking-wide">Password</span>
+              </label>
+              <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <mat-icon class="!text-xl !w-5 !h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors">lock</mat-icon>
+                </div>
+                <input
+                  [type]="hidePassword ? 'password' : 'text'"
+                  formControlName="password"
+                  placeholder="••••••••"
+                  autocomplete="current-password"
+                  class="input input-bordered w-full pl-12 pr-12 h-12 text-base transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                  [class.input-error]="form.get('password')?.invalid && form.get('password')?.touched"
+                  [class.border-slate-300]="!(form.get('password')?.invalid && form.get('password')?.touched)"
+                />
+                <button
+                  type="button"
+                  (click)="togglePasswordVisibility()"
+                  class="absolute top-1/2 -translate-y-1/2 right-3 flex items-center justify-center w-8 h-8 hover:bg-slate-100 rounded transition-all duration-200 z-10"
+                  [attr.aria-label]="'Toggle password visibility'"
+                >
+                  <mat-icon class="!text-xl !w-5 !h-5 text-slate-400 hover:text-slate-600 transition-all duration-200 hover:scale-110 active:scale-95">
+                    {{ hidePassword ? 'visibility_off' : 'visibility' }}
+                  </mat-icon>
+                </button>
+              </div>
+              <div class="min-h-[24px]">
+                @if (form.controls.password.hasError('required') && form.controls.password.touched) {
+                  <label class="label pt-1 pb-0 animate-fade-in">
+                  <span class="label-text-alt text-error flex items-center gap-1">
+                    <svg class="w-4 h-4" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                    Password is required
+                  </span>
+                  </label>
+                }
+              </div>
+            </div>
+
+            <!-- Remember Me & Forgot Password -->
+            <div class="flex items-center justify-between pt-2">
+              <div class="form-control">
+                <label class="label cursor-pointer gap-3 justify-start p-0 group">
+                  <input
+                    type="checkbox"
+                    formControlName="rememberMe"
+                    class="checkbox checkbox-primary checkbox-sm border-2 border-slate-300 checked:border-blue-600"
+                  />
+                  <span class="label-text text-slate-600 group-hover:text-slate-800 transition-colors select-none">Remember me</span>
+                </label>
+              </div>
+              <a
+                routerLink="/auth/forgot-password"
+                class="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-all"
+              >
+                Forgot password?
+              </a>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-control pt-4">
+              <button
+                type="submit"
+                class="btn btn-primary w-full h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-200 border-0"
+                [disabled]="form.invalid || isLoading"
+                [class.opacity-50]="form.invalid || isLoading"
+              >
+                @if (!isLoading) {
+                  <mat-icon class="!text-xl !w-5 !h-5">login</mat-icon>
+                  <span>Sign In</span>
+                } @else {
+                  <span class="loading loading-spinner loading-md"></span>
+                  <span>Signing in...</span>
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<style>
+  /* Truck animations with depth layers */
+  .trucks-layer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+  }
+
+  .truck-wrapper {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    animation: drive linear infinite;
+  }
+
+  .truck-svg {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  }
+
+  /* Headlights */
+  .headlight {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    width: 60px;
+    height: 8px;
+    background: linear-gradient(90deg, rgba(255, 255, 200, 0.8) 0%, transparent 100%);
+    border-radius: 4px;
+    filter: blur(4px);
+  }
+
+  /* Far trucks (back layer) */
+  .truck-far-1 {
+    bottom: 100px;
+    animation-duration: 35s;
+    animation-delay: 0s;
+  }
+  .truck-far-1 .truck-svg {
+    width: 40px;
+    height: 40px;
+    color: #60a5fa;
+  }
+
+  .truck-far-2 {
+    bottom: 95px;
+    animation-duration: 40s;
+    animation-delay: 20s;
+  }
+  .truck-far-2 .truck-svg {
+    width: 38px;
+    height: 38px;
+    color: #34d399;
+  }
+
+  /* Mid-distance trucks */
+  .truck-mid-1 {
+    bottom: 70px;
+    animation-duration: 25s;
+    animation-delay: 8s;
+  }
+  .truck-mid-1 .truck-svg {
+    width: 56px;
+    height: 56px;
+    color: #f59e0b;
+  }
+
+  .truck-mid-2 {
+    bottom: 65px;
+    animation-duration: 30s;
+    animation-delay: 25s;
+  }
+  .truck-mid-2 .truck-svg {
+    width: 52px;
+    height: 52px;
+    color: #8b5cf6;
+  }
+
+  /* Near trucks (front layer) */
+  .truck-near-1 {
+    bottom: 40px;
+    animation-duration: 18s;
+    animation-delay: 5s;
+  }
+  .truck-near-1 .truck-svg {
+    width: 72px;
+    height: 72px;
+    color: #ef4444;
+  }
+
+  @keyframes drive {
+    0% {
+      left: -150px;
+      opacity: 0;
+    }
+    5% {
+      opacity: 1;
+    }
+    95% {
+      opacity: 1;
+    }
+    100% {
+      left: calc(100% + 150px);
+      opacity: 0;
+    }
+  }
+
+  /* Road center line animation */
+  .center-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: repeating-linear-gradient(
+      90deg,
+      #fbbf24 0px,
+      #fbbf24 50px,
+      transparent 50px,
+      transparent 100px
+    );
+    animation: road-scroll 2s linear infinite;
+  }
+
+  @keyframes road-scroll {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 100px 0;
+    }
+  }
+
+  /* Stars twinkling */
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+  }
+
+  /* Light rays */
+  .light-ray {
+    position: absolute;
+    top: -50%;
+    width: 2px;
+    height: 200%;
+    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform-origin: top center;
+  }
+
+  .ray-1 {
+    left: 20%;
+    animation: ray-rotate 20s linear infinite;
+  }
+
+  .ray-2 {
+    left: 50%;
+    animation: ray-rotate 25s linear infinite reverse;
+  }
+
+  .ray-3 {
+    left: 80%;
+    animation: ray-rotate 30s linear infinite;
+  }
+
+  @keyframes ray-rotate {
+    0% {
+      transform: rotate(-10deg);
+    }
+    50% {
+      transform: rotate(10deg);
+    }
+    100% {
+      transform: rotate(-10deg);
+    }
+  }
+
+  /* Fade in animations */
+  @keyframes fade-in-down {
+    0% {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+      transform: translateX(-8px);
+    }
+    20%, 40%, 60%, 80% {
+      transform: translateX(8px);
+    }
+  }
+
+  .animate-fade-in-down {
+    animation: fade-in-down 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+  }
+
+  .animate-shake {
+    animation: shake 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Ensure mat-icons display properly */
+  mat-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Custom scrollbar for better aesthetics */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+  }
+</style>

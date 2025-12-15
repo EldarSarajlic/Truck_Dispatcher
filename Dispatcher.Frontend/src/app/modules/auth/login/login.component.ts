@@ -18,6 +18,8 @@ export class LoginComponent extends BaseComponent {
   private router = inject(Router);
   private currentUser = inject(CurrentUserService);
   hidePassword = true;
+  emailFocused = false;
+  passwordFocused = false;
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]], // FIXED
