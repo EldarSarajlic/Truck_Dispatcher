@@ -2,7 +2,7 @@
 
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular)](https://angular.io/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql)](https://www.postgresql.org/)
+[![SQL Server](https://img.shields.io/badge/SQL%20Server-2022-CC2927?logo=microsoftsqlserver)](https://www.microsoft.com/sql-server)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 A modern, full-stack logistics management platform designed for trucking companies to streamline their entire workflow—from client ordering to delivery completion. Built with Clean Architecture principles and industry best practices.
@@ -62,7 +62,7 @@ Unlike generic e-commerce platforms, this system is purpose-built for logistics 
 - **Framework**: .NET 8.0
 - **Architecture**: Clean Architecture + CQRS
 - **ORM**: Entity Framework Core 8.0
-- **Database**: PostgreSQL 16
+- **Database**: Microsoft SQL Server 2022
 - **Authentication**: JWT with refresh tokens
 - **Validation**: FluentValidation
 - **Mediator**: MediatR
@@ -205,7 +205,7 @@ Dispatcher.Frontend/
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download)
 - [Node.js 20+](https://nodejs.org/) and npm
-- [PostgreSQL 16+](https://www.postgresql.org/)
+- [SQL Server 2022](https://www.microsoft.com/sql-server) or [SQL Server Express](https://www.microsoft.com/sql-server/sql-server-downloads) (free)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) or [VS Code](https://code.visualstudio.com/)
 
 ### Backend Setup
@@ -217,11 +217,20 @@ Dispatcher.Frontend/
    ```
 
 2. **Configure the database**
-   - Update `appsettings.json` with your PostgreSQL connection string:
+   - Update `appsettings.json` with your SQL Server connection string:
    ```json
    {
      "ConnectionStrings": {
-       "DefaultConnection": "Host=localhost;Database=DispatcherDb;Username=postgres;Password=yourpassword"
+       "DefaultConnection": "Server=localhost;Database=DispatcherDb;Trusted_Connection=True;TrustServerCertificate=True"
+     }
+   }
+   ```
+   
+   Or with SQL Server authentication:
+   ```json
+   {
+     "ConnectionStrings": {
+       "DefaultConnection": "Server=localhost;Database=DispatcherDb;User Id=sa;Password=YourPassword;TrustServerCertificate=True"
      }
    }
    ```
