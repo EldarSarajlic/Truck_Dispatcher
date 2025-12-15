@@ -419,8 +419,9 @@ This is an academic project developed as part of a university coursework. While 
 
 ### Development Team
 - **Eldar Sarajlić** - Full-stack Developer
-- **Team Members** - Frontend/Backend Development
-- **Supervisor** - Academic Advisor
+- **Haris Šarić** - Frontend/Backend Development
+- **Ali Mustafić** - Frontend/Backend Development
+- **Academic Supervisors** - Adil Joldić, Azra Smajić
 
 ### Learning Objectives
 This project demonstrates:
@@ -430,16 +431,12 @@ This project demonstrates:
 - Team collaboration using Agile methodology
 - Professional development practices
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 📞 Contact
 
 **Eldar Sarajlić**
 - GitHub: [@EldarSarajlic](https://github.com/EldarSarajlic)
-- LinkedIn: [Your LinkedIn Profile]
-- Email: [Your Email]
+- LinkedIn: https://www.linkedin.com/in/eldar-sarajli%C4%87-3a695b304/
+- Email: eldarsarajlic525@gmail.com
 
 ---
 
