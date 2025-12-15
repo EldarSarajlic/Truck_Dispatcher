@@ -1,132 +1,207 @@
-<mat-sidenav-container class="sidenav-container">
-  <!-- SIDEBAR -->
-  <mat-sidenav mode="side" opened class="sidenav">
-    <!-- SIDEBAR HEADER WITH USER INFO -->
-    <div class="sidebar-header">
-      <!-- User Info -->
-      <div class="user-info">
-        <div class="user-avatar">
-          <mat-icon>account_circle</mat-icon>
-        </div>
-        <div class="user-details">
-          <div class="user-email">{{ auth.currentUser()?.email }}</div>
-          <div class="user-role">
-            @if (auth.isAdmin()) {
-            <mat-chip class="role-chip admin">
-              <mat-icon>admin_panel_settings</mat-icon>
-              {{ 'ADMIN_PANEL.ROLES.ADMIN' | translate }}
-            </mat-chip>
-            }
-<!--            @else if (auth.isManager()) {-->
-<!--            <mat-chip class="role-chip manager">-->
-<!--              <mat-icon>manage_accounts</mat-icon>-->
-<!--              {{ 'ADMIN_PANEL.ROLES.MANAGER' | translate }}-->
-<!--            </mat-chip>-->
-<!--            } @else if (auth.isEmployee()) {-->
-<!--            <mat-chip class="role-chip employee">-->
-<!--              <mat-icon>badge</mat-icon>-->
-<!--              {{ 'ADMIN_PANEL.ROLES.EMPLOYEE' | translate }}-->
-<!--            </mat-chip>-->
-<!--            }-->
-          </div>
-        </div>
-      </div>
+<div class="drawer lg:drawer-open min-h-screen h-screen bg-base-200">
 
-      <!-- Language Selector -->
-      <div class="language-selector">
-        <button mat-icon-button [matMenuTriggerFor]="langMenu" class="lang-button">
-          <span class="flag-icon">{{ getCurrentLanguage()?.flag }}</span>
-          <mat-icon>arrow_drop_down</mat-icon>
-        </button>
-
-        <mat-menu #langMenu="matMenu">
-          <button
-            mat-menu-item
-            *ngFor="let lang of languages"
-            (click)="switchLanguage(lang.code)"
-            [class.active-lang]="currentLang === lang.code"
-          >
-            <span class="flag-icon">{{ lang.flag }}</span>
-            <span>{{ lang.name }}</span>
-            <mat-icon *ngIf="currentLang === lang.code" class="check-icon">check</mat-icon>
-          </button>
-        </mat-menu>
-      </div>
-    </div>
-
-    
-
-
-    <!-- NAVIGATION MENU -->
-    <mat-nav-list>
-      <!-- CATALOG SECTION -->
-      <div class="nav-section-title">
-        {{ 'ADMIN_PANEL.MENU.DASHBOARD' | translate }}
-      </div>
-      <a mat-list-item routerLink="/admin/dashboard" routerLinkActive="active">
-        <mat-icon matListItemIcon>dashboard</mat-icon>
-        <span matListItemTitle>{{ 'ADMIN_PANEL.MENU.DASHBOARD' | translate }}</span>
-      </a>
-
-      <mat-divider></mat-divider>
-            <div class="nav-section-title">
-        {{ 'ADMIN_PANEL.MENU.MENADŽMENT' | translate }}
-      </div>
-
-       <a mat-list-item routerLink="/admin/users" routerLinkActive="active">
-  <mat-icon matListItemIcon>group</mat-icon>
-  <span matListItemTitle>{{ 'ADMIN_PANEL.MENU.KORISNICI' | translate }}</span>
-</a>
-
-<a mat-list-item routerLink="/admin/vehicles" routerLinkActive="active">
-  <mat-icon matListItemIcon>local_shipping</mat-icon>
-  <span matListItemTitle>{{ 'ADMIN_PANEL.MENU.VOZILA' | translate }}</span>
-</a> 
-      <a mat-list-item routerLink="/admin/products" routerLinkActive="active">
-        <mat-icon matListItemIcon>inventory_2</mat-icon>
-        <span matListItemTitle>{{ 'ADMIN_PANEL.MENU.PRODUCTS' | translate }}</span>
-      </a>
-      
-      <a mat-list-item routerLink="/admin/map" routerLinkActive="active">
-        <mat-icon matListItemIcon>place</mat-icon>
-        <span matListItemTitle>{{ 'ADMIN_PANEL.MENU.MAPA' | translate }}</span>
-      </a>
-
-      
-      <mat-divider></mat-divider>
-
-      <!-- ORDERS SECTION -->
-      <div class="nav-section-title">
-        {{ 'ADMIN_PANEL.MENU.ORDERS_SECTION' | translate }}
-      </div>
-
-      <a mat-list-item routerLink="/admin/orders" routerLinkActive="active">
-        <mat-icon matListItemIcon>shopping_cart</mat-icon>
-        <span matListItemTitle>{{ 'ADMIN_PANEL.MENU.ORDERS' | translate }}</span>
-      </a>
-
-      <mat-divider></mat-divider>
-
-      <!-- SYSTEM SECTION -->
-      <div class="nav-section-title">
-        {{ 'ADMIN_PANEL.MENU.SYSTEM' | translate }}
-      </div>
-
-      <a mat-list-item routerLink="/admin/settings" routerLinkActive="active">
-        <mat-icon matListItemIcon>settings</mat-icon>
-        <span matListItemTitle>{{ 'ADMIN_PANEL.MENU.SETTINGS' | translate }}</span>
-      </a>
-
-      <!-- LOGOUT -->
-      <a mat-list-item routerLink="/auth/logout" routerLinkActive="active" class="logout-item">
-        <mat-icon matListItemIcon>logout</mat-icon>
-        <span matListItemTitle>{{ 'ADMIN_PANEL.MENU.LOGOUT' | translate }}</span>
-      </a>
-    </mat-nav-list>
-  </mat-sidenav>
+  <input id="admin-drawer" type="checkbox" class="drawer-toggle" />
 
   <!-- MAIN CONTENT -->
-  <mat-sidenav-content class="main-content">
-    <router-outlet></router-outlet>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  <div class="drawer-content flex flex-col min-h-screen">
+
+    <!-- TOP BAR (mobile) -->
+    <div class="navbar bg-base-100 lg:hidden shadow">
+      <label for="admin-drawer" class="btn btn-ghost btn-square text-xl">
+        ☰
+      </label>
+
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <main class="flex-1 p-8">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="drawer-side h-full">
+    <label for="admin-drawer" class="drawer-overlay"></label>
+
+    <aside
+      class="w-80 min-h-screen h-full bg-base-100 text-base-content
+             flex flex-col border-r border-base-300"
+    >
+
+      <!-- USER HEADER -->
+      <div class="p-6 border-b border-base-300">
+        <div class="flex items-center gap-4">
+
+          <div class="avatar placeholder">
+            <div class="bg-primary text-primary-content rounded-full w-14 h-14 text-xl">
+              👤
+            </div>
+          </div>
+
+          <div class="flex-1">
+            <div class="font-semibold text-base truncate">
+              {{ auth.currentUser()?.email }}
+            </div>
+
+            @if (auth.isAdmin()) {
+              <div class="badge badge-error badge-sm mt-1 px-3 py-2">
+                ADMIN
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- LANGUAGE -->
+        <div class="mt-4">
+          <select
+            class="select select-bordered w-full text-base"
+            [value]="currentLang"
+            (change)="switchLanguage($any($event.target).value)"
+          >
+            <option *ngFor="let lang of languages" [value]="lang.code">
+              {{ lang.flag }} {{ lang.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+<!-- MENU -->
+<ul class="menu menu-lg p-4 gap-2 flex-1 text-lg">
+
+  <!-- DASHBOARD -->
+  <li class="menu-title text-sm tracking-wide">
+    {{ 'ADMIN_PANEL.MENU.DASHBOARD' | translate }}
+  </li>
+
+  <li>
+    <a routerLink="/admin/dashboard" routerLinkActive="active">
+     <span class="menu-icon bg-blue-500/10 text-blue-600 rounded-full">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-7 h-7"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+    </svg>
+  </span> {{ 'ADMIN_PANEL.MENU.DASHBOARD' | translate }}
+    </a>
+  </li>
+
+  <!-- MENADŽMENT -->
+  <li class="menu-title text-sm tracking-wide">
+    {{ 'ADMIN_PANEL.MENU.MANAGEMENT' | translate }}
+  </li>
+
+  <li>
+    <a routerLink="/admin/users" routerLinkActive="active">
+       <span class="menu-icon bg-purple-500/10 text-purple-600 rounded-full p-1">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zM8 11c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zM8 13c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+  </svg>
+</span>
+ {{ 'ADMIN_PANEL.MENU.USERS' | translate }}
+    </a>
+  </li>
+
+  <li>
+    <a routerLink="/admin/vehicles" routerLinkActive="active">
+       <span class="menu-icon bg-amber-500/10 text-amber-600 rounded-full p-1">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M3 7h11v5h5.5l1.5 3v4h-2a2 2 0 11-4 0H9a2 2 0 11-4 0H3V7z"/>
+  </svg>
+</span>
+ {{ 'ADMIN_PANEL.MENU.VEHICLES' | translate }}
+    </a>
+  </li>
+
+  <li>
+    <a routerLink="/admin/products" routerLinkActive="active">
+       <span class="menu-icon bg-emerald-500/10 text-emerald-600 rounded-full p-1">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M21 8V6l-9-4-9 4v2l9 4 9-4zm-9 6l-9-4v8l9 4 9-4v-8l-9 4z"/>
+  </svg>
+</span>
+ {{ 'ADMIN_PANEL.MENU.PRODUCTS' | translate }}
+    </a>
+  </li>
+
+  <li>
+    <a routerLink="/admin/map" routerLinkActive="active">
+       <span class="menu-icon bg-sky-500/10 text-sky-600 rounded-full p-1">
+  <svg xmlns="http://www.w3.org/2000/svg"
+       class="w-7 h-7"
+       fill="currentColor"
+       viewBox="0 0 24 24">
+    <path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+    <path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+  </svg>
+</span>
+ {{ 'ADMIN_PANEL.MENU.MAP' | translate }}
+    </a>
+  </li>
+
+  <!-- ORDERS -->
+  <li class="menu-title text-sm tracking-wide">
+    {{ 'ADMIN_PANEL.MENU.ORDERS_SECTION' | translate }}
+  </li>
+
+  <li>
+    <a routerLink="/admin/orders" routerLinkActive="active">
+       <span class="menu-icon bg-indigo-500/10 text-indigo-600 rounded-full p-1">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M7 4h-2l-1 2H1v2h2l3.6 7.59-1.35 2.44A2 2 0 008 21h12v-2H8.42a.25.25 0 01-.22-.37L9.1 17h7.45a2 2 0 001.8-1.1l3.24-6.48A1 1 0 0020.7 8H6.21l-.94-2z"/>
+  </svg>
+</span>
+ {{ 'ADMIN_PANEL.MENU.ORDERS' | translate }}
+    </a>
+  </li>
+
+  <!-- SYSTEM -->
+  <li class="menu-title text-sm tracking-wide">
+    {{ 'ADMIN_PANEL.MENU.SYSTEM' | translate }}
+  </li>
+
+  <li>
+    <a routerLink="/admin/settings" routerLinkActive="active">
+       <span class="menu-icon bg-gray-500/10 text-gray-600 rounded-full p-1">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M19.14 12.94a7.14 7.14 0 000-1.88l2.03-1.58-2-3.46-2.39.96a7.09 7.09 0 00-1.63-.94L14.5 2h-5l-.65 2.04a7.09 7.09 0 00-1.63.94l-2.39-.96-2 3.46 2.03 1.58a7.14 7.14 0 000 1.88L2.83 14.5l2 3.46 2.39-.96c.5.38 1.05.7 1.63.94L9.5 22h5l.65-2.04c.58-.24 1.13-.56 1.63-.94l2.39.96 2-3.46-2.03-1.58z"/>
+  </svg>
+</span>
+ {{ 'ADMIN_PANEL.MENU.SETTINGS' | translate }}
+    </a>
+  </li>
+
+  <!-- LOGOUT -->
+  <li class="mt-auto pt-6 border-t border-base-300 flex justify-center">
+    <a routerLink="/auth/logout" class="text-error text-xl">
+         <span class="menu-icon bg-red-500/10 text-red-600 rounded-fullbg-red-500/10">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-8 h-8"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15"
+      />
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M12 9l3 3-3 3m3-3H3"
+      />
+    </svg>
+  </span> {{ 'ADMIN_PANEL.MENU.LOGOUT' | translate }}
+    </a>
+  </li>
+
+</ul>
+
+    </aside>
+  </div>
+</div>

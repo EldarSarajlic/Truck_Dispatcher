@@ -28,6 +28,13 @@
       "EMPLOYEE": "Employee"
     },
     "MENU": {
+      "MANAGEMENT": "Management",
+      "DASHBOARD": "Dashboard",
+      "USERS": "Users",
+      "VEHICLES": "Vehicles",
+      "MAP": "Map",
+
+
       "CATALOG": "CATALOG",
       "CATEGORIES": "Product Categories",
       "PRODUCTS": "Products",

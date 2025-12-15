@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import {FitPaginatorBarComponent} from './components/fit-paginator-bar/fit-paginator-bar.component';
 import {materialModules} from './material-modules';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {TranslatePipe} from '@ngx-translate/core';
+import {TranslateModule} from '@ngx-translate/core';
 import { FitConfirmDialogComponent } from './components/fit-confirm-dialog/fit-confirm-dialog.component';
 import {DialogHelperService} from './services/dialog-helper.service';
 import { FitLoadingBarComponent } from './components/fit-loading-bar/fit-loading-bar.component';
@@ -22,7 +22,7 @@ import { FitTableSkeletonComponent } from './components/fit-table-skeleton/fit-t
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    TranslatePipe,
+    TranslateModule,
     ...materialModules
   ],
   providers: [
@@ -32,7 +32,7 @@ import { FitTableSkeletonComponent } from './components/fit-table-skeleton/fit-t
     FitPaginatorBarComponent,
     CommonModule,
     ReactiveFormsModule,
-    TranslatePipe,
+    TranslateModule,
     FormsModule,
     FitLoadingBarComponent,
     FitTableSkeletonComponent,
