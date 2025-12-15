@@ -246,9 +246,7 @@ Dispatcher.Frontend/
    dotnet run
    ```
    
-   The API will be available at `https://localhost:7001` and `http://localhost:5001`
-   
-   Swagger UI: `https://localhost:7001/swagger`
+   The API will be available at `https://localhost:7260`
 
 ### Frontend Setup
 
@@ -267,7 +265,7 @@ Dispatcher.Frontend/
    ```typescript
    export const environment = {
      production: false,
-     apiUrl: 'https://localhost:7001/api'
+     apiUrl: 'https://localhost:7260/api'
    };
    ```
 
@@ -430,13 +428,6 @@ This project demonstrates:
 - Real-world problem-solving
 - Team collaboration using Agile methodology
 - Professional development practices
-
-## 📞 Contact
-
-**Eldar Sarajlić**
-- GitHub: [@EldarSarajlic](https://github.com/EldarSarajlic)
-- LinkedIn: https://www.linkedin.com/in/eldar-sarajli%C4%87-3a695b304/
-- Email: eldarsarajlic525@gmail.com
 
 ---
 

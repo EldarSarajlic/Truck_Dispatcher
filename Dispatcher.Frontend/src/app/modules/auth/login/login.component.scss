@@ -1,13 +1,6 @@
-// Minimal styles - most styling handled by Tailwind/DaisyUI and inline styles
+// Minimal SCSS - All styling is in Tailwind CSS v4 and DaisyUI v5
 :host {
   display: block;
   width: 100%;
   height: 100%;
-}
-
-// Ensure Material icons work properly
-::ng-deep {
-  mat-icon {
-    user-select: none;
-  }
 }

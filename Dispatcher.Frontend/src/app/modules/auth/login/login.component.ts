@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BaseComponent } from '../../../core/components/base-classes/base-component';
@@ -12,20 +12,30 @@ import { CurrentUserService } from '../../../core/services/auth/current-user.ser
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent extends BaseComponent {
+export class LoginComponent extends BaseComponent implements OnInit {
   private fb = inject(FormBuilder);
   private auth = inject(AuthFacadeService);
   private router = inject(Router);
   private currentUser = inject(CurrentUserService);
+  private renderer = inject(Renderer2);
+
   hidePassword = true;
   emailFocused = false;
   passwordFocused = false;
+  currentTheme: 'light' | 'dark' = 'light';
 
   form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]], // FIXED
+    email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
     rememberMe: [false],
   });
+
+  ngOnInit(): void {
+    // Load saved theme from localStorage or default to 'light'
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    this.currentTheme = savedTheme || 'light';
+    this.applyTheme(this.currentTheme);
+  }
 
   onSubmit(): void {
     if (this.form.invalid || this.isLoading) return;
@@ -53,5 +63,16 @@ export class LoginComponent extends BaseComponent {
 
   togglePasswordVisibility(): void {
     this.hidePassword = !this.hidePassword;
+  }
+
+  toggleTheme(): void {
+    this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+    this.applyTheme(this.currentTheme);
+    localStorage.setItem('theme', this.currentTheme);
+  }
+
+  private applyTheme(theme: 'light' | 'dark'): void {
+    const htmlElement = document.documentElement;
+    this.renderer.setAttribute(htmlElement, 'data-theme', theme);
   }
 }
