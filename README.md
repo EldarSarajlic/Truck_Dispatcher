@@ -435,8 +435,8 @@ This project demonstrates:
 
 **Eldar Sarajlić**
 - GitHub: [@EldarSarajlic](https://github.com/EldarSarajlic)
-- LinkedIn: [https://www.linkedin.com/in/eldar-sarajli%C4%87-3a695b304/]
-- Email: [eldarsarajlic525@gmail.com]
+- LinkedIn: (https://www.linkedin.com/in/eldar-sarajli%C4%87-3a695b304/)
+- Email: (eldarsarajlic525@gmail.com)
 
 ---
 
