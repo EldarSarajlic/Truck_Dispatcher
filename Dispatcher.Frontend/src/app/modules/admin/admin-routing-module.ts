@@ -8,12 +8,31 @@ import { ProductsEditComponent } from './catalogs/products/products-edit/product
 import { ProductCategoriesComponent } from './catalogs/product-categories/product-categories.component';
 import {AdminOrdersComponent} from './orders/admin-orders.component';
 import {AdminSettingsComponent} from './admin-settings/admin-settings.component';
+import { AdminDashboardComponent } from './dashboard/admin-dashboard/admin-dashboard.component';
+import { AdminUsersComponent } from './users/admin-users.component';
+import { AdminVehiclesComponent } from './vehicles/admin-vehicles.component';
 
 const routes: Routes = [
   {
     path: '',
     component: AdminLayoutComponent,
     children: [
+      //dashboard
+      { 
+        path: 'dashboard',
+        component: AdminDashboardComponent
+      },
+
+      {
+        path: 'vehicles',
+        component: AdminVehiclesComponent
+
+      },
+
+      {
+        path: 'users',
+        component: AdminUsersComponent
+      },
       // PRODUCTS
       {
         path: 'products',
