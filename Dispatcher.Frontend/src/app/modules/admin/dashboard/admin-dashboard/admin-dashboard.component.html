@@ -1,1 +1,108 @@
-<p>admin-dashboard works!</p>
+<div class="dashboard-container">
+
+  <!-- LOADING STATE -->
+  <ng-container *ngIf="isLoading">
+    <div class="stats-grid">
+      <div class="stat-card skeleton" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+  </ng-container>
+
+  <!-- ERROR STATE -->
+  <div *ngIf="error" class="dashboard-error">
+    <mat-icon>error</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- DASHBOARD CONTENT -->
+  <ng-container *ngIf="!isLoading && dashboardStats">
+
+    <!-- STATS GRID -->
+    <div class="stats-grid">
+
+      <!-- USERS -->
+      <div class="stat-card">
+        <mat-icon>group</mat-icon>
+        <div class="value">{{ dashboardStats.totalUsers }}</div>
+        <div class="label">Total Users</div>
+        <div class="change">
+          {{ dashboardStats.usersChange }}
+        </div>
+      </div>
+
+      <!-- ORDERS -->
+      <div class="stat-card">
+        <mat-icon>assignment</mat-icon>
+        <div class="value">{{ dashboardStats.activeOrders }}</div>
+        <div class="label">Active Orders</div>
+        <div
+          class="change"
+          [class.negative]="dashboardStats.ordersChange < 0"
+          [class.positive]="dashboardStats.ordersChange > 0"
+        >
+          {{ dashboardStats.ordersChangeText }}
+        </div>
+      </div>
+
+      <!-- VEHICLES -->
+      <div class="stat-card">
+        <mat-icon>local_shipping</mat-icon>
+        <div class="value">{{ dashboardStats.totalVehicles }}</div>
+        <div class="label">Fleet Vehicles</div>
+        <div class="change">
+          {{ dashboardStats.readyVehicles }} Ready ·
+          {{ dashboardStats.maintenanceVehicles }} Maint.
+        </div>
+      </div>
+
+      <!-- REVENUE -->
+      <div class="stat-card">
+        <mat-icon>euro</mat-icon>
+        <div class="value">
+          {{ dashboardStats.revenue | currency:'EUR':'symbol':'1.0-0' }}
+        </div>
+        <div class="label">Revenue</div>
+        <div
+          class="change"
+          [class.positive]="dashboardStats.revenueGrowth > 0"
+          [class.negative]="dashboardStats.revenueGrowth < 0"
+        >
+          {{ dashboardStats.revenueGrowth }}%
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LOWER GRID -->
+    <div class="dashboard-grid">
+
+      <!-- REVENUE CHART -->
+      <div class="card">
+        <h3>📈 Revenue Trends</h3>
+
+        <!-- kasnije: chart komponenta -->
+        <div class="placeholder">
+          Chart will be rendered here
+        </div>
+      </div>
+
+      <!-- ALERTS -->
+      <div class="card">
+        <h3>⚠️ Alerts</h3>
+
+        <div *ngIf="dashboardStats.alerts?.length === 0" class="empty">
+          No active alerts 🎉
+        </div>
+
+        <div
+          class="alert"
+          *ngFor="let alert of dashboardStats.alerts"
+        >
+          • {{ alert }}
+        </div>
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</div>
