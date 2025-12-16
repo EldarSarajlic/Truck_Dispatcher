@@ -1,21 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 
+interface RecentOrder {
+  reference: string;
+  client: string;
+  price: number;
+  date: string;
+}
+
 interface DashboardStats {
-  totalUsers: number;
-  usersChange: string;
-
-  activeOrders: number;
-  ordersChange: number;
-  ordersChangeText: string;
-
-  totalVehicles: number;
-  readyVehicles: number;
-  maintenanceVehicles: number;
-
-  revenue: number;
-  revenueGrowth: number;
-
-  alerts: string[];
+  totalSales: number;     // ukupna zarada
+  totalOrders: number;    // sve narudžbe
+  totalUsers: number;     // svi useri (admin, dispatcher, driver, client)
+  pendingOrders: number;  // neodobrene narudžbe
+  recentSales: RecentOrder[];
 }
 
 @Component({
@@ -32,27 +29,39 @@ export class AdminDashboardComponent implements OnInit {
   dashboardStats?: DashboardStats;
 
   ngOnInit(): void {
-    // mock dok nema API
+    // MOCK DATA – DISPATCH SISTEM
     setTimeout(() => {
       this.dashboardStats = {
+        totalSales: 1843200,     // €1.8M
+        totalOrders: 428,
         totalUsers: 156,
-        usersChange: '+12 this month',
+        pendingOrders: 12,
 
-        activeOrders: 89,
-        ordersChange: -5,
-        ordersChangeText: '-5 today',
-
-        totalVehicles: 45,
-        readyVehicles: 42,
-        maintenanceVehicles: 3,
-
-        revenue: 458320,
-        revenueGrowth: 15.3,
-
-        alerts: [
-          '3 vehicles need service',
-          '2 insurance policies expiring',
-          '5 pending order approvals'
+        recentSales: [
+          {
+            reference: 'ORD-2024-0912',
+            client: 'LogiTrans d.o.o.',
+            price: 2450,
+            date: '2024-12-14'
+          },
+          {
+            reference: 'ORD-2024-0911',
+            client: 'Euro Freight GmbH',
+            price: 3890,
+            date: '2024-12-13'
+          },
+          {
+            reference: 'ORD-2024-0910',
+            client: 'Balkan Express',
+            price: 1720,
+            date: '2024-12-12'
+          },
+          {
+            reference: 'ORD-2024-0909',
+            client: 'NordCargo AS',
+            price: 4100,
+            date: '2024-12-11'
+          }
         ]
       };
 
