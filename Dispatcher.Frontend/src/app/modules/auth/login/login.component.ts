@@ -65,12 +65,6 @@ export class LoginComponent extends BaseComponent implements OnInit {
     this.hidePassword = !this.hidePassword;
   }
 
-  toggleTheme(): void {
-    this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
-    this.applyTheme(this.currentTheme);
-    localStorage.setItem('theme', this.currentTheme);
-  }
-
   private applyTheme(theme: 'light' | 'dark'): void {
     const htmlElement = document.documentElement;
     this.renderer.setAttribute(htmlElement, 'data-theme', theme);
