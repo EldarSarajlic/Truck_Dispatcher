@@ -14,9 +14,10 @@ import {AdminSettingsComponent} from './admin-settings/admin-settings.component'
 import {SharedModule} from '../shared/shared-module';
 import { OrderDetailsDialogComponent } from './orders/admin-orders-details-dialog/order-details-dialog.component';
 import { ChangeStatusDialogComponent } from './orders/change-status-dialog/change-status-dialog.component';
-import { AdminDashboardComponent } from './dashboard/admin-dashboard/admin-dashboard.component';
 import { AdminUsersComponent } from './users/admin-users.component';
 import { AdminVehiclesComponent } from './vehicles/admin-vehicles.component';
+import { DashboardLayoutComponent } from './dashboard/dashboard-layout/dashboard-layout.component';
+import { DashboardOverviewComponent } from './dashboard/overview/dashboard-overview/dashboard-overview.component';
 
 
 
@@ -32,9 +33,10 @@ import { AdminVehiclesComponent } from './vehicles/admin-vehicles.component';
     AdminSettingsComponent,
     OrderDetailsDialogComponent,
     ChangeStatusDialogComponent,
-    AdminDashboardComponent,
     AdminUsersComponent,
     AdminVehiclesComponent,
+    DashboardLayoutComponent,
+    DashboardOverviewComponent,
   
   ],
   imports: [
