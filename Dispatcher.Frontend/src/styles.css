@@ -1,0 +1,147 @@
+/* ===========================
+   TAILWIND CSS v4 + DAISYUI v5
+   =========================== */
+@import "tailwindcss";
+
+/* Import DaisyUI with Tailwind v4 syntax */
+@plugin "daisyui";
+
+/* Configure DaisyUI themes */
+@theme {
+  --daisyui-themes: light, dark;
+}
+
+/* ===========================
+   BASE STYLES
+   =========================== */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+body {
+  color-scheme: light;
+}
+
+html {
+  @apply bg-base-100 text-base-content;
+}
+
+/* ===========================
+   THEME SWITCHING
+   =========================== */
+:root {
+  color-scheme: light;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* ===========================
+   ANGULAR MATERIAL OVERRIDES
+   =========================== */
+/* Note: Angular Material theming with @use/@include cannot be done in pure CSS
+   These styles will need to stay in a separate SCSS file or be migrated away from Material */
+
+/* ===========================
+   SNACKBAR / TOASTER STYLES
+   =========================== */
+.snackbar-success {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.snackbar-success .mat-mdc-snack-bar-label {
+  color: white !important;
+}
+
+.snackbar-success .mat-mdc-button {
+  color: white !important;
+}
+
+.snackbar-error {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.snackbar-error .mat-mdc-snack-bar-label {
+  color: white !important;
+}
+
+.snackbar-error .mat-mdc-button {
+  color: white !important;
+}
+
+.snackbar-warning {
+  background-color: #ff9800 !important;
+  color: white !important;
+}
+
+.snackbar-warning .mat-mdc-snack-bar-label {
+  color: white !important;
+}
+
+.snackbar-warning .mat-mdc-button {
+  color: white !important;
+}
+
+.snackbar-info {
+  background-color: #2196f3 !important;
+  color: white !important;
+}
+
+.snackbar-info .mat-mdc-snack-bar-label {
+  color: white !important;
+}
+
+.snackbar-info .mat-mdc-button {
+  color: white !important;
+}
+
+/* ===========================
+   DAISYUI COMPONENT OVERRIDES
+   =========================== */
+.card {
+  @apply bg-base-100 text-base-content;
+}
+
+.input,
+.textarea,
+.select {
+  @apply bg-base-100 text-base-content border-base-300;
+}
+
+.btn {
+  @apply bg-base-200 text-base-content border-base-300;
+}
+
+.btn-primary {
+  @apply bg-primary text-primary-content border-primary;
+}
+
+.alert {
+  @apply bg-base-200 text-base-content;
+}
+
+.alert-error {
+  @apply bg-error text-error-content;
+}
+
+.alert-success {
+  @apply bg-success text-success-content;
+}
+
+.alert-warning {
+  @apply bg-warning text-warning-content;
+}
+
+.alert-info {
+  @apply bg-info text-info-content;
+}

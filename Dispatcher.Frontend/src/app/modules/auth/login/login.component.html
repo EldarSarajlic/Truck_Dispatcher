@@ -1,26 +1,6 @@
 <div class="relative min-h-screen overflow-hidden">
-  <!-- Theme Toggle Button - Top Right Corner -->
-  <div class="absolute top-4 right-4 z-50">
-    <button
-      type="button"
-      (click)="toggleTheme()"
-      class="btn btn-circle btn-ghost backdrop-blur-md bg-white/10 hover:bg-white/20 border border-white/20 transition-all duration-200"
-      [attr.aria-label]="currentTheme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
-    >
-      @if (currentTheme === 'light') {
-        <!-- Sun Icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-      } @else {
-        <!-- Moon Icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-        </svg>
-      }
-    </button>
-  </div>
-
+  <div class="flex items-"></div>
+<div class="table"></div>
   <!-- Animated Background Scene -->
   <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
     <!-- Animated truck scene - blurred background -->
@@ -122,8 +102,12 @@
         </div>
       </div>
 
-      <!-- Login Card -->
-      <div class="relative card bg-base-100 backdrop-blur-xl shadow-2xl border border-base-300 animate-fade-in-up hover:shadow-blue-500/20 transition-all duration-300">
+      <!-- Login Card with Logo Background -->
+      <div class="relative card bg-base-100 backdrop-blur-xl shadow-2xl border border-base-300 animate-fade-in-up hover:shadow-blue-500/20 transition-all duration-300 overflow-hidden">
+        <!-- Logo Background Image - Increased Opacity -->
+        <div class="absolute inset-0 opacity-[0.06] pointer-events-none bg-logo-pattern z-0"></div>
+
+        <!-- Card Body with Higher Z-Index -->
         <div class="card-body p-8 relative z-10">
           <div class="mb-6">
             <h2 class="text-3xl font-bold text-base-content mb-2">Sign In</h2>
@@ -161,7 +145,7 @@
                   autocomplete="email"
                   (focus)="emailFocused = true"
                   (blur)="emailFocused = false"
-                  class="input input-bordered w-full pl-12 pr-4 h-12 text-base transition-all duration-200 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none"
+                  class="input input-bordered w-full pl-12 pr-4 h-12 text-base transition-all duration-200 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none bg-base-100/90 backdrop-blur-sm shadow-sm"
                   [class.input-error]="form.controls.email.invalid && form.controls.email.touched && !emailFocused"
                 />
               </div>
@@ -206,7 +190,7 @@
                   formControlName="password"
                   placeholder="••••••••"
                   autocomplete="current-password"
-                  class="input input-bordered w-full pl-12 pr-12 h-12 text-base transition-all duration-200 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none"
+                  class="input input-bordered w-full pl-12 pr-12 h-12 text-base transition-all duration-200 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none bg-base-100/90 backdrop-blur-sm shadow-sm"
                   [class.input-error]="form.get('password')?.invalid && form.get('password')?.touched"
                 />
                 <button
@@ -287,6 +271,14 @@
 </div>
 
 <style>
+  /* Logo Background Pattern */
+  .bg-logo-pattern {
+    background-image: url('/logo.png');
+    background-size: 60%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
   /* Truck animations with depth layers */
   .trucks-layer {
     position: absolute;
@@ -329,98 +321,74 @@
     width: 40px;
     height: 40px;
     color: #60a5fa;
+    opacity: 0.6;
   }
 
   .truck-far-2 {
-    bottom: 95px;
+    bottom: 110px;
     animation-duration: 40s;
-    animation-delay: 20s;
+    animation-delay: 15s;
   }
   .truck-far-2 .truck-svg {
-    width: 38px;
-    height: 38px;
-    color: #34d399;
+    width: 42px;
+    height: 42px;
+    color: #93c5fd;
+    opacity: 0.6;
   }
 
   /* Mid-distance trucks */
   .truck-mid-1 {
-    bottom: 70px;
+    bottom: 60px;
     animation-duration: 25s;
-    animation-delay: 8s;
+    animation-delay: 5s;
   }
   .truck-mid-1 .truck-svg {
     width: 56px;
     height: 56px;
-    color: #f59e0b;
+    color: #3b82f6;
+    opacity: 0.8;
   }
 
   .truck-mid-2 {
-    bottom: 65px;
+    bottom: 70px;
     animation-duration: 30s;
-    animation-delay: 25s;
+    animation-delay: 20s;
   }
   .truck-mid-2 .truck-svg {
-    width: 52px;
-    height: 52px;
-    color: #8b5cf6;
+    width: 54px;
+    height: 54px;
+    color: #60a5fa;
+    opacity: 0.8;
   }
 
   /* Near trucks (front layer) */
   .truck-near-1 {
-    bottom: 40px;
+    bottom: 20px;
     animation-duration: 18s;
-    animation-delay: 5s;
+    animation-delay: 10s;
   }
   .truck-near-1 .truck-svg {
     width: 72px;
     height: 72px;
-    color: #ef4444;
+    color: #2563eb;
+    opacity: 1;
   }
 
   @keyframes drive {
-    0% {
-      left: -150px;
-      opacity: 0;
+    from {
+      left: -100px;
     }
-    5% {
-      opacity: 1;
-    }
-    95% {
-      opacity: 1;
-    }
-    100% {
-      left: calc(100% + 150px);
-      opacity: 0;
+    to {
+      left: calc(100% + 100px);
     }
   }
 
-  /* Road center line animation */
-  .center-line {
+  /* Stars */
+  .stars-container {
     position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: repeating-linear-gradient(
-      90deg,
-      #fbbf24 0px,
-      #fbbf24 50px,
-      transparent 50px,
-      transparent 100px
-    );
-    animation: road-scroll 2s linear infinite;
+    inset: 0;
   }
 
-  @keyframes road-scroll {
-    0% {
-      background-position: 0 0;
-    }
-    100% {
-      background-position: 100px 0;
-    }
-  }
-
-  /* Stars twinkling */
   .star {
     position: absolute;
     width: 2px;
@@ -431,14 +399,31 @@
   }
 
   @keyframes twinkle {
-    0%, 100% {
-      opacity: 0.3;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 1;
-      transform: scale(1.5);
-    }
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+  }
+
+  /* Road markings */
+  .road-markings {
+    position: absolute;
+    inset: 0;
+  }
+
+  .center-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: repeating-linear-gradient(
+      90deg,
+      #fbbf24 0px,
+      #fbbf24 40px,
+      transparent 40px,
+      transparent 80px
+    );
+    transform: translateY(-50%) perspective(400px) rotateX(65deg);
+    transform-origin: center;
   }
 
   /* Light rays */
@@ -447,112 +432,66 @@
     top: -50%;
     width: 2px;
     height: 200%;
-    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transform-origin: top center;
+    background: linear-gradient(180deg, transparent, rgba(255,255,255,0.03), transparent);
+    animation: ray-move 20s linear infinite;
   }
 
-  .ray-1 {
-    left: 20%;
-    animation: ray-rotate 20s linear infinite;
+  .ray-1 { left: 20%; animation-delay: 0s; }
+  .ray-2 { left: 50%; animation-delay: 7s; }
+  .ray-3 { left: 80%; animation-delay: 14s; }
+
+  @keyframes ray-move {
+    from { transform: translateY(-100%) rotate(-10deg); }
+    to { transform: translateY(100%) rotate(-10deg); }
   }
 
-  .ray-2 {
-    left: 50%;
-    animation: ray-rotate 25s linear infinite reverse;
-  }
-
-  .ray-3 {
-    left: 80%;
-    animation: ray-rotate 30s linear infinite;
-  }
-
-  @keyframes ray-rotate {
-    0% {
-      transform: rotate(-10deg);
-    }
-    50% {
-      transform: rotate(10deg);
-    }
-    100% {
-      transform: rotate(-10deg);
-    }
-  }
-
-  /* Fade in animations */
+  /* Animations */
   @keyframes fade-in-down {
-    0% {
+    from {
       opacity: 0;
-      transform: translateY(-30px);
+      transform: translateY(-20px);
     }
-    100% {
+    to {
       opacity: 1;
       transform: translateY(0);
     }
   }
 
   @keyframes fade-in-up {
-    0% {
+    from {
       opacity: 0;
-      transform: translateY(30px);
+      transform: translateY(20px);
     }
-    100% {
+    to {
       opacity: 1;
       transform: translateY(0);
     }
   }
 
   @keyframes fade-in {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
   @keyframes shake {
-    0%, 100% {
-      transform: translateX(0);
-    }
-    10%, 30%, 50%, 70%, 90% {
-      transform: translateX(-8px);
-    }
-    20%, 40%, 60%, 80% {
-      transform: translateX(8px);
-    }
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
   }
 
   .animate-fade-in-down {
-    animation: fade-in-down 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+    animation: fade-in-down 0.6s ease-out;
   }
 
   .animate-fade-in-up {
-    animation: fade-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+    animation: fade-in-up 0.6s ease-out;
   }
 
   .animate-fade-in {
-    animation: fade-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+    animation: fade-in 0.3s ease-out;
   }
 
   .animate-shake {
-    animation: shake 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Custom scrollbar for better aesthetics */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.5);
+    animation: shake 0.5s ease-out;
   }
 </style>

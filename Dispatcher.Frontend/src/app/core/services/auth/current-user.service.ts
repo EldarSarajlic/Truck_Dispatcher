@@ -40,7 +40,7 @@ export class CurrentUserService {
       case UserRole.Client:
         return '/client';
       default:
-        return '/client';
+        return '/';
     }
   }
 }
