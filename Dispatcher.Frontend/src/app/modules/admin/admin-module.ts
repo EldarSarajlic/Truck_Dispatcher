@@ -18,6 +18,7 @@ import { AdminUsersComponent } from './users/admin-users.component';
 import { AdminVehiclesComponent } from './vehicles/admin-vehicles.component';
 import { DashboardLayoutComponent } from './dashboard/dashboard-layout/dashboard-layout.component';
 import { DashboardOverviewComponent } from './dashboard/overview/dashboard-overview/dashboard-overview.component';
+import { OrderStatsComponent } from './dashboard/order-stats/order-stats.component';
 
 
 
@@ -37,6 +38,7 @@ import { DashboardOverviewComponent } from './dashboard/overview/dashboard-overv
     AdminVehiclesComponent,
     DashboardLayoutComponent,
     DashboardOverviewComponent,
+    OrderStatsComponent,
   
   ],
   imports: [

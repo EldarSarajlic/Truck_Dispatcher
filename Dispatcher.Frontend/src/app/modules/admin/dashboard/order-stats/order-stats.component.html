@@ -1,0 +1,194 @@
+<div class="flex flex-col gap-10">
+
+  <!-- ================= CURRENT MONTH KPIs ================= -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+
+<!-- TOTAL REVENUE -->
+<div class="card bg-base-100 shadow">
+  <div class="card-body flex-row items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg"
+       fill="none"
+       viewBox="0 0 24 24"
+       stroke-width="1.5"
+       stroke="currentColor"
+       class="w-7 h-7">
+    <path stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0
+             1.172-.879 1.172-2.303 0-3.182
+             C13.536 12.219 12.768 12 12 12
+             c-.725 0-1.45-.22-2.003-.659
+             -1.106-.879-1.106-2.303 0-3.182
+             s2.9-.879 4.006 0l.415.33
+             M21 12a9 9 0 1 1-18 0
+             9 9 0 0 1 18 0Z" />
+  </svg>
+</div>
+    <div>
+      <div class="text-sm text-base-content/70">Total Revenue</div>
+      <div class="text-2xl font-bold">
+        {{ currentMonth.totalRevenue | currency:'EUR' }}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Monthly Revenue -->
+    <div class="card bg-base-100 shadow">
+      <div class="card-body flex-row items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg"
+       fill="none"
+       viewBox="0 0 24 24"
+       stroke-width="1.5"
+       stroke="currentColor"
+       class="w-7 h-7">
+    <path stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0
+             1.172-.879 1.172-2.303 0-3.182
+             C13.536 12.219 12.768 12 12 12
+             c-.725 0-1.45-.22-2.003-.659
+             -1.106-.879-1.106-2.303 0-3.182
+             s2.9-.879 4.006 0l.415.33
+             M21 12a9 9 0 1 1-18 0
+             9 9 0 0 1 18 0Z" />
+  </svg>
+</div>
+        <div>
+          <div class="text-sm text-base-content/70">Monthly Revenue</div>
+          <div class="text-2xl font-bold">
+            {{ currentMonth.revenue | currency:'EUR' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders -->
+    <div class="card bg-base-100 shadow">
+      <div class="card-body flex-row items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg"
+       class="w-7 h-7"
+       fill="none"
+       viewBox="0 0 24 24"
+       stroke="currentColor"
+       stroke-width="2">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M20.25 6.375c0 .621-.504 1.125-1.125 1.125H4.875A1.125 1.125 0 013.75 6.375m16.5 0v11.25c0 .621-.504 1.125-1.125 1.125H4.875A1.125 1.125 0 013.75 17.625V6.375m6 4.875h4.5" />
+  </svg>
+</div>
+        <div>
+          <div class="text-sm text-base-content/70">Orders This Month</div>
+          <div class="text-2xl font-bold">
+            {{ currentMonth.totalOrders }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Avg Order Value -->
+    <div class="card bg-base-100 shadow">
+      <div class="card-body flex-row items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg"
+       class="w-7 h-7"
+       fill="none"
+       viewBox="0 0 24 24"
+       stroke="currentColor"
+       stroke-width="2">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M15.75 15.75h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zM15.75 12.75h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zM15.75 9.75h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zM6 3h12a2.25 2.25 0 012.25 2.25v13.5A2.25 2.25 0 0118 21H6a2.25 2.25 0 01-2.25-2.25V5.25A2.25 2.25 0 016 3z" />
+  </svg>
+</div>
+        <div>
+          <div class="text-sm text-base-content/70">Avg Order Value</div>
+          <div class="text-2xl font-bold">
+            {{ currentMonth.avgOrderValue | currency:'EUR' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= FILTER ================= -->
+  <div class="flex flex-wrap gap-4 items-center">
+    <select class="select select-bordered" [(ngModel)]="selectedMonth">
+      <option *ngFor="let m of months" [value]="m.value">
+        {{ m.label }}
+      </option>
+    </select>
+
+    <select class="select select-bordered" [(ngModel)]="selectedYear">
+      <option *ngFor="let y of years" [value]="y">
+        {{ y }}
+      </option>
+    </select>
+
+    <button class="btn btn-primary" (click)="loadStats()">
+      Apply
+    </button>
+  </div>
+
+  <!-- ================= SELECTED MONTH DETAILS ================= -->
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+
+      <h3 class="text-lg font-semibold mb-4">
+        {{ selectedMonthLabel }} {{ selectedYear }} – Order Breakdown
+      </h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+
+        <div class="stat">
+          <div class="stat-title">Approved</div>
+          <div class="stat-value text-success">
+            {{ selectedStats.approved }}
+          </div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-title">Pending</div>
+          <div class="stat-value text-warning">
+            {{ selectedStats.pending }}
+          </div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-title">Rejected</div>
+          <div class="stat-value text-error">
+            {{ selectedStats.rejected }}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= CHARTS ================= -->
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+    <!-- Monthly Orders Chart -->
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h3 class="font-semibold mb-2">Orders This Year</h3>
+        <canvas id="ordersByMonthChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Revenue Chart -->
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h3 class="font-semibold mb-2">Revenue This Year</h3>
+        <canvas id="revenueByMonthChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+</div>
