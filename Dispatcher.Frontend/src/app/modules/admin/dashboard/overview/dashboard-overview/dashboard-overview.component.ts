@@ -1,19 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 
-interface RecentOrder {
-  reference: string;
-  client: string;
-  price: number;
-  date: string;
-}
-
-interface DashboardStats {
-  totalSales: number;
-  totalOrders: number;
-  totalUsers: number;
-  pendingOrders: number;
-  recentSales: RecentOrder[];
-}
+import { DashboardApiService } from '../../../../../api-services/dashboard/dashboard-api.service';
+import {
+  GetAdminDashboardOverviewResponse
+} from '../../../../../api-services/dashboard/dashboard-api.model';
 
 @Component({
   selector: 'app-dashboard-overview',
@@ -22,27 +13,50 @@ interface DashboardStats {
 })
 export class DashboardOverviewComponent implements OnInit {
 
-  isLoading = true;
+  private api = inject(DashboardApiService);
+
+  isLoading = false;
   error?: string;
-  dashboardStats?: DashboardStats;
+
+  dashboardStats?: GetAdminDashboardOverviewResponse;
+
+  // ✅ MODAL STATE
+  selectedOrder: GetAdminDashboardOverviewResponse['recentOrders'][number] | null = null;
 
   ngOnInit(): void {
-    // MOCK DATA
-    setTimeout(() => {
-      this.dashboardStats = {
-        totalSales: 1843200,
-        totalOrders: 428,
-        totalUsers: 156,
-        pendingOrders: 12,
-        recentSales: [
-          { reference: 'ORD-2024-0912', client: 'LogiTrans d.o.o.', price: 2450, date: '2024-12-14' },
-          { reference: 'ORD-2024-0911', client: 'Euro Freight GmbH', price: 3890, date: '2024-12-13' },
-          { reference: 'ORD-2024-0910', client: 'Balkan Express', price: 1720, date: '2024-12-12' },
-          { reference: 'ORD-2024-0909', client: 'NordCargo AS', price: 4100, date: '2024-12-11' },
-        ],
-      };
+    this.loadOverview();
+  }
 
-      this.isLoading = false;
-    }, 600);
+  private loadOverview(): void {
+    this.isLoading = true;
+    this.error = undefined;
+
+    this.api.getOverview().subscribe({
+      next: (response) => {
+        this.dashboardStats = response;
+        this.isLoading = false;
+      },
+      error: (err: unknown) => {
+        if (err instanceof HttpErrorResponse) {
+          this.error = err.error?.message ?? err.message;
+        } else if (err instanceof Error) {
+          this.error = err.message;
+        } else {
+          this.error = 'Failed to load dashboard overview';
+        }
+
+        this.isLoading = false;
+        console.error('Dashboard overview error:', err);
+      }
+    });
+  }
+
+  // ✅ MODAL METHODS
+  openOrderModal(order: GetAdminDashboardOverviewResponse['recentOrders'][number]): void {
+    this.selectedOrder = order;
+  }
+
+  closeOrderModal(): void {
+    this.selectedOrder = null;
   }
 }

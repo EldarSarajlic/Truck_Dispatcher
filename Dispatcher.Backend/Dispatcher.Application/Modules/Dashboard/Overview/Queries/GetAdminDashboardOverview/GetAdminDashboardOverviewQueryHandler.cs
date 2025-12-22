@@ -11,9 +11,11 @@ namespace Dispatcher.Application.Modules.Dashboard.Overview.Queries.GetAdminDash
             GetAdminDashboardOverviewQuery request,
             CancellationToken cancellationToken)
         {
+            var revenueStatuses = new[] { "Approved", "InProgress", "Completed" };
             var totalSales = await context.Orders
-                .AsNoTracking()
-                .SumAsync(o => o.TotalAmount, cancellationToken);
+    .AsNoTracking()
+    .Where(o => revenueStatuses.Contains(o.Status))
+    .SumAsync(o => o.TotalAmount, cancellationToken);
 
             var totalOrders = await context.Orders
                 .AsNoTracking()
@@ -40,7 +42,8 @@ var recentOrders = await context.Orders
         Reference = o.OrderNumber,
         Client = o.Client.DisplayName, // prilagodi ako treba
         Price = o.TotalAmount,
-        Date = o.OrderDate
+        Date = o.OrderDate,
+        Status=o.Status
     })
     .ToListAsync(cancellationToken);
 
