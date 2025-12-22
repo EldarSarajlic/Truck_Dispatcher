@@ -16,5 +16,6 @@ namespace Dispatcher.Application.Modules.Dashboard.Overview.Queries.GetAdminDash
         public string Client { get; set; }
         public decimal Price { get; set; }
         public DateTime Date { get; set; }
+        public string Status { get; set; }
     }
 }
