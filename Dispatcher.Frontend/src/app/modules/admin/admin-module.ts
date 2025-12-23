@@ -19,6 +19,7 @@ import { AdminVehiclesComponent } from './vehicles/admin-vehicles.component';
 import { DashboardLayoutComponent } from './dashboard/dashboard-layout/dashboard-layout.component';
 import { DashboardOverviewComponent } from './dashboard/overview/dashboard-overview/dashboard-overview.component';
 import { OrderStatsComponent } from './dashboard/order-stats/order-stats.component';
+import { TrucksComponent } from './vehicles/trucks/trucks.component';
 
 
 
@@ -39,6 +40,7 @@ import { OrderStatsComponent } from './dashboard/order-stats/order-stats.compone
     DashboardLayoutComponent,
     DashboardOverviewComponent,
     OrderStatsComponent,
+    TrucksComponent,
   
   ],
   imports: [
