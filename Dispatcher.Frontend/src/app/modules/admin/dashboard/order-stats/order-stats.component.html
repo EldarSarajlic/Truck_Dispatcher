@@ -117,11 +117,14 @@
 
   <!-- ================= FILTER ================= -->
   <div class="flex flex-wrap gap-4 items-center">
-    <select class="select select-bordered" [(ngModel)]="selectedMonth">
-      <option *ngFor="let m of months" [value]="m.value">
-        {{ m.label }}
-      </option>
-    </select>
+<select class="select select-bordered" [(ngModel)]="selectedMonth">
+  <option [ngValue]="null">All months</option>
+
+  <option *ngFor="let m of months" [ngValue]="m.value">
+    {{ m.label }}
+  </option>
+</select>
+
 
     <select class="select select-bordered" [(ngModel)]="selectedYear">
       <option *ngFor="let y of years" [value]="y">
@@ -134,41 +137,257 @@
     </button>
   </div>
 
-  <!-- ================= SELECTED MONTH DETAILS ================= -->
-  <div class="card bg-base-100 shadow">
-    <div class="card-body">
+<!-- ================= ORDERS REPORT ================= -->
+<div *ngIf="ordersReport as report" class="card bg-base-100 shadow">
+  <div class="card-body">
 
-      <h3 class="text-lg font-semibold mb-4">
-        {{ selectedMonthLabel }} {{ selectedYear }} – Order Breakdown
+    <!-- HEADER -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <h3 class="text-lg font-semibold">
+        {{ report.periodLabel }} – Orders Report
       </h3>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="badge badge-outline badge-lg">
+        Total Orders: {{ report.totalOrders }}
+      </div>
+    </div>
 
-        <div class="stat">
-          <div class="stat-title">Approved</div>
-          <div class="stat-value text-success">
-            {{ selectedStats.approved }}
-          </div>
+    <!-- ================= FINANCE ================= -->
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-8">
+
+      <div class="stat bg-base-200 rounded-lg">
+        <div class="stat-title">Total Revenue</div>
+        <div class="stat-value text-success">
+          {{ report.totalRevenue | currency:'EUR' }}
         </div>
+      </div>
 
-        <div class="stat">
-          <div class="stat-title">Pending</div>
-          <div class="stat-value text-warning">
-            {{ selectedStats.pending }}
-          </div>
+      <div class="stat bg-base-200 rounded-lg">
+        <div class="stat-title">Avg Order Value</div>
+        <div class="stat-value">
+          {{ report.avgOrderValue | currency:'EUR' }}
         </div>
+      </div>
 
-        <div class="stat">
-          <div class="stat-title">Rejected</div>
-          <div class="stat-value text-error">
-            {{ selectedStats.rejected }}
-          </div>
+      <div class="stat bg-base-200 rounded-lg">
+        <div class="stat-title">Max Order</div>
+        <div class="stat-value text-primary">
+          {{ report.maxOrderValue | currency:'EUR' }}
         </div>
+      </div>
 
+      <div class="stat bg-base-200 rounded-lg">
+        <div class="stat-title">Min Order</div>
+        <div class="stat-value text-warning">
+          {{ report.minOrderValue | currency:'EUR' }}
+        </div>
       </div>
 
     </div>
+
+    <!-- ================= ORDER FLOW ================= -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+
+      <div class="stat bg-base-200 rounded-lg">
+        <div class="stat-title">Approval Rate</div>
+        <div class="stat-value text-success">
+          {{ report.approvalRate | number:'1.0-2' }}%
+        </div>
+      </div>
+
+      <div class="stat bg-base-200 rounded-lg">
+        <div class="stat-title">Cancel Rate</div>
+        <div class="stat-value text-error">
+          {{ report.cancelRate | number:'1.0-2' }}%
+        </div>
+      </div>
+
+      <div class="stat bg-base-200 rounded-lg">
+        <div class="stat-title">Avg Delivery Time</div>
+        <div class="stat-value">
+          {{ report.avgDeliveryTimeDays | number:'1.0-1' }} days
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= BREAKDOWN ================= -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+
+      <!-- REVENUE BY CURRENCY -->
+      <div class="bg-base-200 rounded-lg p-4">
+        <h4 class="font-semibold mb-3">Revenue by Currency</h4>
+
+        <div
+          *ngFor="let c of report.revenueByCurrency | keyvalue"
+          class="flex justify-between py-1 text-sm"
+        >
+          <span>{{ c.key }}</span>
+          <span class="font-semibold">
+            {{ c.value | currency:c.key }}
+          </span>
+        </div>
+      </div>
+
+      <!-- PRIORITY -->
+      <div class="bg-base-200 rounded-lg p-4">
+        <h4 class="font-semibold mb-3">Order Priority</h4>
+
+        <div
+          *ngFor="let p of report.priorityStats | keyvalue"
+          class="flex justify-between py-1 text-sm"
+        >
+          <span>{{ p.key }}</span>
+          <span class="font-semibold">{{ p.value }}</span>
+        </div>
+      </div>
+
+    </div>
+
+<!-- ================= TOP ITEMS ================= -->
+<div class="flex items-center justify-between mb-4">
+  <h4 class="font-semibold text-base-content">
+    Top Items
+  </h4>
+
+  <div class="tabs tabs-boxed bg-base-200 p-1">
+    <a
+      class="tab gap-2"
+      [class.tab-active]="activeItemsTab === 'selling'"
+      (click)="activeItemsTab = 'selling'"
+    >
+      🔥 Top Selling
+    </a>
+
+    <a
+      class="tab gap-2"
+      [class.tab-active]="activeItemsTab === 'profitable'"
+      (click)="activeItemsTab = 'profitable'"
+    >
+      💰 Most Profitable
+    </a>
+
+    <a
+      class="tab gap-2"
+      [class.tab-active]="activeItemsTab === 'cancelled'"
+      (click)="activeItemsTab = 'cancelled'"
+    >
+      ❌ Cancelled
+    </a>
   </div>
+</div>
+
+
+
+<div class="overflow-x-auto rounded-lg border border-base-300">
+
+  <!-- TOP SELLING -->
+  <table *ngIf="activeItemsTab === 'selling'" class="table table-sm">
+    <thead class="bg-base-200">
+      <tr>
+        <th>Item</th>
+        <th class="text-right">Quantity</th>
+        <th class="text-right">Revenue</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of report.topSellingItems" class="hover:bg-base-200 transition">
+        <td>{{ item.name }}</td>
+        <td class="text-right">{{ item.quantity }}</td>
+        <td class="text-right font-semibold text-success">{{ item.revenue | currency:'EUR' }}</td>
+      </tr>
+          <tr *ngIf="report.topSellingItems.length === 0">
+      <td colspan="3" class="text-center py-6 text-base-content/60">
+        No selling items found
+      </td>
+    </tr>
+
+    </tbody>
+  </table>
+
+  <!-- MOST PROFITABLE -->
+  <table *ngIf="activeItemsTab === 'profitable'" class="table table-sm">
+    <thead class="bg-base-200">
+      <tr>
+        <th>Item</th>
+        <th class="text-right">Quantity</th>
+        <th class="text-right">Revenue</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of report.topProfitableItems" class="hover:bg-base-200 transition">
+        <td>{{ item.name }}</td>
+        <td class="text-right">{{ item.quantity }}</td>
+        <td class="text-right font-semibold text-primary">{{ item.revenue | currency:'EUR' }}</td>
+      </tr>
+          <tr *ngIf="report.topProfitableItems.length === 0">
+      <td colspan="3" class="text-center py-6 text-base-content/60">
+        No profitable items found
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- MOST CANCELLED -->
+  <table *ngIf="activeItemsTab === 'cancelled'" class="table table-sm">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th class="text-right">Quantity</th>
+        <th class="text-right text-base-content/50">Revenue</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of report.mostCancelledItems" class="hover:bg-base-200 transition">
+        <td>{{ item.name }}</td>
+        <td class="text-right">{{ item.quantity }}</td>
+        <td class="text-right">—</td>
+      </tr>
+          <tr *ngIf="report.mostCancelledItems.length === 0">
+      <td colspan="3" class="text-center py-6 text-base-content/60">
+        🎉 No cancelled items
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
+
+
+  </div>
+</div>
+
+<!-- LOADING -->
+<div *ngIf="isLoadingReport" class="flex justify-center py-10">
+  <span class="loading loading-spinner loading-lg"></span>
+</div>
+
+<!-- ERROR -->
+<div *ngIf="reportError" class="alert alert-error shadow">
+  {{ reportError }}
+</div>
+
+
+  <!-- ================= CHART FILTER ================= -->
+<div class="flex items-center justify-between gap-4">
+  <h3 class="text-lg font-semibold">
+    Orders & Revenue Trends
+  </h3>
+
+  <div class="flex items-center gap-2">
+    <span class="text-sm text-base-content/70">Year</span>
+
+    <select
+      class="select select-bordered select-sm"
+      [(ngModel)]="selectedYear"
+      (change)="loadCharts(selectedYear)"
+    >
+      <option *ngFor="let y of years" [value]="y">
+        {{ y }}
+      </option>
+    </select>
+  </div>
+</div>
 
   <!-- ================= CHARTS ================= -->
   <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -176,7 +395,7 @@
     <!-- Monthly Orders Chart -->
     <div class="card bg-base-100 shadow">
       <div class="card-body">
-        <h3 class="font-semibold mb-2">Orders This Year</h3>
+        <h3 class="font-semibold mb-2">Orders in {{ selectedYear }}</h3>
         <canvas id="ordersByMonthChart"></canvas>
       </div>
     </div>
@@ -184,7 +403,7 @@
     <!-- Revenue Chart -->
     <div class="card bg-base-100 shadow">
       <div class="card-body">
-        <h3 class="font-semibold mb-2">Revenue This Year</h3>
+        <h3 class="font-semibold mb-2">Revenue in {{ selectedYear }}</h3>
         <canvas id="revenueByMonthChart"></canvas>
       </div>
     </div>
