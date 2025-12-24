@@ -14,6 +14,7 @@ import { DashboardLayoutComponent } from './dashboard/dashboard-layout/dashboard
 import { DashboardOverviewComponent } from './dashboard/overview/dashboard-overview/dashboard-overview.component';
 import { OrderStatsComponent } from './dashboard/order-stats/order-stats.component';
 import { TrucksComponent } from './vehicles/trucks/trucks.component';
+import { MapComponent } from './map/map.component';
 const routes: Routes = [
   {
     path: '',
@@ -43,6 +44,10 @@ const routes: Routes = [
       {
         path: 'users',
         component: AdminUsersComponent
+      },
+      {
+        path: 'map',
+        component: MapComponent
       },
       // PRODUCTS
       {
@@ -75,10 +80,10 @@ const routes: Routes = [
       },
 
 
-      // default admin route → /admin/products
+      // default admin route → /admin/dashboard
       {
         path: '',
-        redirectTo: 'products',
+        redirectTo: 'dashboard',
         pathMatch: 'full',
       },
     ],

@@ -12,11 +12,13 @@ import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {CustomTranslateLoader} from './core/services/custom-translate-loader';
 import {materialModules} from './modules/shared/material-modules';
 import {SharedModule} from './modules/shared/shared-module';
+import { MapComponent } from './modules/admin/map/map.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    MapComponent,
    
   ],
   imports: [
