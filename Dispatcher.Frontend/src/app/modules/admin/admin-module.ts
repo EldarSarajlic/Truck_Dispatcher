@@ -21,8 +21,6 @@ import { DashboardOverviewComponent } from './dashboard/overview/dashboard-overv
 import { OrderStatsComponent } from './dashboard/order-stats/order-stats.component';
 import { TrucksComponent } from './vehicles/trucks/trucks.component';
 
-
-
 @NgModule({
   declarations: [
     ProductsComponent,
