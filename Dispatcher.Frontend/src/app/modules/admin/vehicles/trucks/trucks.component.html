@@ -1,8 +1,19 @@
+<!-- Truck Form Modal (T-2.3.6) -->
+<app-truck-form-modal
+  [open]="modalOpen"
+  [mode]="modalMode"
+  [truck]="selectedTruck"
+  [statusOptions]="availableStatusOptions"
+  (closed)="closeModal()"
+  (submitted)="onTruckFormSubmitted($event)"
+></app-truck-form-modal>
+
 <!-- BLOCK 1: Header + Filters -->
 <div class="card bg-base-100 shadow">
   <div class="card-body gap-6">
 
     <div class="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
+      <!-- Left: Title -->
       <div class="flex items-center gap-4">
         <div class="btn btn-circle btn-primary pointer-events-none">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -16,36 +27,29 @@
         </div>
       </div>
 
-    <select
-  class="select select-bordered w-full sm:w-72"
-  [ngModel]="statusId"
-  (ngModelChange)="onStatusIdChange($event)"
->
-  <option [ngValue]="null">Filtriraj po Statusu (All)</option>
-  <option *ngFor="let s of availableStatusOptions" [ngValue]="s.id">
-    {{ s.statusName }}
-  </option>
-</select>
+      <!-- Right: Actions -->
+      <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto lg:justify-end">
 
-        <!-- Maintenance filter -->
-       <!--<select
-          class="select select-bordered w-full sm:w-64"
-          [(ngModel)]="maintenanceFilter"
-          (ngModelChange)="applyFilters()"
+        <!-- Status filter -->
+        <select
+          class="select select-bordered w-full sm:w-72"
+          [ngModel]="statusId"
+          (ngModelChange)="onStatusIdChange($event)"
         >
-          <option value="all">All maintenance</option>
-          <option value="dueSoon">Maintenance due soon</option>
-          <option value="overdue">Maintenance overdue</option>
-        </select>-->
+          <option [ngValue]="null">Filtriraj po Statusu (All)</option>
+          <option *ngFor="let s of availableStatusOptions" [ngValue]="s.id">
+            {{ s.statusName }}
+          </option>
+        </select>
 
         <!-- Search -->
         <div class="join w-full sm:w-72">
-         <input
-  class="input input-bordered join-item w-full"
-  placeholder="Pretraži kamione..."
-  [ngModel]="search"
-  (ngModelChange)="onSearchChange($event)"
-/>
+          <input
+            class="input input-bordered join-item w-full"
+            placeholder="Pretraži kamione..."
+            [ngModel]="search"
+            (ngModelChange)="onSearchChange($event)"
+          />
           <button class="btn join-item bg-base-200 border-base-300" type="button" (click)="applyFilters()">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l3.387 3.387a1 1 0 01-1.414 1.414l-3.387-3.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z" clip-rule="evenodd" />
@@ -54,18 +58,24 @@
         </div>
 
         <!-- Clear filters -->
-        <button class="btn btn-outline" type="button" (click)="clearFilters()">
+        <button class="btn btn-outline w-full sm:w-auto" type="button" (click)="clearFilters()">
           Očisti Filtere
         </button>
 
         <!-- Refresh -->
-        <button class="btn btn-ghost" type="button" (click)="load()" [disabled]="loading">
+        <button class="btn btn-ghost w-full sm:w-auto" type="button" (click)="load()" [disabled]="loading">
           Refresh
+        </button>
+
+        <!-- Add -->
+        <button class="btn btn-primary w-full sm:w-44" type="button" (click)="openCreateTruck()">
+          Dodaj
         </button>
       </div>
     </div>
 
   </div>
+</div>
 
 <!-- spacing between blocks -->
 <div class="h-6"></div>
@@ -144,9 +154,9 @@
 
         <!-- Actions -->
         <div class="flex flex-wrap gap-3 pt-2">
-          <button class="btn bg-base-200 border-0" (click)="view(t)">View Details</button>
-          <button class="btn bg-base-200 border-0" (click)="edit(t)">Edit</button>
-          <button class="btn bg-base-200 border-0" (click)="changeStatus(t)">Change Status</button>
+          <button class="btn bg-base-200 border-0" type="button" (click)="view(t)">View Details</button>
+          <button class="btn bg-base-200 border-0" type="button" (click)="edit(t)">Edit</button>
+          <button class="btn bg-base-200 border-0" type="button" (click)="changeStatus(t)">Change Status</button>
         </div>
 
       </div>

@@ -5,7 +5,7 @@ import { catchError, debounceTime, distinctUntilChanged, startWith, switchMap, t
 import { TruckService } from '../../../../api-services/vehicles/truck.service';
 import { VehicleStatusService } from '../../../../api-services/vehicles/vehicle-status.service';
 
-import { TruckDto } from '../../../../core/models/truck.model';
+import { CreateTruckRequest, TruckDto, UpdateTruckRequest } from '../../../../core/models/truck.model';
 import { VehicleStatusDto } from '../../../../core/models/vehicle-status.model';
 
 type MaintenanceFilter = 'all' | 'dueSoon' | 'overdue';
@@ -31,6 +31,11 @@ export class TrucksComponent implements OnInit, OnDestroy {
   rows: TruckDto[] = [];
   filtered: TruckDto[] = [];
 
+  // modal (T-2.3.6 UI only)
+  modalOpen = false;
+  modalMode: 'create' | 'edit' | 'view' = 'create';
+  selectedTruck: TruckDto | null = null;
+
   private readonly destroy$ = new Subject<void>();
   private readonly search$ = new Subject<string>();
   private readonly statusId$ = new Subject<number | null>();
@@ -43,20 +48,20 @@ export class TrucksComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Load status options for dropdown
     this.vehicleStatusService
-  .getAll()
-  .pipe(takeUntil(this.destroy$))
-  .subscribe({
-    next: (data: VehicleStatusDto[]) => {
-  this.availableStatusOptions = (data ?? [])
-    .slice()
-    .sort((a: VehicleStatusDto, b: VehicleStatusDto) =>
-      (a.statusName ?? '').localeCompare(b.statusName ?? '')
-    );
-},
-    error: () => {
-      this.availableStatusOptions = [];
-    },
-  });
+      .getAll()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: VehicleStatusDto[]) => {
+          this.availableStatusOptions = (data ?? [])
+            .slice()
+            .sort((a: VehicleStatusDto, b: VehicleStatusDto) =>
+              (a.statusName ?? '').localeCompare(b.statusName ?? '')
+            );
+        },
+        error: () => {
+          this.availableStatusOptions = [];
+        },
+      });
 
     // Debounced server-side filtering: Search + StatusId
     combineLatest([
@@ -136,12 +141,42 @@ export class TrucksComponent implements OnInit, OnDestroy {
     });
   }
 
+  // -------- modal handlers (T-2.3.6 UI only) --------
+  openCreateTruck(): void {
+    this.modalMode = 'create';
+    this.selectedTruck = null;
+    this.modalOpen = true;
+  }
+
+  openEditTruck(t: TruckDto): void {
+    this.modalMode = 'edit';
+    this.selectedTruck = t;
+    this.modalOpen = true;
+  }
+
+  openViewTruck(t: TruckDto): void {
+    this.modalMode = 'view';
+    this.selectedTruck = t;
+    this.modalOpen = true;
+  }
+
+  closeModal(): void {
+    this.modalOpen = false;
+  }
+
+  onTruckFormSubmitted(payload: CreateTruckRequest | UpdateTruckRequest): void {
+    // Scope of T-2.3.6: no API integration yet
+    console.log('Truck form submitted:', payload);
+    this.closeModal();
+  }
+
+  // -------- row actions --------
   view(t: TruckDto): void {
-    console.log('view truck', t);
+    this.openViewTruck(t);
   }
 
   edit(t: TruckDto): void {
-    console.log('edit truck', t);
+    this.openEditTruck(t);
   }
 
   changeStatus(t: TruckDto): void {
