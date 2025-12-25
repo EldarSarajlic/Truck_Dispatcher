@@ -16,16 +16,16 @@
         </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto lg:justify-end">
-        <!-- Status filter -->
-        <select
-          class="select select-bordered w-full sm:w-72"
-          [(ngModel)]="statusFilter"
-          (ngModelChange)="applyFilters()"
-        >
-          <option value="all">Filtriraj po Statusu (All)</option>
-          <option *ngFor="let s of availableStatuses" [value]="s">{{ s }}</option>
-        </select>
+    <select
+  class="select select-bordered w-full sm:w-72"
+  [ngModel]="statusId"
+  (ngModelChange)="onStatusIdChange($event)"
+>
+  <option [ngValue]="null">Filtriraj po Statusu (All)</option>
+  <option *ngFor="let s of availableStatusOptions" [ngValue]="s.id">
+    {{ s.statusName }}
+  </option>
+</select>
 
         <!-- Maintenance filter -->
        <!--<select
@@ -66,7 +66,6 @@
     </div>
 
   </div>
-</div>
 
 <!-- spacing between blocks -->
 <div class="h-6"></div>

@@ -1,8 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { TruckService } from '../../../../api-services/trucks/truck.service';
-import { TruckDto } from '../../../../core/models/truck.model';
-import { Subject, of } from 'rxjs';
+import { Subject, combineLatest, of } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+
+import { TruckService } from '../../../../api-services/vehicles/truck.service';
+import { VehicleStatusService } from '../../../../api-services/vehicles/vehicle-status.service';
+
+import { TruckDto } from '../../../../core/models/truck.model';
+import { VehicleStatusDto } from '../../../../core/models/vehicle-status.model';
 
 type MaintenanceFilter = 'all' | 'dueSoon' | 'overdue';
 
@@ -17,45 +21,63 @@ export class TrucksComponent implements OnInit, OnDestroy {
 
   // filters
   search = '';
-  statusFilter: string = 'all';
+  statusId: number | null = null; // <- VehicleStatusId (T-2.3.5)
   maintenanceFilter: MaintenanceFilter = 'all';
+
+  // dropdown data (from /VehicleStatuses)
+  availableStatusOptions: VehicleStatusDto[] = [];
 
   // data
   rows: TruckDto[] = [];
   filtered: TruckDto[] = [];
 
-  availableStatuses: string[] = [];
-
   private readonly destroy$ = new Subject<void>();
   private readonly search$ = new Subject<string>();
+  private readonly statusId$ = new Subject<number | null>();
 
-  constructor(private truckService: TruckService) {}
+  constructor(
+    private truckService: TruckService,
+    private vehicleStatusService: VehicleStatusService
+  ) {}
 
   ngOnInit(): void {
-    // Debounced server-side search
-    this.search$
+    // Load status options for dropdown
+    this.vehicleStatusService
+  .getAll()
+  .pipe(takeUntil(this.destroy$))
+  .subscribe({
+    next: (data: VehicleStatusDto[]) => {
+  this.availableStatusOptions = (data ?? [])
+    .slice()
+    .sort((a: VehicleStatusDto, b: VehicleStatusDto) =>
+      (a.statusName ?? '').localeCompare(b.statusName ?? '')
+    );
+},
+    error: () => {
+      this.availableStatusOptions = [];
+    },
+  });
+
+    // Debounced server-side filtering: Search + StatusId
+    combineLatest([
+      this.search$.pipe(startWith(''), debounceTime(300), distinctUntilChanged()),
+      this.statusId$.pipe(startWith(null), distinctUntilChanged()),
+    ])
       .pipe(
-        startWith(''),
-        debounceTime(300),
-        distinctUntilChanged(),
         tap(() => (this.loading = true)),
-        switchMap((term) =>
-          this.truckService.getAll({ search: term?.trim() || undefined }).pipe(catchError(() => of([] as TruckDto[])))
+        switchMap(([term, statusId]) =>
+          this.truckService
+            .getAll({
+              search: term?.trim() || undefined,
+              status: statusId, // <- sends Status=<id>
+            })
+            .pipe(catchError(() => of([] as TruckDto[])))
         ),
         takeUntil(this.destroy$)
       )
       .subscribe((data: TruckDto[]) => {
         this.rows = data ?? [];
-
-        // status dropdown iz podataka
-        const set = new Set<string>();
-        for (const t of this.rows) {
-          if (t.vehicleStatusName) set.add(t.vehicleStatusName);
-        }
-        this.availableStatuses = Array.from(set).sort((a, b) => a.localeCompare(b));
-
-        // maintenance/status(name) filter ostaje lokalno
-        this.applyFilters();
+        this.applyFilters(); // maintenance stays local
         this.loading = false;
       });
 
@@ -68,44 +90,35 @@ export class TrucksComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // Called from HTML on typing (ngModelChange)
   onSearchChange(value: string): void {
     this.search = value;
     this.search$.next(value);
   }
 
-  // Manual refresh (button)
-  refresh(): void {
-    this.search$.next(this.search);
+  onStatusIdChange(value: number | null): void {
+    this.statusId = value;
+    this.statusId$.next(value);
   }
 
-  // Keep old name so you don't have to change all buttons
+  refresh(): void {
+    this.search$.next(this.search);
+    this.statusId$.next(this.statusId);
+  }
+
   load(): void {
     this.refresh();
   }
 
   clearFilters(): void {
     this.search = '';
-    this.statusFilter = 'all';
+    this.statusId = null;
     this.maintenanceFilter = 'all';
-
-    // reset server-side search
     this.refresh();
-
-    // reset local filters
-    this.applyFilters();
   }
 
+  // Only maintenance filter is local now
   applyFilters(): void {
-    const q = this.search.trim().toLowerCase();
-
     this.filtered = this.rows.filter((t) => {
-      // local status filter by name (until T-2.3.5)
-      if (this.statusFilter !== 'all' && (t.vehicleStatusName ?? '') !== this.statusFilter) {
-        return false;
-      }
-
-      // maintenance filter (local)
       if (this.maintenanceFilter !== 'all') {
         const d = this.toDate(t.nextMaintenanceDate);
         if (!d) return false;
@@ -119,8 +132,6 @@ export class TrucksComponent implements OnInit, OnDestroy {
         }
       }
 
-      // NOTE: server-side search already filtered rows,
-      // but we keep this local search too so UI behaves the same.
       return true;
     });
   }
