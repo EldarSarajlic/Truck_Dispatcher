@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TruckService } from '../../../../api-services/trucks/truck.service';
 import { TruckDto } from '../../../../core/models/truck.model';
+import { Subject, of } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 type MaintenanceFilter = 'all' | 'dueSoon' | 'overdue';
 
@@ -10,7 +12,7 @@ type MaintenanceFilter = 'all' | 'dueSoon' | 'overdue';
   standalone: false,
   styleUrls: ['./trucks.component.css'],
 })
-export class TrucksComponent implements OnInit {
+export class TrucksComponent implements OnInit, OnDestroy {
   loading = false;
 
   // filters
@@ -24,41 +26,73 @@ export class TrucksComponent implements OnInit {
 
   availableStatuses: string[] = [];
 
+  private readonly destroy$ = new Subject<void>();
+  private readonly search$ = new Subject<string>();
+
   constructor(private truckService: TruckService) {}
 
   ngOnInit(): void {
-    this.load();
+    // Debounced server-side search
+    this.search$
+      .pipe(
+        startWith(''),
+        debounceTime(300),
+        distinctUntilChanged(),
+        tap(() => (this.loading = true)),
+        switchMap((term) =>
+          this.truckService.getAll({ search: term?.trim() || undefined }).pipe(catchError(() => of([] as TruckDto[])))
+        ),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((data: TruckDto[]) => {
+        this.rows = data ?? [];
+
+        // status dropdown iz podataka
+        const set = new Set<string>();
+        for (const t of this.rows) {
+          if (t.vehicleStatusName) set.add(t.vehicleStatusName);
+        }
+        this.availableStatuses = Array.from(set).sort((a, b) => a.localeCompare(b));
+
+        // maintenance/status(name) filter ostaje lokalno
+        this.applyFilters();
+        this.loading = false;
+      });
+
+    // initial load
+    this.refresh();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // Called from HTML on typing (ngModelChange)
+  onSearchChange(value: string): void {
+    this.search = value;
+    this.search$.next(value);
+  }
+
+  // Manual refresh (button)
+  refresh(): void {
+    this.search$.next(this.search);
+  }
+
+  // Keep old name so you don't have to change all buttons
   load(): void {
-  this.loading = true;
-
-  this.truckService.getAll().subscribe({
-    next: (data: TruckDto[]) => {
-      this.rows = data ?? [];
-
-      const set = new Set<string>();
-      for (const t of this.rows) {
-        if (t.vehicleStatusName) set.add(t.vehicleStatusName);
-      }
-      this.availableStatuses = Array.from(set).sort((a, b) => a.localeCompare(b));
-
-      this.applyFilters();
-      this.loading = false;
-    },
-    error: () => {
-      this.rows = [];
-      this.filtered = [];
-      this.availableStatuses = [];
-      this.loading = false;
-    },
-  });
-}
+    this.refresh();
+  }
 
   clearFilters(): void {
     this.search = '';
     this.statusFilter = 'all';
     this.maintenanceFilter = 'all';
+
+    // reset server-side search
+    this.refresh();
+
+    // reset local filters
     this.applyFilters();
   }
 
@@ -66,10 +100,12 @@ export class TrucksComponent implements OnInit {
     const q = this.search.trim().toLowerCase();
 
     this.filtered = this.rows.filter((t) => {
+      // local status filter by name (until T-2.3.5)
       if (this.statusFilter !== 'all' && (t.vehicleStatusName ?? '') !== this.statusFilter) {
         return false;
       }
 
+      // maintenance filter (local)
       if (this.maintenanceFilter !== 'all') {
         const d = this.toDate(t.nextMaintenanceDate);
         if (!d) return false;
@@ -83,21 +119,9 @@ export class TrucksComponent implements OnInit {
         }
       }
 
-      if (!q) return true;
-
-      const hay = [
-        t.licensePlateNumber ?? '',
-        t.vinNumber ?? '',
-        t.make ?? '',
-        t.model ?? '',
-        String(t.year ?? ''),
-        t.vehicleStatusName ?? '',
-        t.gpsDeviceId ?? '',
-      ]
-        .join(' ')
-        .toLowerCase();
-
-      return hay.includes(q);
+      // NOTE: server-side search already filtered rows,
+      // but we keep this local search too so UI behaves the same.
+      return true;
     });
   }
 
