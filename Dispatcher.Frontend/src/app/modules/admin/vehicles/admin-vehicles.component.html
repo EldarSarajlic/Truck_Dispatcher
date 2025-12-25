@@ -38,46 +38,43 @@
       <span>Trucks</span>
     </a>
 
-    <!-- TRAILERS (COMING SOON) -->
-    <button
-      type="button"
-      (click)="setActive('trailers'); showComingSoon('Trailers')"
-      class="group pb-2 sm:pb-3
-             flex items-center gap-2 sm:gap-3
-             cursor-pointer
-             text-sm sm:text-base
-             text-base-content/70
-             transition-all duration-200
-             hover:-translate-y-[1px]
-             hover:text-base-content"
-      [ngClass]="{
-        'shadow-[inset_0_-3px_0_0_#2563eb] text-primary font-semibold': activeTab === 'trailers'
-      }"
-    >
-      <span
-        class="w-8 h-8 sm:w-10 sm:h-10
-               flex items-center justify-center rounded-full
-               bg-emerald-500/10 text-emerald-600
-               transition-all duration-200
-               group-hover:bg-emerald-500/20 group-hover:scale-105"
-      >
-        <!-- Trailer icon (box + wheels) -->
-        <svg xmlns="http://www.w3.org/2000/svg"
-             viewBox="0 0 24 24"
-             fill="none"
-             stroke="currentColor"
-             stroke-width="1.5"
-             stroke-linecap="round"
-             stroke-linejoin="round"
-             class="w-5 h-5 sm:w-6 sm:h-6">
-          <path d="M3 7h14v9H3z" />
-          <path d="M17 10h2a2 2 0 0 1 2 2v4h-4" />
-          <path d="M6.5 18.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3Z" />
-          <path d="M13.5 18.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3Z" />
-        </svg>
-      </span>
-      <span>Trailers</span>
-    </button>
+    <!-- TRAILERS -->
+<a
+  routerLink="trailers"
+  routerLinkActive="shadow-[inset_0_-3px_0_0_#2563eb] text-primary font-semibold"
+  class="group pb-2 sm:pb-3
+         flex items-center gap-2 sm:gap-3
+         cursor-pointer
+         text-sm sm:text-base
+         text-base-content/70
+         transition-all duration-200
+         hover:-translate-y-[1px]
+         hover:text-base-content"
+>
+  <span
+    class="w-8 h-8 sm:w-10 sm:h-10
+           flex items-center justify-center rounded-full
+           bg-emerald-500/10 text-emerald-600
+           transition-all duration-200
+           group-hover:bg-emerald-500/20 group-hover:scale-105"
+  >
+    <!-- Trailer icon -->
+    <svg xmlns="http://www.w3.org/2000/svg"
+         viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="1.5"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         class="w-5 h-5 sm:w-6 sm:h-6">
+      <path d="M3 7h14v9H3z" />
+      <path d="M17 10h2a2 2 0 0 1 2 2v4h-4" />
+      <path d="M6.5 18.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3Z" />
+      <path d="M13.5 18.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3Z" />
+    </svg>
+  </span>
+  <span>Trailers</span>
+</a>
 
     <!-- VEHICLE STATUS (COMING SOON) -->
     <button

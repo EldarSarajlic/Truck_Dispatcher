@@ -15,6 +15,7 @@ import { DashboardOverviewComponent } from './dashboard/overview/dashboard-overv
 import { OrderStatsComponent } from './dashboard/order-stats/order-stats.component';
 import { TrucksComponent } from './vehicles/trucks/trucks.component';
 import { MapComponent } from './map/map.component';
+import { TrailersComponent } from './vehicles/trailers/trailers.component';
 const routes: Routes = [
   {
     path: '',
@@ -38,6 +39,7 @@ const routes: Routes = [
        children: [
         { path: 'trucks', component: TrucksComponent },
         { path: '', redirectTo: 'trucks', pathMatch: 'full' },
+        {path: 'trailers', component: TrailersComponent},
   ],
 },
 

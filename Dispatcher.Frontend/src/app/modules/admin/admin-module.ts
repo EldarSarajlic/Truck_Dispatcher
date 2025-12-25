@@ -20,6 +20,7 @@ import { DashboardLayoutComponent } from './dashboard/dashboard-layout/dashboard
 import { DashboardOverviewComponent } from './dashboard/overview/dashboard-overview/dashboard-overview.component';
 import { OrderStatsComponent } from './dashboard/order-stats/order-stats.component';
 import { TrucksComponent } from './vehicles/trucks/trucks.component';
+import { TrailersComponent } from './vehicles/trailers/trailers.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { TrucksComponent } from './vehicles/trucks/trucks.component';
     DashboardOverviewComponent,
     OrderStatsComponent,
     TrucksComponent,
+    TrailersComponent,
   
   ],
   imports: [
