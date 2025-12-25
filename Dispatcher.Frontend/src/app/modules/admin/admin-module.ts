@@ -1,17 +1,16 @@
-import {NgModule} from '@angular/core';
-
-import {AdminRoutingModule} from './admin-routing-module';
-import {ProductsComponent} from './catalogs/products/products.component';
-import {ProductsAddComponent} from './catalogs/products/products-add/products-add.component';
-import {ProductsEditComponent} from './catalogs/products/products-edit/products-edit.component';
-import {AdminLayoutComponent} from './admin-layout/admin-layout.component';
-import {ProductCategoriesComponent} from './catalogs/product-categories/product-categories.component';
-import {
-  ProductCategoryUpsertComponent
-} from './catalogs/product-categories/product-category-upsert/product-category-upsert.component';
-import {AdminOrdersComponent} from './orders/admin-orders.component';
-import {AdminSettingsComponent} from './admin-settings/admin-settings.component';
-import {SharedModule} from '../shared/shared-module';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AdminRoutingModule } from './admin-routing-module';
+import { SharedModule } from '../shared/shared-module';
+import { ProductsComponent } from './catalogs/products/products.component';
+import { ProductsAddComponent } from './catalogs/products/products-add/products-add.component';
+import { ProductsEditComponent } from './catalogs/products/products-edit/products-edit.component';
+import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
+import { ProductCategoriesComponent } from './catalogs/product-categories/product-categories.component';
+import { ProductCategoryUpsertComponent } from './catalogs/product-categories/product-category-upsert/product-category-upsert.component';
+import { AdminOrdersComponent } from './orders/admin-orders.component';
+import { AdminSettingsComponent } from './admin-settings/admin-settings.component';
 import { OrderDetailsDialogComponent } from './orders/admin-orders-details-dialog/order-details-dialog.component';
 import { ChangeStatusDialogComponent } from './orders/change-status-dialog/change-status-dialog.component';
 import { AdminUsersComponent } from './users/admin-users.component';
@@ -19,8 +18,9 @@ import { AdminVehiclesComponent } from './vehicles/admin-vehicles.component';
 import { DashboardLayoutComponent } from './dashboard/dashboard-layout/dashboard-layout.component';
 import { DashboardOverviewComponent } from './dashboard/overview/dashboard-overview/dashboard-overview.component';
 import { OrderStatsComponent } from './dashboard/order-stats/order-stats.component';
+
 import { TrucksComponent } from './vehicles/trucks/trucks.component';
-import { TrailersComponent } from './vehicles/trailers/trailers.component';
+import { TruckFormModalComponent } from './vehicles/trucks/truck-form-modal/truck-form-modal.component';
 
 @NgModule({
   declarations: [
@@ -40,12 +40,14 @@ import { TrailersComponent } from './vehicles/trailers/trailers.component';
     DashboardOverviewComponent,
     OrderStatsComponent,
     TrucksComponent,
-    TrailersComponent,
-  
+    TruckFormModalComponent,
   ],
   imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     AdminRoutingModule,
     SharedModule,
-  ]
+  ],
 })
-export class AdminModule { }
+export class AdminModule {}
