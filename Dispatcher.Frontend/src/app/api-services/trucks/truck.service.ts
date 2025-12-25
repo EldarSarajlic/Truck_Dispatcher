@@ -1,8 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { CreateTruckRequest, TruckDto, UpdateTruckRequest } from '../../core/models/truck.model';
+
+export type TruckQuery = {
+  search?: string;
+  status?: number | null; // VehicleStatusId (for T-2.3.5)
+};
 
 @Injectable({ providedIn: 'root' })
 export class TruckService {
@@ -10,9 +15,16 @@ export class TruckService {
 
   constructor(private http: HttpClient) {}
 
-  // GET /Trucks
-  getAll(): Observable<TruckDto[]> {
-    return this.http.get<TruckDto[]>(`${this.baseUrl}/Trucks`);
+  // GET /Trucks?Search=...&Status=...
+  getAll(query?: TruckQuery): Observable<TruckDto[]> {
+    let params = new HttpParams();
+
+    if (query?.search) params = params.set('Search', query.search);
+    if (query?.status !== null && query?.status !== undefined) {
+      params = params.set('Status', String(query.status));
+    }
+
+    return this.http.get<TruckDto[]>(`${this.baseUrl}/Trucks`, { params });
   }
 
   // GET /Trucks/{id}
