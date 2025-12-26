@@ -21,7 +21,8 @@ import { OrderStatsComponent } from './dashboard/order-stats/order-stats.compone
 
 import { TrucksComponent } from './vehicles/trucks/trucks.component';
 import { TruckFormModalComponent } from './vehicles/trucks/truck-form-modal/truck-form-modal.component';
-
+import { TrailersComponent } from './vehicles/trailers/trailers.component';
+import { TrailerFormModalComponent } from './vehicles/trailers/trailer-form-modal/trailer-form-modal.component';
 @NgModule({
   declarations: [
     ProductsComponent,
@@ -41,6 +42,8 @@ import { TruckFormModalComponent } from './vehicles/trucks/truck-form-modal/truc
     OrderStatsComponent,
     TrucksComponent,
     TruckFormModalComponent,
+    TrailersComponent,
+    TrailerFormModalComponent,
   ],
   imports: [
     CommonModule,
