@@ -113,30 +113,40 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Last Maintenance -->
-        <label class="form-control w-full">
-          <div class="label"><span class="label-text">Last Maintenance Date</span></div>
-          <input type="date" class="input input-bordered w-full" formControlName="lastMaintenanceDate" />
-        </label>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Last Maintenance Date</mat-label>
+          <input matInput [matDatepicker]="lastPicker" formControlName="lastMaintenanceDate" />
+          <mat-datepicker-toggle matIconSuffix [for]="lastPicker"></mat-datepicker-toggle>
+           <mat-datepicker #lastPicker></mat-datepicker>
+        </mat-form-field>
 
         <!-- Next Maintenance -->
-        <label class="form-control w-full">
-          <div class="label"><span class="label-text">Next Maintenance Date</span></div>
-          <input type="date" class="input input-bordered w-full" formControlName="nextMaintenanceDate" />
-        </label>
+       <mat-form-field appearance="outline" class="w-full">
+       <mat-label>Next Maintenance Date</mat-label>
+       <input matInput [matDatepicker]="nextPicker" formControlName="nextMaintenanceDate" />
+         <mat-datepicker-toggle matIconSuffix [for]="nextPicker"></mat-datepicker-toggle>
+          <mat-datepicker #nextPicker></mat-datepicker>
+</mat-form-field>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Registration Expiration -->
-        <label class="form-control w-full">
-          <div class="label"><span class="label-text">Registration Expiration</span></div>
-          <input type="date" class="input input-bordered w-full" formControlName="registrationExpiration" />
-        </label>
+        
+        <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Registration Expiration</mat-label>
+        <input matInput [matDatepicker]="registrationPicker" formControlName="registrationExpiration" />
+       <mat-datepicker-toggle matIconSuffix [for]="registrationPicker"></mat-datepicker-toggle>
+       <mat-datepicker #registrationPicker></mat-datepicker>
+        </mat-form-field>
 
         <!-- Insurance Expiration -->
-        <label class="form-control w-full">
-          <div class="label"><span class="label-text">Insurance Expiration</span></div>
-          <input type="date" class="input input-bordered w-full" formControlName="insuranceExpiration" />
-        </label>
+        
+       <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Insurance Expiration</mat-label>
+        <input matInput [matDatepicker]="insurancePicker" formControlName="insuranceExpiration" />
+       <mat-datepicker-toggle matIconSuffix [for]="insurancePicker"></mat-datepicker-toggle>
+       <mat-datepicker #insurancePicker></mat-datepicker>
+        </mat-form-field>
       </div>
 
       <!-- Footer buttons -->
