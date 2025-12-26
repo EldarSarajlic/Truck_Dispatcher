@@ -1,4 +1,4 @@
-<!-- Truck Form Modal (T-2.3.6) -->
+<!-- Truck Form Modal (T-2.3.6 + 2.3.8) -->
 <app-truck-form-modal
   [open]="modalOpen"
   [mode]="modalMode"
@@ -152,11 +152,12 @@
           </div>
         </div>
 
-        <!-- Actions -->
+        <!-- Actions for this truck -->
         <div class="flex flex-wrap gap-3 pt-2">
           <button class="btn bg-base-200 border-0" type="button" (click)="view(t)">View Details</button>
           <button class="btn bg-base-200 border-0" type="button" (click)="edit(t)">Edit</button>
           <button class="btn bg-base-200 border-0" type="button" (click)="changeStatus(t)">Change Status</button>
+          <button class="btn bg-error border-0 text-white" type="button" (click)="delete(t)">Delete</button>
         </div>
 
       </div>

@@ -1,11 +1,22 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject, combineLatest, of } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import {
+  catchError,
+  debounceTime,
+  startWith,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs/operators';
 
 import { TruckService } from '../../../../api-services/vehicles/truck.service';
 import { VehicleStatusService } from '../../../../api-services/vehicles/vehicle-status.service';
 
-import { CreateTruckRequest, TruckDto, UpdateTruckRequest } from '../../../../core/models/truck.model';
+import {
+  CreateTruckRequest,
+  TruckDto,
+  UpdateTruckRequest,
+} from '../../../../core/models/truck.model';
 import { VehicleStatusDto } from '../../../../core/models/vehicle-status.model';
 
 type MaintenanceFilter = 'all' | 'dueSoon' | 'overdue';
@@ -31,7 +42,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
   rows: TruckDto[] = [];
   filtered: TruckDto[] = [];
 
-  // modal (T-2.3.6 UI only)
+  // modal
   modalOpen = false;
   modalMode: 'create' | 'edit' | 'view' = 'create';
   selectedTruck: TruckDto | null = null;
@@ -65,22 +76,32 @@ export class TrucksComponent implements OnInit, OnDestroy {
 
     // Debounced server-side filtering: Search + StatusId
     combineLatest([
-      this.search$.pipe(startWith(''), debounceTime(300), distinctUntilChanged()),
-      this.statusId$.pipe(startWith(null), distinctUntilChanged()),
+      this.search$.pipe(startWith(''), debounceTime(300)),
+      this.statusId$.pipe(startWith(null)),
     ])
       .pipe(
-        tap(() => (this.loading = true)),
+        tap(([term, statusId]) => {
+          console.log('COMBINELATEST VALUE', term, statusId);
+          this.loading = true;
+        }),
         switchMap(([term, statusId]) =>
           this.truckService
             .getAll({
               search: term?.trim() || undefined,
               status: statusId, // <- sends Status=<id>
             })
-            .pipe(catchError(() => of([] as TruckDto[])))
+            .pipe(
+              tap((res) => console.log('GETALL RESULT RAW', res)),
+              catchError((err) => {
+                console.error('GETALL ERROR', err);
+                return of([] as TruckDto[]);
+              })
+            )
         ),
         takeUntil(this.destroy$)
       )
       .subscribe((data: TruckDto[]) => {
+        console.log('SUBSCRIBE DATA', data);
         this.rows = data ?? [];
         this.applyFilters(); // maintenance stays local
         this.loading = false;
@@ -95,6 +116,8 @@ export class TrucksComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  // ------------ filters ------------
+
   onSearchChange(value: string): void {
     this.search = value;
     this.search$.next(value);
@@ -106,6 +129,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
   }
 
   refresh(): void {
+    console.log('REFRESH CALLED', this.search, this.statusId);
     this.search$.next(this.search);
     this.statusId$.next(this.statusId);
   }
@@ -141,7 +165,8 @@ export class TrucksComponent implements OnInit, OnDestroy {
     });
   }
 
-  // -------- modal handlers (T-2.3.6 UI only) --------
+  // ------------ modal handlers ------------
+
   openCreateTruck(): void {
     this.modalMode = 'create';
     this.selectedTruck = null;
@@ -162,15 +187,41 @@ export class TrucksComponent implements OnInit, OnDestroy {
 
   closeModal(): void {
     this.modalOpen = false;
+    this.selectedTruck = null;
   }
 
   onTruckFormSubmitted(payload: CreateTruckRequest | UpdateTruckRequest): void {
-    // Scope of T-2.3.6: no API integration yet
-    console.log('Truck form submitted:', payload);
-    this.closeModal();
+    console.log('FORM SUBMITTED PAYLOAD', payload);
+
+    if ('id' in payload) {
+      // UPDATE
+      this.truckService.update(payload.id, payload).subscribe({
+        next: () => {
+          console.log('UPDATE OK, calling refresh()');
+          this.closeModal();
+          this.refresh(); // ponovo učitaj listu sa servera
+        },
+        error: (err) => {
+          console.error('Greška pri ažuriranju kamiona', err);
+        },
+      });
+    } else {
+      // CREATE
+      this.truckService.create(payload).subscribe({
+        next: () => {
+          console.log('CREATE OK, calling refresh()');
+          this.closeModal();
+          this.refresh(); // ponovo učitaj listu
+        },
+        error: (err) => {
+          console.error('Greška pri kreiranju kamiona', err);
+        },
+      });
+    }
   }
 
-  // -------- row actions --------
+  // ------------ row actions ------------
+
   view(t: TruckDto): void {
     this.openViewTruck(t);
   }
@@ -179,11 +230,29 @@ export class TrucksComponent implements OnInit, OnDestroy {
     this.openEditTruck(t);
   }
 
+  delete(t: TruckDto): void {
+    if (!confirm(`Da li sigurno želiš obrisati kamion ${t.licensePlateNumber}?`)) {
+      return;
+    }
+
+    this.truckService.delete(t.id).subscribe({
+      next: () => {
+        console.log('DELETE OK, calling refresh()');
+        this.refresh(); // ponovo učitaj listu nakon brisanja
+      },
+      error: (err) => {
+        console.error('Greška pri brisanju kamiona', err);
+      },
+    });
+  }
+
   changeStatus(t: TruckDto): void {
     console.log('change status', t);
+    // ovdje po želji kasnije dodaš enable/disable
   }
 
   // ---------- helpers ----------
+
   formatDate(value: string | null): string {
     const d = this.toDate(value);
     if (!d) return '-';
