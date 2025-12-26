@@ -42,10 +42,19 @@ export class TrucksComponent implements OnInit, OnDestroy {
   rows: TruckDto[] = [];
   filtered: TruckDto[] = [];
 
+  // pagination
+  pageSize = 10;
+  currentPage = 1;
+  totalPages = 1;
+  paged: TruckDto[] = [];
+
   // modal
   modalOpen = false;
   modalMode: 'create' | 'edit' | 'view' = 'create';
   selectedTruck: TruckDto | null = null;
+
+  // inline status edit (Change Status dropdown)
+  editingStatusTruckId: number | null = null;
 
   private readonly destroy$ = new Subject<void>();
   private readonly search$ = new Subject<string>();
@@ -103,7 +112,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
       .subscribe((data: TruckDto[]) => {
         console.log('SUBSCRIBE DATA', data);
         this.rows = data ?? [];
-        this.applyFilters(); // maintenance stays local
+        this.applyFilters(); // maintenance stays local (and updates pagination)
         this.loading = false;
       });
 
@@ -163,6 +172,48 @@ export class TrucksComponent implements OnInit, OnDestroy {
 
       return true;
     });
+
+    // reset to first page after filtering and update pagination
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  // ------------ pagination helpers ------------
+
+  private updatePagination(): void {
+    const totalItems = this.filtered.length;
+    this.totalPages = Math.max(1, Math.ceil(totalItems / this.pageSize));
+
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+    if (this.currentPage < 1) {
+      this.currentPage = 1;
+    }
+
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.paged = this.filtered.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updatePagination();
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
+    }
   }
 
   // ------------ modal handlers ------------
@@ -199,10 +250,10 @@ export class TrucksComponent implements OnInit, OnDestroy {
         next: () => {
           console.log('UPDATE OK, calling refresh()');
           this.closeModal();
-          this.refresh(); // ponovo učitaj listu sa servera
+          this.refresh(); // reload list
         },
         error: (err) => {
-          console.error('Greška pri ažuriranju kamiona', err);
+          console.error('Error updating truck', err);
         },
       });
     } else {
@@ -211,10 +262,10 @@ export class TrucksComponent implements OnInit, OnDestroy {
         next: () => {
           console.log('CREATE OK, calling refresh()');
           this.closeModal();
-          this.refresh(); // ponovo učitaj listu
+          this.refresh(); // reload list
         },
         error: (err) => {
-          console.error('Greška pri kreiranju kamiona', err);
+          console.error('Error creating truck', err);
         },
       });
     }
@@ -238,7 +289,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
     this.truckService.delete(t.id).subscribe({
       next: () => {
         console.log('DELETE OK, calling refresh()');
-        this.refresh(); // ponovo učitaj listu nakon brisanja
+        this.refresh();
       },
       error: (err) => {
         console.error('Greška pri brisanju kamiona', err);
@@ -246,9 +297,46 @@ export class TrucksComponent implements OnInit, OnDestroy {
     });
   }
 
+  // klik na "Change Status" → otvori dropdown za taj truck
   changeStatus(t: TruckDto): void {
-    console.log('change status', t);
-    // ovdje po želji kasnije dodaš enable/disable
+    this.editingStatusTruckId = t.id;
+  }
+
+  // odabir statusa iz dropdowna → pošalji update
+  changeStatusForTruck(truck: TruckDto, newStatusId: number): void {
+    if (truck.vehicleStatusId === newStatusId) {
+      this.editingStatusTruckId = null;
+      return;
+    }
+
+    const payload: UpdateTruckRequest = {
+      id: truck.id,
+      licensePlateNumber: truck.licensePlateNumber,
+      vinNumber: truck.vinNumber,
+      make: truck.make,
+      model: truck.model,
+      year: truck.year,
+      capacity: truck.capacity,
+      engineCapacity: truck.engineCapacity,
+      kw: truck.kw,
+      gpsDeviceId: truck.gpsDeviceId,
+      lastMaintenanceDate: truck.lastMaintenanceDate,
+      nextMaintenanceDate: truck.nextMaintenanceDate,
+      registrationExpiration: truck.registrationExpiration,
+      insuranceExpiration: truck.insuranceExpiration,
+      vehicleStatusId: newStatusId,
+    };
+
+    this.truckService.update(truck.id, payload).subscribe({
+      next: () => {
+        console.log('STATUS CHANGE OK, calling refresh()');
+        this.editingStatusTruckId = null;
+        this.refresh();
+      },
+      error: (err) => {
+        console.error('Greška pri promjeni statusa kamiona', err);
+      },
+    });
   }
 
   // ---------- helpers ----------

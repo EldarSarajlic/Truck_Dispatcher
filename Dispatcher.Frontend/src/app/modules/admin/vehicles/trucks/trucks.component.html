@@ -90,7 +90,7 @@
 
   <!-- Cards -->
   <ng-container *ngIf="!loading">
-    <div *ngFor="let t of filtered" class="card bg-base-100 shadow">
+    <div *ngFor="let t of paged" class="card bg-base-100 shadow">
       <div class="card-body gap-6">
 
         <!-- Top row -->
@@ -156,7 +156,37 @@
         <div class="flex flex-wrap gap-3 pt-2">
           <button class="btn bg-base-200 border-0" type="button" (click)="view(t)">View Details</button>
           <button class="btn bg-base-200 border-0" type="button" (click)="edit(t)">Edit</button>
-          <button class="btn bg-base-200 border-0" type="button" (click)="changeStatus(t)">Change Status</button>
+
+          <!-- Change Status: button or dropdown -->
+          <ng-container *ngIf="editingStatusTruckId !== t.id; else statusSelectTpl">
+            <button
+              class="btn bg-base-200 border-0"
+              type="button"
+              (click)="changeStatus(t)"
+            >
+              Change Status
+            </button>
+          </ng-container>
+
+          <ng-template #statusSelectTpl>
+            <select
+              class="select select-bordered"
+              [ngModel]="t.vehicleStatusId"
+              (ngModelChange)="changeStatusForTruck(t, $event)"
+            >
+              <!-- prikaži trenutni status na vrhu -->
+              <option [ngValue]="t.vehicleStatusId" disabled>
+                Current: {{ t.vehicleStatusName || 'Unknown' }}
+              </option>
+              <option disabled>──────────</option>
+
+              <!-- svi mogući statusi -->
+              <option *ngFor="let s of availableStatusOptions" [ngValue]="s.id">
+                {{ s.statusName }}
+              </option>
+            </select>
+          </ng-template>
+
           <button class="btn bg-error border-0 text-white" type="button" (click)="delete(t)">Delete</button>
         </div>
 
@@ -167,4 +197,37 @@
       No trucks found.
     </div>
   </ng-container>
+
+  <!-- Pagination -->
+  <div *ngIf="filtered.length > pageSize" class="flex justify-center items-center gap-2 pt-4">
+    <button
+      class="btn btn-sm"
+      type="button"
+      (click)="prevPage()"
+      [disabled]="currentPage === 1"
+    >
+      « Prev
+    </button>
+
+    <div class="join">
+      <button
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        type="button"
+        class="btn btn-sm join-item"
+        [ngClass]="{ 'btn-active': currentPage === i + 1 }"
+        (click)="goToPage(i + 1)"
+      >
+        {{ i + 1 }}
+      </button>
+    </div>
+
+    <button
+      class="btn btn-sm"
+      type="button"
+      (click)="nextPage()"
+      [disabled]="currentPage === totalPages"
+    >
+      Next »
+    </button>
+  </div>
 </div>
