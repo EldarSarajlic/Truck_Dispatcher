@@ -23,6 +23,22 @@ export class TruckFormModalComponent implements OnChanges {
 
  form!: FormGroup;
 
+private parseBackendDate(value: string | null): Date | null {
+  if (!value) return null;
+
+  // Accept: "2025-10-22 23:56:27.4423254" or "2025-10-22T23:56:27.4423254"
+  let s = value.trim().replace(' ', 'T');
+
+  // Trim fractional seconds to 3 digits (JS Date reliably supports milliseconds)
+  s = s.replace(/\.(\d{3})\d+$/, '.$1');
+
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+
+
+
 constructor(private fb: FormBuilder) {
   this.form = this.fb.group({
     licensePlateNumber: ['', [Validators.required, Validators.maxLength(50)]],
@@ -34,10 +50,10 @@ constructor(private fb: FormBuilder) {
     engineCapacity: [0, [Validators.required, Validators.min(0)]],
     kw: [0, [Validators.required, Validators.min(0)]],
     vehicleStatusId: [null as number | null, [Validators.required]],
-    lastMaintenanceDate: [null as string | null],
-    nextMaintenanceDate: [null as string | null],
-    registrationExpiration: [null as string | null],
-    insuranceExpiration: [null as string | null],
+    lastMaintenanceDate: [null as Date | null],
+    nextMaintenanceDate: [null as Date | null],
+    registrationExpiration: [null as Date | null],
+    insuranceExpiration: [null as Date | null],
     gpsDeviceId: [null as string | null],
   });
 }
@@ -61,28 +77,32 @@ constructor(private fb: FormBuilder) {
     this.closed.emit();
   }
 
-  onSubmit(): void {
-    if (this.isView) return;
+ onSubmit(): void {
+  if (this.isView) return;
 
-    this.form.markAllAsTouched();
-    if (this.form.invalid) return;
+  this.form.markAllAsTouched();
+  if (this.form.invalid) return;
 
-    const base: CreateTruckRequest = {
-      licensePlateNumber: this.form.value.licensePlateNumber,
-      vinNumber: this.form.value.vinNumber,
-      make: this.form.value.make,
-      model: this.form.value.model,
-      year: Number(this.form.value.year),
-      capacity: Number(this.form.value.capacity),
-      lastMaintenanceDate: this.form.value.lastMaintenanceDate || null,
-      nextMaintenanceDate: this.form.value.nextMaintenanceDate || null,
-      registrationExpiration: this.form.value.registrationExpiration || null,
-      insuranceExpiration: this.form.value.insuranceExpiration || null,
-      gpsDeviceId: this.form.value.gpsDeviceId || null,
-      vehicleStatusId: Number(this.form.value.vehicleStatusId),
-      engineCapacity: Number(this.form.value.engineCapacity),
-      kw: Number(this.form.value.kw),
-    };
+  const toYmd = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : null);
+  const v = this.form.getRawValue();
+
+  const base: CreateTruckRequest = {
+    licensePlateNumber: v.licensePlateNumber,
+    vinNumber: v.vinNumber,
+    make: v.make,
+    model: v.model,
+    year: Number(v.year),
+    capacity: Number(v.capacity),
+    lastMaintenanceDate: toYmd(v.lastMaintenanceDate),
+    nextMaintenanceDate: toYmd(v.nextMaintenanceDate),
+    registrationExpiration: toYmd(v.registrationExpiration),
+    insuranceExpiration: toYmd(v.insuranceExpiration),
+    gpsDeviceId: v.gpsDeviceId || null,
+    vehicleStatusId: Number(v.vehicleStatusId),
+    engineCapacity: Number(v.engineCapacity),
+    kw: Number(v.kw),
+  };
+
 
     if (this.mode === 'create') {
       this.submitted.emit(base);
@@ -112,24 +132,26 @@ private syncForm(): void {
     gpsDeviceId: null,
   });
 
-  if (this.mode !== 'create' && this.truck) {
-    this.form.patchValue({
-      licensePlateNumber: this.truck.licensePlateNumber ?? '',
-      vinNumber: this.truck.vinNumber ?? '',
-      make: this.truck.make ?? '',
-      model: this.truck.model ?? '',
-      year: this.truck.year ?? new Date().getFullYear(),
-      capacity: this.truck.capacity ?? 0,
-      engineCapacity: this.truck.engineCapacity ?? 0,
-      kw: this.truck.kw ?? 0,
-      vehicleStatusId: this.truck.vehicleStatusId ?? null,
-      lastMaintenanceDate: this.truck.lastMaintenanceDate ?? null,
-      nextMaintenanceDate: this.truck.nextMaintenanceDate ?? null,
-      registrationExpiration: this.truck.registrationExpiration ?? null,
-      insuranceExpiration: this.truck.insuranceExpiration ?? null,
-      gpsDeviceId: this.truck.gpsDeviceId ?? null,
-    });
-  }
+ if (this.mode !== 'create' && this.truck) {
+  this.form.patchValue({
+    licensePlateNumber: this.truck.licensePlateNumber ?? '',
+    vinNumber: this.truck.vinNumber ?? '',
+    make: this.truck.make ?? '',
+    model: this.truck.model ?? '',
+    year: this.truck.year ?? new Date().getFullYear(),
+    capacity: this.truck.capacity ?? 0,
+    engineCapacity: this.truck.engineCapacity ?? 0,
+    kw: this.truck.kw ?? 0,
+    vehicleStatusId: this.truck.vehicleStatusId ?? null,
+
+    lastMaintenanceDate: this.parseBackendDate(this.truck.lastMaintenanceDate),
+    nextMaintenanceDate: this.parseBackendDate(this.truck.nextMaintenanceDate),
+    registrationExpiration: this.parseBackendDate(this.truck.registrationExpiration),
+    insuranceExpiration: this.parseBackendDate(this.truck.insuranceExpiration),
+
+    gpsDeviceId: this.truck.gpsDeviceId ?? null,
+  });
+}
 
   // View mode: lock everything
   if (this.isView) {
