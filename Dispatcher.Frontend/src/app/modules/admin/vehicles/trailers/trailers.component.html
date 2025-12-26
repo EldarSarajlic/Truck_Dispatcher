@@ -1,1 +1,238 @@
-<p>trailers works!</p>
+<!-- Trailer Form Modal -->
+<app-trailer-form-modal
+  [open]="modalOpen"
+  [mode]="modalMode"
+  [trailer]="selectedTrailer"
+  [statusOptions]="availableStatusOptions"
+  (closed)="closeModal()"
+  (submitted)="onTrailerFormSubmitted($event)"
+></app-trailer-form-modal>
+
+
+
+
+<!-- ================= BLOCK 1: Header + Filters ================= -->
+<div class="card bg-base-100 shadow">
+  <div class="card-body gap-6">
+
+    <div class="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
+
+      <!-- Left: Title -->
+      <div class="flex items-center gap-4">
+        <div class="btn btn-circle btn-primary pointer-events-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 7h13v8H3V7zm13 2h2l3 3v3h-5v-6zM5 19a2 2 0 104 0H5zm12 0a2 2 0 104 0h-4z" />
+          </svg>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold">Trailers</h2>
+        </div>
+      </div>
+
+      <!-- Right: Actions -->
+      <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto lg:justify-end">
+
+        <!-- Status filter -->
+        <select
+          class="select select-bordered w-full sm:w-72"
+          [ngModel]="statusId"
+          (ngModelChange)="onStatusIdChange($event)"
+        >
+          <option [ngValue]="null">Filter by Status (All)</option>
+          <option *ngFor="let s of availableStatusOptions" [ngValue]="s.id">
+            {{ s.statusName }}
+          </option>
+        </select>
+
+        <!-- Search -->
+        <div class="join w-full sm:w-72">
+          <input
+            class="input input-bordered join-item w-full"
+            placeholder="Search trailers..."
+            [ngModel]="search"
+            (ngModelChange)="onSearchChange($event)"
+          />
+          <button
+            class="btn join-item bg-base-200 border-base-300"
+            type="button"
+            (click)="applyFilters()"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70"
+                 viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M12.9 14.32a8 8 0 111.414-1.414l3.387 3.387a1 1 0 01-1.414 1.414l-3.387-3.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Clear filters -->
+        <button class="btn btn-outline w-full sm:w-auto" type="button"
+                (click)="clearFilters()">
+          Clear filters
+        </button>
+
+        <!-- Refresh -->
+        <button class="btn btn-ghost w-full sm:w-auto" type="button"
+                (click)="load()" [disabled]="loading">
+          Refresh
+        </button>
+
+        <!-- Add -->
+        <button class="btn btn-primary w-full sm:w-44" type="button"
+                (click)="openCreateTrailer()">
+          Add Trailer
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- spacing -->
+<div class="h-6"></div>
+
+<!-- ================= BLOCK 2: Trailers list ================= -->
+<div class="space-y-6">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center py-10">
+    <span class="loading loading-spinner loading-lg"></span>
+  </div>
+
+  <!-- Cards -->
+  <ng-container *ngIf="!loading">
+
+    <div *ngFor="let t of filtered" class="card bg-base-100 shadow">
+      <div class="card-body gap-6">
+
+        <!-- Top row -->
+        <div class="flex items-start justify-between gap-6">
+
+          <div class="flex items-start gap-5">
+            <div class="w-12 h-12 rounded-2xl bg-base-200 flex items-center justify-center">
+              <span class="text-2xl">🚛</span>
+            </div>
+
+            <div>
+              <div class="text-2xl font-bold leading-tight">
+                {{ t.licensePlateNumber || '-' }}
+              </div>
+              <div class="text-base-content/60">
+                {{ (t.make || '-') + ' ' + (t.model || '-') + ' (' + (t.year || '-') + ')' }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Status badge -->
+          <div
+            class="badge badge-lg px-5 py-4 gap-2"
+            [ngClass]="getStatusBadgeClass(t.vehicleStatusName)"
+          >
+            <span
+              class="w-2.5 h-2.5 rounded-full"
+              [ngClass]="getStatusDotClass(t.vehicleStatusName)"
+            ></span>
+            <span class="uppercase font-semibold">
+              {{ t.vehicleStatusName || 'UNKNOWN' }}
+            </span>
+          </div>
+
+        </div>
+
+        <!-- divider -->
+        <div class="divider my-0"></div>
+
+        <!-- Info grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+          <!-- Left -->
+          <div class="space-y-6">
+
+            <div>
+              <div class="text-xs tracking-widest text-base-content/50 uppercase">
+                Capacity
+              </div>
+              <div class="text-lg font-semibold">
+                {{ formatCapacity(t.capacity) }}
+              </div>
+            </div>
+
+            <div>
+              <div class="text-xs tracking-widest text-base-content/50 uppercase">
+                Type
+              </div>
+              <div class="text-lg font-semibold">
+                {{ t.type || '-' }}
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right -->
+          <div class="space-y-6">
+
+            <div>
+              <div class="text-xs tracking-widest text-base-content/50 uppercase">
+                Length
+              </div>
+              <div class="text-lg font-semibold flex items-center gap-2">
+                <span class="opacity-70">📏</span>
+                <span>{{ t.length }} m</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="text-xs tracking-widest text-base-content/50 uppercase">
+                Registration Expiration
+              </div>
+              <div class="text-lg font-semibold flex items-center gap-2">
+                <span class="opacity-70">📅</span>
+                <span>{{ formatDate(t.registrationExpiration) }}</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="text-xs tracking-widest text-base-content/50 uppercase">
+                Insurance Expiration
+              </div>
+              <div class="text-lg font-semibold flex items-center gap-2">
+                <span class="opacity-70">🛡️</span>
+                <span>{{ formatDate(t.insuranceExpiration) }}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-wrap gap-3 pt-2">
+          <button class="btn bg-base-200 border-0" type="button"
+                  (click)="view(t)">
+            View Details
+          </button>
+          <button class="btn bg-base-200 border-0" type="button"
+                  (click)="edit(t)">
+            Edit
+          </button>
+          <button class="btn bg-base-200 border-0" type="button"
+                  (click)="changeStatus(t)">
+            Change Status
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Empty -->
+    <div *ngIf="filtered.length === 0"
+         class="text-center text-base-content/60 py-10">
+      No trailers found.
+    </div>
+
+  </ng-container>
+</div>

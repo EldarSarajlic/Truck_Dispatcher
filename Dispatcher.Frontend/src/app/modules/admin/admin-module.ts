@@ -20,10 +20,8 @@ import { DashboardOverviewComponent } from './dashboard/overview/dashboard-overv
 import { OrderStatsComponent } from './dashboard/order-stats/order-stats.component';
 import { TrucksComponent } from './vehicles/trucks/trucks.component';
 import { TruckFormModalComponent } from './vehicles/trucks/truck-form-modal/truck-form-modal.component';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { TrailersComponent } from './vehicles/trailers/trailers.component';
+import { TrailerFormModalComponent } from './vehicles/trailers/trailer-form-modal/trailer-form-modal.component';
 @NgModule({
   declarations: [
     ProductsComponent,
@@ -43,6 +41,8 @@ import { MatInputModule } from '@angular/material/input';
     OrderStatsComponent,
     TrucksComponent,
     TruckFormModalComponent,
+    TrailersComponent,
+    TrailerFormModalComponent,
   ],
   imports: [
     CommonModule,
