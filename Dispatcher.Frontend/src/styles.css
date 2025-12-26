@@ -145,3 +145,56 @@ html[data-theme="dark"] {
 .alert-info {
   @apply bg-info text-info-content;
 }
+/* ================================
+   Truck status badge – svjetle nijanse
+   ================================ */
+
+/* AVAILABLE – badge-success */
+.badge.badge-success {
+  background-color: #c8f7de !important; /* svijetlo zelena */
+  color: #14532d !important;            /* tamno zeleni tekst */
+  border: none;
+}
+
+/* IN TRANSIT – badge-info */
+.badge.badge-info {
+  background-color: #dbeafe !important; /* svijetlo plava */
+  color: #1d4ed8 !important;            /* tamno plavi tekst */
+  border: none;
+}
+
+/* MAINTENANCE – badge-warning (ako ga imaš) */
+.badge.badge-warning {
+  background-color: #fef9c3 !important; /* svijetlo žuta */
+  color: #854d0e !important;            /* tamno zlatna */
+  border: none;
+}
+
+/* OUT OF SERVICE – badge-error */
+.badge.badge-error {
+  background-color: #ffe0e7 !important; /* svijetlo roze */
+  color: #7f1d1d !important;            /* tamno crveni tekst */
+  border: none;
+}
+
+/* ================================
+   Tačkice unutar badge-a – jače boje
+   ================================ */
+
+/* mala tačka ima klase w-2.5 h-2.5 rounded-full + bg-* */
+
+.badge-success .w-2\.5.h-2\.5 {
+  background-color: #22c55e !important; /* jača zelena */
+}
+
+.badge-info .w-2\.5.h-2\.5 {
+  background-color: #2563eb !important; /* jača plava */
+}
+
+.badge-warning .w-2\.5.h-2\.5 {
+  background-color: #eab308 !important; /* jača žuta */
+}
+
+.badge-error .w-2\.5.h-2\.5 {
+  background-color: #f97373 !important; /* jača crvena */
+}

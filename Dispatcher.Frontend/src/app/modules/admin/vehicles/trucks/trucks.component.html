@@ -30,23 +30,11 @@
       <!-- Right: Actions -->
       <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto lg:justify-end">
 
-        <!-- Status filter -->
-        <select
-          class="select select-bordered w-full sm:w-72"
-          [ngModel]="statusId"
-          (ngModelChange)="onStatusIdChange($event)"
-        >
-          <option [ngValue]="null">Filtriraj po Statusu (All)</option>
-          <option *ngFor="let s of availableStatusOptions" [ngValue]="s.id">
-            {{ s.statusName }}
-          </option>
-        </select>
-
-        <!-- Search -->
-        <div class="join w-full sm:w-72">
+        <!-- Search (PRVI, duži) -->
+        <div class="join w-full sm:w-96">
           <input
             class="input input-bordered join-item w-full"
-            placeholder="Pretraži kamione..."
+            placeholder="Search trucks..."
             [ngModel]="search"
             (ngModelChange)="onSearchChange($event)"
           />
@@ -57,9 +45,21 @@
           </button>
         </div>
 
+        <!-- Status filter (poslije searcha, kraći) -->
+        <select
+          class="select select-bordered w-full sm:w-44"
+          [ngModel]="statusId"
+          (ngModelChange)="onStatusIdChange($event)"
+        >
+          <option [ngValue]="null">Filter by Status (All)</option>
+          <option *ngFor="let s of availableStatusOptions" [ngValue]="s.id">
+            {{ s.statusName }}
+          </option>
+        </select>
+
         <!-- Clear filters -->
         <button class="btn btn-outline w-full sm:w-auto" type="button" (click)="clearFilters()">
-          Očisti Filtere
+          Clear filters
         </button>
 
         <!-- Refresh -->
@@ -69,7 +69,7 @@
 
         <!-- Add -->
         <button class="btn btn-primary w-full sm:w-44" type="button" (click)="openCreateTruck()">
-          Dodaj
+          Add truck
         </button>
       </div>
     </div>
@@ -124,33 +124,60 @@
         <!-- divider -->
         <div class="divider my-0"></div>
 
-        <!-- Info grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div class="space-y-6">
-            <div>
-              <div class="text-xs tracking-widest text-base-content/50 uppercase">Capacity</div>
-              <div class="text-lg font-semibold">{{ formatCapacity(t.capacity) }}</div>
-            </div>
+       <!-- Info grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+  <!-- Left column -->
+  <div class="space-y-6">
+    <!-- Capacity -->
+    <div>
+      <div class="text-xs tracking-widest text-base-content/50 uppercase">Capacity</div>
+      <div class="text-lg font-semibold">{{ formatCapacity(t.capacity) }}</div>
+    </div>
 
-            <div>
-              <div class="text-xs tracking-widest text-base-content/50 uppercase">Next service</div>
-              <div class="text-lg font-semibold flex items-center gap-2">
-                <span class="opacity-70">🛠️</span>
-                <span>{{ formatMonthYear(t.nextMaintenanceDate) }}</span>
-              </div>
-            </div>
-          </div>
+    <!-- Next service -->
+    <div>
+      <div class="text-xs tracking-widest text-base-content/50 uppercase">Next service</div>
+      <div class="text-lg font-semibold flex items-center gap-2">
+        <span class="opacity-70">🛠️</span>
+        <span>{{ formatMonthYear(t.nextMaintenanceDate) }}</span>
+      </div>
+    </div>
+  </div>
 
-          <div class="space-y-6">
-            <div>
-              <div class="text-xs tracking-widest text-base-content/50 uppercase">Location</div>
-              <div class="text-lg font-semibold flex items-center gap-2">
-                <span class="opacity-70">📍</span>
-                <span>—</span>
-              </div>
-            </div>
-          </div>
-        </div>
+  <!-- Right column -->
+  <div class="space-y-6">
+    <!-- Location (ostaje za sada “—”) -->
+    <div>
+      <div class="text-xs tracking-widest text-base-content/50 uppercase">Location</div>
+      <div class="text-lg font-semibold flex items-center gap-2">
+        <span class="opacity-70">📍</span>
+        <span>—</span>
+      </div>
+    </div>
+
+    <!-- Registration Expiration -->
+    <div>
+      <div class="text-xs tracking-widest text-base-content/50 uppercase">
+        Registration Expiration
+      </div>
+      <div class="text-lg font-semibold flex items-center gap-2">
+        <span class="opacity-70">📅</span>
+        <span>{{ formatDate(t.registrationExpiration) }}</span>
+      </div>
+    </div>
+
+    <!-- Insurance Expiration -->
+    <div>
+      <div class="text-xs tracking-widest text-base-content/50 uppercase">
+        Insurance Expiration
+      </div>
+      <div class="text-lg font-semibold flex items-center gap-2">
+        <span class="opacity-70">🛡️</span>
+        <span>{{ formatDate(t.insuranceExpiration) }}</span>
+      </div>
+    </div>
+  </div>
+</div>
 
         <!-- Actions for this truck -->
         <div class="flex flex-wrap gap-3 pt-2">

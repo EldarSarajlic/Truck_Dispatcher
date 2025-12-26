@@ -32,7 +32,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
 
   // filters
   search = '';
-  statusId: number | null = null; // <- VehicleStatusId (T-2.3.5)
+  statusId: number | null = null;
   maintenanceFilter: MaintenanceFilter = 'all';
 
   // dropdown data (from /VehicleStatuses)
@@ -53,7 +53,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
   modalMode: 'create' | 'edit' | 'view' = 'create';
   selectedTruck: TruckDto | null = null;
 
-  // inline status edit (Change Status dropdown)
+  // inline status edit
   editingStatusTruckId: number | null = null;
 
   private readonly destroy$ = new Subject<void>();
@@ -66,7 +66,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Load status options for dropdown
+    // Load status options
     this.vehicleStatusService
       .getAll()
       .pipe(takeUntil(this.destroy$))
@@ -74,7 +74,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
         next: (data: VehicleStatusDto[]) => {
           this.availableStatusOptions = (data ?? [])
             .slice()
-            .sort((a: VehicleStatusDto, b: VehicleStatusDto) =>
+            .sort((a, b) =>
               (a.statusName ?? '').localeCompare(b.statusName ?? '')
             );
         },
@@ -83,7 +83,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
         },
       });
 
-    // Debounced server-side filtering: Search + StatusId
+    // Debounced filtering
     combineLatest([
       this.search$.pipe(startWith(''), debounceTime(300)),
       this.statusId$.pipe(startWith(null)),
@@ -97,7 +97,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
           this.truckService
             .getAll({
               search: term?.trim() || undefined,
-              status: statusId, // <- sends Status=<id>
+              status: statusId,
             })
             .pipe(
               tap((res) => console.log('GETALL RESULT RAW', res)),
@@ -112,7 +112,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
       .subscribe((data: TruckDto[]) => {
         console.log('SUBSCRIBE DATA', data);
         this.rows = data ?? [];
-        this.applyFilters(); // maintenance stays local (and updates pagination)
+        this.applyFilters();
         this.loading = false;
       });
 
@@ -125,7 +125,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // ------------ filters ------------
+  // filters
 
   onSearchChange(value: string): void {
     this.search = value;
@@ -154,7 +154,6 @@ export class TrucksComponent implements OnInit, OnDestroy {
     this.refresh();
   }
 
-  // Only maintenance filter is local now
   applyFilters(): void {
     this.filtered = this.rows.filter((t) => {
       if (this.maintenanceFilter !== 'all') {
@@ -173,12 +172,11 @@ export class TrucksComponent implements OnInit, OnDestroy {
       return true;
     });
 
-    // reset to first page after filtering and update pagination
     this.currentPage = 1;
     this.updatePagination();
   }
 
-  // ------------ pagination helpers ------------
+  // pagination
 
   private updatePagination(): void {
     const totalItems = this.filtered.length;
@@ -216,7 +214,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ------------ modal handlers ------------
+  // modal handlers
 
   openCreateTruck(): void {
     this.modalMode = 'create';
@@ -245,24 +243,22 @@ export class TrucksComponent implements OnInit, OnDestroy {
     console.log('FORM SUBMITTED PAYLOAD', payload);
 
     if ('id' in payload) {
-      // UPDATE
       this.truckService.update(payload.id, payload).subscribe({
         next: () => {
           console.log('UPDATE OK, calling refresh()');
           this.closeModal();
-          this.refresh(); // reload list
+          this.refresh();
         },
         error: (err) => {
           console.error('Error updating truck', err);
         },
       });
     } else {
-      // CREATE
       this.truckService.create(payload).subscribe({
         next: () => {
           console.log('CREATE OK, calling refresh()');
           this.closeModal();
-          this.refresh(); // reload list
+          this.refresh();
         },
         error: (err) => {
           console.error('Error creating truck', err);
@@ -271,7 +267,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ------------ row actions ------------
+  // row actions
 
   view(t: TruckDto): void {
     this.openViewTruck(t);
@@ -297,12 +293,12 @@ export class TrucksComponent implements OnInit, OnDestroy {
     });
   }
 
-  // klik na "Change Status" → otvori dropdown za taj truck
+  // inline status dropdown
+
   changeStatus(t: TruckDto): void {
     this.editingStatusTruckId = t.id;
   }
 
-  // odabir statusa iz dropdowna → pošalji update
   changeStatusForTruck(truck: TruckDto, newStatusId: number): void {
     if (truck.vehicleStatusId === newStatusId) {
       this.editingStatusTruckId = null;
@@ -339,7 +335,7 @@ export class TrucksComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ---------- helpers ----------
+  // helpers
 
   formatDate(value: string | null): string {
     const d = this.toDate(value);
