@@ -18,10 +18,12 @@ import { AdminVehiclesComponent } from './vehicles/admin-vehicles.component';
 import { DashboardLayoutComponent } from './dashboard/dashboard-layout/dashboard-layout.component';
 import { DashboardOverviewComponent } from './dashboard/overview/dashboard-overview/dashboard-overview.component';
 import { OrderStatsComponent } from './dashboard/order-stats/order-stats.component';
-
 import { TrucksComponent } from './vehicles/trucks/trucks.component';
 import { TruckFormModalComponent } from './vehicles/trucks/truck-form-modal/truck-form-modal.component';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 @NgModule({
   declarations: [
     ProductsComponent,
@@ -48,6 +50,10 @@ import { TruckFormModalComponent } from './vehicles/trucks/truck-form-modal/truc
     ReactiveFormsModule,
     AdminRoutingModule,
     SharedModule,
+     MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
 })
 export class AdminModule {}
