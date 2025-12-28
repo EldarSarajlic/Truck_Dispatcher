@@ -1,224 +1,176 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject, of } from 'rxjs';
+import { takeUntil, catchError, tap, switchMap, startWith } from 'rxjs/operators';
 
-export interface TrailerDto {
-  id: number;
-  licensePlateNumber: string;
-  make: string;
-  model: string;
-  year: number;
-  type: string;
-  length: number;
-  capacity: number;
-  registrationExpiration: string | null;
-  insuranceExpiration: string | null;
-  vehicleStatusId: number;
-  vehicleStatusName: string;
-}
+import { TrailersService } from '../../../../api-services/vehicles/trailers/trailers-api.service';
+import { VehicleStatusService } from '../../../../api-services/vehicles/vehicle-status.service';
 
-export interface VehicleStatusDto {
-  id: number;
-  statusName: string;
-}
+import {
+  ListTrailerQueryDto,
+  CreateTrailerCommand,
+  UpdateTrailerCommand,
+  ChangeTrailerStatusCommand
+} from '../../../../api-services/vehicles/trailers/trailers-api.model';
+
+import { VehicleStatusDto } from '../../../../core/models/vehicle-status.model';
 
 @Component({
   selector: 'app-trailers',
   templateUrl: './trailers.component.html',
   standalone: false,
-  styleUrls: ['./trailers.component.css'],
+  styleUrls: ['./trailers.component.css']
 })
-export class TrailersComponent implements OnInit {
+export class TrailersComponent implements OnInit, OnDestroy {
   loading = false;
 
   // filters
-  search = '';
   statusId: number | null = null;
-
-  // dropdown status options (dummy)
-  availableStatusOptions: VehicleStatusDto[] = [
-    { id: 1, statusName: 'Available' },
-    { id: 2, statusName: 'In Transit' },
-    { id: 3, statusName: 'Maintenance' },
-    { id: 4, statusName: 'Out of Service' },
-  ];
+  availableStatusOptions: VehicleStatusDto[] = [];
 
   // data
-  rows: TrailerDto[] = [];
-  filtered: TrailerDto[] = [];
+  rows: ListTrailerQueryDto[] = [];
+  filtered: ListTrailerQueryDto[] = [];
 
   // modal
   modalOpen = false;
   modalMode: 'create' | 'edit' | 'view' = 'create';
-  selectedTrailer: TrailerDto | null = null;
+  selectedTrailer: ListTrailerQueryDto | null = null;
+
+  // inline status edit
+  editingStatusTrailerId: number | null = null;
+
+  private readonly destroy$ = new Subject<void>();
+  private readonly statusId$ = new Subject<number | null>();
+
+  constructor(
+    private trailersService: TrailersService,
+    private vehicleStatusService: VehicleStatusService
+  ) {}
 
   ngOnInit(): void {
-    this.load();
+    // load vehicle status options
+    this.vehicleStatusService.getAll()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: data => this.availableStatusOptions = (data ?? []).sort((a,b) => (a.statusName ?? '').localeCompare(b.statusName ?? '')),
+        error: () => this.availableStatusOptions = []
+      });
+
+    // load trailers
+    this.statusId$
+      .pipe(
+        startWith(null),
+        tap(() => this.loading = true),
+        switchMap(() =>
+          this.trailersService.list()
+            .pipe(
+              catchError(err => {
+                console.error('Error loading trailers', err);
+                return of({ items: [] } as any);
+              })
+            )
+        ),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(res => {
+        this.rows = res.items ?? [];
+        this.applyFilters();
+        this.loading = false;
+      });
+
+    this.refresh();
   }
 
-  // ---------------- DATA ----------------
-
-  load(): void {
-    this.loading = true;
-
-    // ⏱ fake loading
-    setTimeout(() => {
-      this.rows = this.getDummyTrailers();
-      this.applyFilters();
-      this.loading = false;
-    }, 400);
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  private getDummyTrailers(): TrailerDto[] {
-    return [
-      {
-        id: 1,
-        licensePlateNumber: 'TR-101-AA',
-        make: 'Schmitz',
-        model: 'S.CS',
-        year: 2019,
-        type: 'Refrigerated',
-        length: 13.6,
-        capacity: 24,
-        registrationExpiration: '2025-06-30',
-        insuranceExpiration: '2025-05-15',
-        vehicleStatusId: 1,
-        vehicleStatusName: 'Available',
-      },
-      {
-        id: 2,
-        licensePlateNumber: 'TR-202-BB',
-        make: 'Krone',
-        model: 'Cool Liner',
-        year: 2021,
-        type: 'Refrigerated',
-        length: 13.6,
-        capacity: 25,
-        registrationExpiration: '2024-12-01',
-        insuranceExpiration: '2024-11-10',
-        vehicleStatusId: 2,
-        vehicleStatusName: 'In Transit',
-      },
-      {
-        id: 3,
-        licensePlateNumber: 'TR-303-CC',
-        make: 'Kögel',
-        model: 'SN24',
-        year: 2017,
-        type: 'Flatbed',
-        length: 12.0,
-        capacity: 22,
-        registrationExpiration: '2024-08-20',
-        insuranceExpiration: '2024-08-01',
-        vehicleStatusId: 3,
-        vehicleStatusName: 'Maintenance',
-      },
-      {
-        id: 4,
-        licensePlateNumber: 'TR-404-DD',
-        make: 'Schwarzmüller',
-        model: 'Curtainsider',
-        year: 2016,
-        type: 'Curtainsider',
-        length: 13.6,
-        capacity: 23,
-        registrationExpiration: null,
-        insuranceExpiration: null,
-        vehicleStatusId: 4,
-        vehicleStatusName: 'Out of Service',
-      },
-    ];
+  refresh(): void {
+    this.statusId$.next(this.statusId);
   }
 
-  // ---------------- FILTERS ----------------
-
-  onSearchChange(value: string): void {
-    this.search = value;
-    this.applyFilters();
+  applyFilters(): void {
+    if (this.statusId != null) {
+      this.filtered = this.rows.filter(x => x.vehicleStatusId === this.statusId);
+    } else {
+      this.filtered = [...this.rows];
+    }
   }
 
   onStatusIdChange(value: number | null): void {
     this.statusId = value;
-    this.applyFilters();
+    this.refresh();
   }
 
   clearFilters(): void {
-    this.search = '';
     this.statusId = null;
-    this.applyFilters();
+    this.refresh();
   }
 
-  applyFilters(): void {
-    const term = this.search.toLowerCase();
-
-    this.filtered = this.rows.filter((t) => {
-      if (term) {
-        const text =
-          `${t.licensePlateNumber} ${t.make} ${t.model} ${t.type}`.toLowerCase();
-        if (!text.includes(term)) return false;
-      }
-
-      if (this.statusId !== null && t.vehicleStatusId !== this.statusId) {
-        return false;
-      }
-
-      return true;
-    });
-  }
-
-  // ---------------- MODAL ----------------
-
+  // modal handlers
   openCreateTrailer(): void {
     this.modalMode = 'create';
     this.selectedTrailer = null;
     this.modalOpen = true;
   }
 
-  openEditTrailer(t: TrailerDto): void {
+  openEditTrailer(trailer: ListTrailerQueryDto): void {
     this.modalMode = 'edit';
-    this.selectedTrailer = t;
+    this.selectedTrailer = trailer;
     this.modalOpen = true;
   }
 
-  openViewTrailer(t: TrailerDto): void {
+  openViewTrailer(trailer: ListTrailerQueryDto): void {
     this.modalMode = 'view';
-    this.selectedTrailer = t;
+    this.selectedTrailer = trailer;
     this.modalOpen = true;
   }
 
   closeModal(): void {
     this.modalOpen = false;
+    this.selectedTrailer = null;
   }
 
-  onTrailerFormSubmitted(payload: any): void {
-    console.log('Trailer form submitted:', payload);
-    this.closeModal();
+  onTrailerFormSubmitted(payload: CreateTrailerCommand | UpdateTrailerCommand): void {
+    if ('id' in payload) {
+      this.trailersService.update(payload.id, payload).subscribe({
+        next: () => { this.closeModal(); this.refresh(); },
+        error: err => console.error(err)
+      });
+    } else {
+      this.trailersService.create(payload).subscribe({
+        next: () => { this.closeModal(); this.refresh(); },
+        error: err => console.error(err)
+      });
+    }
   }
 
-  // ---------------- ROW ACTIONS ----------------
-
-  view(t: TrailerDto): void {
-    this.openViewTrailer(t);
+  // row actions
+  view(trailer: ListTrailerQueryDto): void { this.openViewTrailer(trailer); }
+  edit(trailer: ListTrailerQueryDto): void { this.openEditTrailer(trailer); }
+  delete(trailer: ListTrailerQueryDto): void {
+    if (!confirm(`Da li sigurno želiš obrisati prikolicu ${trailer.licensePlateNumber}?`)) return;
+    this.trailersService.delete(trailer.id).subscribe({
+      next: () => this.refresh(),
+      error: err => console.error(err)
+    });
   }
 
-  edit(t: TrailerDto): void {
-    this.openEditTrailer(t);
+  // inline status
+  changeStatus(trailer: ListTrailerQueryDto): void {
+    this.editingStatusTrailerId = trailer.id;
   }
 
-  changeStatus(t: TrailerDto): void {
-    console.log('Change status:', t);
-  }
-
-  // ---------------- HELPERS ----------------
-
-  formatDate(value: string | null): string {
-    if (!value) return '-';
-    const d = new Date(value);
-    if (isNaN(d.getTime())) return '-';
-    return d.toISOString().split('T')[0];
-  }
-
-  formatCapacity(value: number): string {
-    if (value === null || value === undefined) return '-';
-    return `${value.toFixed(1)} tons`;
+  changeStatusForTrailer(trailer: ListTrailerQueryDto, newStatusId: number): void {
+    if (trailer.vehicleStatusId === newStatusId) {
+      this.editingStatusTrailerId = null;
+      return;
+    }
+    this.trailersService.changeStatus(trailer.id, { vehicleStatusId: newStatusId }).subscribe({
+      next: () => { this.editingStatusTrailerId = null; this.refresh(); },
+      error: err => console.error(err)
+    });
   }
 
   getStatusBadgeClass(status: string | null): string {
@@ -237,5 +189,24 @@ export class TrailersComponent implements OnInit {
     if (s.includes('maintenance')) return 'bg-warning';
     if (s.includes('out')) return 'bg-error';
     return 'bg-base-content/40';
+  }
+
+   formatCapacity(value: number): string {
+    if (value === null || value === undefined) return '-';
+    return `${value.toFixed(1)} tons`;
+  }
+
+  formatDate(value: string | null): string {
+    const d = this.toDate(value);
+    if (!d) return '-';
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+    private toDate(value: string | null): Date | null {
+    if (!value) return null;
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : d;
   }
 }

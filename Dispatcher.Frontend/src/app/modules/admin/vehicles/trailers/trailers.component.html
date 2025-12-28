@@ -8,9 +8,6 @@
   (submitted)="onTrailerFormSubmitted($event)"
 ></app-trailer-form-modal>
 
-
-
-
 <!-- ================= BLOCK 1: Header + Filters ================= -->
 <div class="card bg-base-100 shadow">
   <div class="card-body gap-6">
@@ -47,38 +44,10 @@
           </option>
         </select>
 
-        <!-- Search -->
-        <div class="join w-full sm:w-72">
-          <input
-            class="input input-bordered join-item w-full"
-            placeholder="Search trailers..."
-            [ngModel]="search"
-            (ngModelChange)="onSearchChange($event)"
-          />
-          <button
-            class="btn join-item bg-base-200 border-base-300"
-            type="button"
-            (click)="applyFilters()"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70"
-                 viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd"
-                d="M12.9 14.32a8 8 0 111.414-1.414l3.387 3.387a1 1 0 01-1.414 1.414l-3.387-3.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z"
-                clip-rule="evenodd" />
-            </svg>
-          </button>
-        </div>
-
         <!-- Clear filters -->
         <button class="btn btn-outline w-full sm:w-auto" type="button"
                 (click)="clearFilters()">
           Clear filters
-        </button>
-
-        <!-- Refresh -->
-        <button class="btn btn-ghost w-full sm:w-auto" type="button"
-                (click)="load()" [disabled]="loading">
-          Refresh
         </button>
 
         <!-- Add -->
@@ -131,11 +100,11 @@
           <!-- Status badge -->
           <div
             class="badge badge-lg px-5 py-4 gap-2"
-            [ngClass]="getStatusBadgeClass(t.vehicleStatusName)"
+            [ngClass]="getStatusBadgeClass(t.vehicleStatusName ?? null)"
           >
             <span
               class="w-2.5 h-2.5 rounded-full"
-              [ngClass]="getStatusDotClass(t.vehicleStatusName)"
+              [ngClass]="getStatusDotClass(t.vehicleStatusName ?? null)"
             ></span>
             <span class="uppercase font-semibold">
               {{ t.vehicleStatusName || 'UNKNOWN' }}

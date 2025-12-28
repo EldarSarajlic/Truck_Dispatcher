@@ -1,10 +1,17 @@
-using MediatR;
+using Dispatcher.Application.Common;
 
 namespace Dispatcher.Application.Modules.Vehicles.Trailers.Queries.List
 {
-    public sealed class ListTrailerQuery : IRequest<List<ListTrailerQueryDto>>
+    public sealed class ListTrailerQuery : BasePagedQuery<ListTrailerQueryDto>
     {
-        public string? Search { get; set; }
-        public int? Status { get; set; }
+        /// <summary>
+        /// Free text search (license plate, make, model, type)
+        /// </summary>
+        public string? Search { get; init; }
+
+        /// <summary>
+        /// Filter by vehicle status
+        /// </summary>
+        public int? Status { get; init; }
     }
 }

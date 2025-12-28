@@ -1,44 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-// Ako već imaš modele u core/models, koristi njih.
-// Ako nemaš, možeš ostaviti ove lokalne tipove ili ih prebaci u core/models.
-export interface TrailerDto {
-  id: number;
-  licensePlateNumber: string;
-  make: string;
-  model: string;
-  year: number;
-  type: string;
-  registrationExpiration: string | null;
-  insuranceExpiration: string | null;
-  length: number;
-  capacity: number;
-  vehicleStatusId: number;
-  vehicleStatusName?: string;
-}
-
-export interface CreateTrailerRequest {
-  licensePlateNumber: string;
-  make: string;
-  model: string;
-  year: number;
-  type: string;
-  registrationExpiration: string | null;
-  insuranceExpiration: string | null;
-  length: number;
-  capacity: number;
-  vehicleStatusId: number;
-}
-
-export interface UpdateTrailerRequest extends CreateTrailerRequest {
-  id: number;
-}
-
-export interface VehicleStatusDto {
-  id: number;
-  statusName: string;
-}
+import {
+  ListTrailerQueryDto,
+  CreateTrailerCommand,
+  UpdateTrailerCommand
+} from '../../../../../api-services/vehicles/trailers/trailers-api.model';
+import { VehicleStatusDto } from '../../../../../core/models/vehicle-status.model';
 
 export type TrailerModalMode = 'create' | 'edit' | 'view';
 
@@ -51,11 +18,11 @@ export type TrailerModalMode = 'create' | 'edit' | 'view';
 export class TrailerFormModalComponent implements OnChanges {
   @Input() open = false;
   @Input() mode: TrailerModalMode = 'create';
-  @Input() trailer: TrailerDto | null = null;
+  @Input() trailer: ListTrailerQueryDto | null = null;
   @Input() statusOptions: VehicleStatusDto[] = [];
 
   @Output() closed = new EventEmitter<void>();
-  @Output() submitted = new EventEmitter<CreateTrailerRequest | UpdateTrailerRequest>();
+  @Output() submitted = new EventEmitter<CreateTrailerCommand | UpdateTrailerCommand>();
 
   form!: FormGroup;
 
@@ -102,27 +69,31 @@ export class TrailerFormModalComponent implements OnChanges {
 
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
+    const toYmd = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : null);
+    const v = this.form.getRawValue();
 
-    const base: CreateTrailerRequest = {
-      licensePlateNumber: this.form.value.licensePlateNumber,
-      make: this.form.value.make,
-      model: this.form.value.model,
-      year: Number(this.form.value.year),
-      type: this.form.value.type,
 
-      length: Number(this.form.value.length),
-      capacity: Number(this.form.value.capacity),
 
-      registrationExpiration: this.form.value.registrationExpiration || null,
-      insuranceExpiration: this.form.value.insuranceExpiration || null,
 
-      vehicleStatusId: Number(this.form.value.vehicleStatusId),
+
+    const base: CreateTrailerCommand = {
+      licensePlateNumber: v.licensePlateNumber,
+      make: v.make,
+      model: v.model,
+      year: Number(v.year),
+      type: v.type,
+      length: Number(v.length),
+      capacity: Number(v.capacity),
+      vehicleStatusId: Number(v.vehicleStatusId),
+      registrationExpiration: v.registrationExpiration || null,
+      insuranceExpiration: v.insuranceExpiration || null,
+      
     };
 
     if (this.mode === 'create') {
       this.submitted.emit(base);
     } else if (this.mode === 'edit' && this.trailer) {
-      const payload: UpdateTrailerRequest = { id: this.trailer.id, ...base };
+      const payload: UpdateTrailerCommand = { id: this.trailer.id, ...base };
       this.submitted.emit(payload);
     }
   }
@@ -165,11 +136,9 @@ export class TrailerFormModalComponent implements OnChanges {
       this.form.enable({ emitEvent: false });
     }
 
-    // Edit mode: po želji zaključaš neke fieldove (kao truck)
+    // Edit mode: optionally lock fields
     if (this.mode === 'edit') {
-      // npr. tablice često ne mijenjaš:
       this.form.get('licensePlateNumber')?.disable({ emitEvent: false });
-      // i year možda:
       this.form.get('year')?.disable({ emitEvent: false });
     }
   }
