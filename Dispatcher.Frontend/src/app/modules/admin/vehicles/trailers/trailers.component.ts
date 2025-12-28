@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject, of } from 'rxjs';
-import { takeUntil, catchError, tap, switchMap, startWith } from 'rxjs/operators';
+import { Subject,combineLatest ,of } from 'rxjs';
+import { takeUntil, catchError, tap, switchMap, startWith,debounceTime } from 'rxjs/operators';
 
 import { TrailersService } from '../../../../api-services/vehicles/trailers/trailers-api.service';
 import { VehicleStatusService } from '../../../../api-services/vehicles/vehicle-status.service';
@@ -23,6 +23,7 @@ import { VehicleStatusDto } from '../../../../core/models/vehicle-status.model';
 export class TrailersComponent implements OnInit, OnDestroy {
   loading = false;
 
+  search = '';
   // filters
   statusId: number | null = null;
   availableStatusOptions: VehicleStatusDto[] = [];
@@ -41,7 +42,7 @@ export class TrailersComponent implements OnInit, OnDestroy {
 
   private readonly destroy$ = new Subject<void>();
   private readonly statusId$ = new Subject<number | null>();
-
+private readonly search$ = new Subject<string>();
   constructor(
     private trailersService: TrailersService,
     private vehicleStatusService: VehicleStatusService
@@ -56,29 +57,43 @@ export class TrailersComponent implements OnInit, OnDestroy {
         error: () => this.availableStatusOptions = []
       });
 
-    // load trailers
-    this.statusId$
-      .pipe(
-        startWith(null),
-        tap(() => this.loading = true),
-        switchMap(() =>
-          this.trailersService.list()
-            .pipe(
-              catchError(err => {
-                console.error('Error loading trailers', err);
-                return of({ items: [] } as any);
-              })
-            )
-        ),
-        takeUntil(this.destroy$)
+// Debounced server-side filtering: Search + StatusId
+combineLatest([
+  this.search$.pipe(startWith(''), debounceTime(300)),
+  this.statusId$.pipe(startWith(null)),
+])
+  .pipe(
+    tap(([term, statusId]) => {
+      console.log('COMBINELATEST VALUE', term, statusId);
+      this.loading = true;
+    }),
+    switchMap(([term, statusId]) =>
+      this.trailersService.list({
+        search: term?.trim() || undefined,
+        status: statusId || undefined, // <- filter by status on server
+        paging: { page: 1, pageSize: 1000 },
+      }).pipe(
+        tap((res) => console.log('GETALL TRAILERS RAW', res)),
+        catchError((err) => {
+          console.error('GETALL TRAILERS ERROR', err);
+          return of({ items: [] } as any);
+        })
       )
-      .subscribe(res => {
-        this.rows = res.items ?? [];
-        this.applyFilters();
-        this.loading = false;
-      });
+    ),
+    takeUntil(this.destroy$)
+  )
+  .subscribe((res: { items: ListTrailerQueryDto[] }) => {
+    console.log('SUBSCRIBE TRAILERS DATA', res);
+    this.rows = res.items ?? [];
+    this.applyFilters(); // local filtering if needed
+    this.loading = false;
+  });
 
-    this.refresh();
+// initial load
+this.search$.next('');
+this.statusId$.next(null);
+
+
   }
 
   ngOnDestroy(): void {
@@ -88,6 +103,11 @@ export class TrailersComponent implements OnInit, OnDestroy {
 
   refresh(): void {
     this.statusId$.next(this.statusId);
+  }
+
+ onSearchChange(value: string): void {
+    this.search = value;
+    this.search$.next(value);
   }
 
   applyFilters(): void {
@@ -104,8 +124,11 @@ export class TrailersComponent implements OnInit, OnDestroy {
   }
 
   clearFilters(): void {
+    this.search = '';
     this.statusId = null;
-    this.refresh();
+      this.search$.next('');
+  this.statusId$.next(null);
+    
   }
 
   // modal handlers

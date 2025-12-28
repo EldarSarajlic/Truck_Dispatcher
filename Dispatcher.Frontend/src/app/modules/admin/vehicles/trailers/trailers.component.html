@@ -8,19 +8,17 @@
   (submitted)="onTrailerFormSubmitted($event)"
 ></app-trailer-form-modal>
 
-<!-- ================= BLOCK 1: Header + Filters ================= -->
+<!-- BLOCK 1: Header + Filters -->
 <div class="card bg-base-100 shadow">
   <div class="card-body gap-6">
 
     <div class="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
-
       <!-- Left: Title -->
       <div class="flex items-center gap-4">
         <div class="btn btn-circle btn-primary pointer-events-none">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-               viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 7h13v8H3V7zm13 2h2l3 3v3h-5v-6zM5 19a2 2 0 104 0H5zm12 0a2 2 0 104 0h-4z" />
+              d="M3 7h11v8H3V7zm11 3h3l4 4v1h-7v-5zM6 19a2 2 0 104 0H6zm10 0a2 2 0 104 0h-4z" />
           </svg>
         </div>
 
@@ -32,9 +30,24 @@
       <!-- Right: Actions -->
       <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto lg:justify-end">
 
+        <!-- Search -->
+        <div class="join w-full sm:w-96">
+          <input
+            class="input input-bordered join-item w-full"
+            placeholder="Search trailers..."
+            [ngModel]="search"
+            (ngModelChange)="onSearchChange($event)"
+          />
+          <button class="btn join-item bg-base-200 border-base-300" type="button" (click)="applyFilters()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l3.387 3.387a1 1 0 01-1.414 1.414l-3.387-3.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+
         <!-- Status filter -->
         <select
-          class="select select-bordered w-full sm:w-72"
+          class="select select-bordered w-full sm:w-44"
           [ngModel]="statusId"
           (ngModelChange)="onStatusIdChange($event)"
         >
@@ -45,14 +58,12 @@
         </select>
 
         <!-- Clear filters -->
-        <button class="btn btn-outline w-full sm:w-auto" type="button"
-                (click)="clearFilters()">
+        <button class="btn btn-outline w-full sm:w-auto" type="button" (click)="clearFilters()">
           Clear filters
         </button>
 
         <!-- Add -->
-        <button class="btn btn-primary w-full sm:w-44" type="button"
-                (click)="openCreateTrailer()">
+        <button class="btn btn-primary w-full sm:w-44" type="button" (click)="openCreateTrailer()">
           Add Trailer
         </button>
 
@@ -61,6 +72,7 @@
 
   </div>
 </div>
+
 
 <!-- spacing -->
 <div class="h-6"></div>
