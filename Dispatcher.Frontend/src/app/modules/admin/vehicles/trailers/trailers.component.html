@@ -190,21 +190,56 @@
           </div>
         </div>
 
-        <!-- Actions -->
-        <div class="flex flex-wrap gap-3 pt-2">
-          <button class="btn bg-base-200 border-0" type="button"
-                  (click)="view(t)">
-            View Details
-          </button>
-          <button class="btn bg-base-200 border-0" type="button"
-                  (click)="edit(t)">
-            Edit
-          </button>
-          <button class="btn bg-base-200 border-0" type="button"
-                  (click)="changeStatus(t)">
-            Change Status
-          </button>
-        </div>
+<!-- Actions -->
+<div class="flex flex-wrap gap-3 pt-2">
+
+  <button class="btn bg-base-200 border-0" type="button" (click)="view(t)">
+    View Details
+  </button>
+
+  <button class="btn bg-base-200 border-0" type="button" (click)="edit(t)">
+    Edit
+  </button>
+
+  <!-- Change Status: button OR dropdown -->
+  <ng-container *ngIf="editingStatusTrailerId !== t.id; else statusSelectTpl">
+    <button
+      class="btn bg-base-200 border-0"
+      type="button"
+      (click)="changeStatus(t)"
+    >
+      Change Status
+    </button>
+  </ng-container>
+
+  <ng-template #statusSelectTpl>
+    <select
+      class="select select-bordered"
+      [ngModel]="t.vehicleStatusId"
+      (ngModelChange)="changeStatusForTrailer(t, $event)"
+    >
+      <option [ngValue]="t.vehicleStatusId" disabled>
+        Current: {{ t.vehicleStatusName || 'Unknown' }}
+      </option>
+      <option disabled>──────────</option>
+
+      <option *ngFor="let s of availableStatusOptions" [ngValue]="s.id">
+        {{ s.statusName }}
+      </option>
+    </select>
+  </ng-template>
+
+  <!-- Delete -->
+  <button
+    class="btn bg-error border-0 text-white"
+    type="button"
+    (click)="delete(t)"
+  >
+    Delete
+  </button>
+
+</div>
+
 
       </div>
     </div>
