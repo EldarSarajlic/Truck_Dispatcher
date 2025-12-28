@@ -67,9 +67,10 @@ public async Task<IActionResult> Update(
     return NoContent();
 }
 
+
 [HttpGet]
 [Authorize(Roles = "Admin,Dispatcher")]
-public async Task<ActionResult<List<ListTrailerQueryDto>>> List(
+public async Task<ActionResult<PageResult<ListTrailerQueryDto>>> List(
     [FromQuery] ListTrailerQuery query,
     CancellationToken ct)
 {

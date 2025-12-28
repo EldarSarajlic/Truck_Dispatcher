@@ -3,22 +3,24 @@ using MediatR;
 
 namespace Dispatcher.Application.Modules.Vehicles.Trailers.Queries.List
 {
-    public class ListTrailerQueryHandler(IAppDbContext ctx)
-        : IRequestHandler<ListTrailerQuery, List<ListTrailerQueryDto>>
+    public sealed class ListTrailerQueryHandler(IAppDbContext ctx)
+        : IRequestHandler<ListTrailerQuery, PageResult<ListTrailerQueryDto>>
     {
-        public async Task<List<ListTrailerQueryDto>> Handle(
+        public async Task<PageResult<ListTrailerQueryDto>> Handle(
             ListTrailerQuery request,
             CancellationToken cancellationToken)
         {
             var query = ctx.Trailers
+                .AsNoTracking()
                 .Include(t => t.VehicleStatus)
                 .Where(t => !t.IsDeleted)
                 .AsQueryable();
 
-            // Search filter
+            // === Search filter ===
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
                 var search = request.Search.Trim().ToLower();
+
                 query = query.Where(t =>
                     t.LicensePlateNumber.ToLower().Contains(search) ||
                     t.Make.ToLower().Contains(search) ||
@@ -27,13 +29,13 @@ namespace Dispatcher.Application.Modules.Vehicles.Trailers.Queries.List
                 );
             }
 
-            // Status filter
+            // === Status filter ===
             if (request.Status.HasValue)
             {
                 query = query.Where(t => t.VehicleStatusId == request.Status.Value);
             }
 
-            return await query
+            var projectedQuery = query
                 .OrderBy(t => t.LicensePlateNumber)
                 .ThenBy(t => t.Make)
                 .Select(t => new ListTrailerQueryDto
@@ -52,8 +54,12 @@ namespace Dispatcher.Application.Modules.Vehicles.Trailers.Queries.List
                     VehicleStatusName = t.VehicleStatus != null
                         ? t.VehicleStatus.StatusName
                         : null
-                })
-                .ToListAsync(cancellationToken);
+                });
+
+            return await PageResult<ListTrailerQueryDto>.FromQueryableAsync(
+                projectedQuery,
+                request.Paging,
+                cancellationToken);
         }
     }
 }
