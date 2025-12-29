@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject,combineLatest ,of } from 'rxjs';
-import { takeUntil, catchError, tap, switchMap, startWith,debounceTime } from 'rxjs/operators';
+import { Observable, Subject,combineLatest ,of } from 'rxjs';
+import { takeUntil, catchError, tap, switchMap, startWith,debounceTime, map } from 'rxjs/operators';
 
 import { TrailersService } from '../../../../api-services/vehicles/trailers/trailers-api.service';
 import { VehicleStatusService } from '../../../../api-services/vehicles/vehicle-status.service';
@@ -9,10 +9,12 @@ import {
   ListTrailerQueryDto,
   CreateTrailerCommand,
   UpdateTrailerCommand,
-  ChangeTrailerStatusCommand
+  ChangeTrailerStatusCommand,
+  ListTrailersResponse
 } from '../../../../api-services/vehicles/trailers/trailers-api.model';
 
 import { VehicleStatusDto } from '../../../../core/models/vehicle-status.model';
+import { PageResult } from '../../../../core/models/paging/page-result';
 
 @Component({
   selector: 'app-trailers',
@@ -23,10 +25,17 @@ import { VehicleStatusDto } from '../../../../core/models/vehicle-status.model';
 export class TrailersComponent implements OnInit, OnDestroy {
   loading = false;
 
+  
   search = '';
   // filters
   statusId: number | null = null;
   availableStatusOptions: VehicleStatusDto[] = [];
+
+currentPage = 1;
+pageSize = 10;
+totalPages = 1;
+totalItems = 0;
+
 
   // data
   rows: ListTrailerQueryDto[] = [];
@@ -42,59 +51,78 @@ export class TrailersComponent implements OnInit, OnDestroy {
 
   private readonly destroy$ = new Subject<void>();
   private readonly statusId$ = new Subject<number | null>();
+  private readonly currentPage$ = new Subject<number>();
+
 private readonly search$ = new Subject<string>();
   constructor(
     private trailersService: TrailersService,
     private vehicleStatusService: VehicleStatusService
   ) {}
 
-  ngOnInit(): void {
-    // load vehicle status options
-    this.vehicleStatusService.getAll()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: data => this.availableStatusOptions = (data ?? []).sort((a,b) => (a.statusName ?? '').localeCompare(b.statusName ?? '')),
-        error: () => this.availableStatusOptions = []
-      });
+ngOnInit(): void {
+  // load vehicle status options
+  this.vehicleStatusService.getAll()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: data => this.availableStatusOptions = (data ?? []).sort((a,b) => (a.statusName ?? '').localeCompare(b.statusName ?? '')),
+      error: () => this.availableStatusOptions = []
+    });
 
-// Debounced server-side filtering: Search + StatusId
-combineLatest([
-  this.search$.pipe(startWith(''), debounceTime(300)),
-  this.statusId$.pipe(startWith(null)),
-])
+  // server-side filtering + pagination
+  combineLatest([
+    this.search$.pipe(startWith(''), debounceTime(300)),
+    this.statusId$.pipe(startWith(null)),
+    this.currentPage$.pipe(startWith(this.currentPage))
+  ])
   .pipe(
-    tap(([term, statusId]) => {
-      console.log('COMBINELATEST VALUE', term, statusId);
-      this.loading = true;
-    }),
-    switchMap(([term, statusId]) =>
+    tap(() => this.loading = true),
+    switchMap(([term, statusId, page]) =>
       this.trailersService.list({
         search: term?.trim() || undefined,
-        status: statusId || undefined, // <- filter by status on server
-        paging: { page: 1, pageSize: 1000 },
+        status: statusId || undefined,
+        paging: { page, pageSize: this.pageSize },
       }).pipe(
-        tap((res) => console.log('GETALL TRAILERS RAW', res)),
-        catchError((err) => {
+        map(res => {
+          // mapiranje backend response { total, items } → PageResult
+          const totalItems = (res as any).total ?? 0;
+          return {
+            items: res.items ?? [],
+            totalItems,
+            totalPages: Math.ceil(totalItems / this.pageSize),
+            currentPage: page,
+            pageSize: this.pageSize,
+            includedTotal: true
+          } as PageResult<ListTrailerQueryDto>;
+        }),
+        catchError(err => {
           console.error('GETALL TRAILERS ERROR', err);
-          return of({ items: [] } as any);
+          return of({
+            items: [],
+            totalItems: 0,
+            totalPages: 0,
+            currentPage: page,
+            pageSize: this.pageSize,
+            includedTotal: true
+          } as PageResult<ListTrailerQueryDto>);
         })
       )
     ),
     takeUntil(this.destroy$)
   )
-  .subscribe((res: { items: ListTrailerQueryDto[] }) => {
-    console.log('SUBSCRIBE TRAILERS DATA', res);
-    this.rows = res.items ?? [];
-    this.applyFilters(); // local filtering if needed
+  .subscribe((res: PageResult<ListTrailerQueryDto>) => {
+    this.rows = res.items;
+    this.filtered = [...res.items];
+    this.totalItems = res.totalItems;
+    this.totalPages = res.totalPages;
+    this.currentPage = res.currentPage;
     this.loading = false;
   });
 
-// initial load
-this.search$.next('');
-this.statusId$.next(null);
-
-
-  }
+  // initial load
+  this.search$.next('');
+  this.statusId$.next(null);
+  this.currentPage$.next(this.currentPage);
+}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -108,6 +136,8 @@ this.statusId$.next(null);
  onSearchChange(value: string): void {
     this.search = value;
     this.search$.next(value);
+    this.currentPage = 1;             // reset na prvu stranicu
+  this.currentPage$.next(this.currentPage);
   }
 
   applyFilters(): void {
@@ -120,6 +150,8 @@ this.statusId$.next(null);
 
   onStatusIdChange(value: number | null): void {
     this.statusId = value;
+     this.currentPage = 1;             // reset na prvu stranicu
+  this.currentPage$.next(this.currentPage);
     this.refresh();
   }
 
@@ -130,6 +162,18 @@ this.statusId$.next(null);
   this.statusId$.next(null);
     
   }
+
+goToPage(page: number): void {
+  if (page < 1 || page > this.totalPages) return;
+  this.currentPage = page;
+  this.currentPage$.next(page);  // <- obavezno emitovati novu stranicu
+  console.log('GO TO PAGE', page);
+}
+
+
+prevPage(): void { this.goToPage(this.currentPage - 1); }
+nextPage(): void { this.goToPage(this.currentPage + 1); }
+
 
   // modal handlers
   openCreateTrailer(): void {
