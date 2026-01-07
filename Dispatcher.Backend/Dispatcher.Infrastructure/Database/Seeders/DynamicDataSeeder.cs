@@ -248,7 +248,7 @@ public static class DynamicDataSeeder
                 DateOfBirth = new DateTime(1995, 12, 10),
                 PasswordHash = hasher.HashPassword(null!, "string"),
                 Role = UserRole.Client,
-                IsEnabled = true,
+                IsEnabled = false,
                 TwoFactorEnabled = false,
                 AccessFailedCount = 0,
                 CityId = sarajevo?.Id
