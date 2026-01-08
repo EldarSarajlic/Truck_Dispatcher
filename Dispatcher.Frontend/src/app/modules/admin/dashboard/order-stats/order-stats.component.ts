@@ -57,7 +57,7 @@ export class OrderStatsComponent implements OnInit {
     { value: 12, label: 'December' }
   ];
 
-  years = [2023, 2024, 2025];
+  years = [2023, 2024, 2025,2026];
 
   selectedMonth = new Date().getMonth() + 1;
   selectedYear = new Date().getFullYear();
