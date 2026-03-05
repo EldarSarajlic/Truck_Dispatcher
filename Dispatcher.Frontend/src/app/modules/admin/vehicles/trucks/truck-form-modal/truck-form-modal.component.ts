@@ -12,8 +12,8 @@ import {
   TruckDto,
   CreateTruckRequest,
   UpdateTruckRequest,
-} from '../../../../../core/models/truck.model';
-import { VehicleStatusDto } from '../../../../../core/models/vehicle-status.model';
+} from '../../../../../api-services/vehicles/trucks/trucks.model';
+import { VehicleStatusDto } from '../../../../../api-services/vehicles/vehicle-statuses.model';
 
 export type TruckModalMode = 'create' | 'edit' | 'view';
 

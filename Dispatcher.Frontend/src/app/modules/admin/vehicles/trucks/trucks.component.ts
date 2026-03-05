@@ -9,15 +9,15 @@ import {
   tap,
 } from 'rxjs/operators';
 
-import { TruckService } from '../../../../api-services/vehicles/truck.service';
-import { VehicleStatusService } from '../../../../api-services/vehicles/vehicle-status.service';
+import { TruckService } from '../../../../api-services/vehicles/trucks/trucks.service';
+import { VehicleStatusService } from '../../../../api-services/vehicles/vehicle-statuses.service';
 
 import {
   CreateTruckRequest,
   TruckDto,
   UpdateTruckRequest,
-} from '../../../../core/models/truck.model';
-import { VehicleStatusDto } from '../../../../core/models/vehicle-status.model';
+} from '../../../../api-services/vehicles/trucks/trucks.model';
+import { VehicleStatusDto } from '../../../../api-services/vehicles/vehicle-statuses.model';
 
 type MaintenanceFilter = 'all' | 'dueSoon' | 'overdue';
 

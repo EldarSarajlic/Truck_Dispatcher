@@ -5,7 +5,7 @@ import {
   CreateTrailerCommand,
   UpdateTrailerCommand
 } from '../../../../../api-services/vehicles/trailers/trailers-api.model';
-import { VehicleStatusDto } from '../../../../../core/models/vehicle-status.model';
+import { VehicleStatusDto } from '../../../../../api-services/vehicles/vehicle-statuses.model';
 
 export type TrailerModalMode = 'create' | 'edit' | 'view';
 

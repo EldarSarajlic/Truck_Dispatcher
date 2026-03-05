@@ -3,7 +3,7 @@ import { Observable, Subject,combineLatest ,of } from 'rxjs';
 import { takeUntil, catchError, tap, switchMap, startWith,debounceTime, map } from 'rxjs/operators';
 
 import { TrailersService } from '../../../../api-services/vehicles/trailers/trailers-api.service';
-import { VehicleStatusService } from '../../../../api-services/vehicles/vehicle-status.service';
+import { VehicleStatusService } from '../../../../api-services/vehicles/vehicle-statuses.service';
 
 import {
   ListTrailerQueryDto,
@@ -13,7 +13,7 @@ import {
   ListTrailersResponse
 } from '../../../../api-services/vehicles/trailers/trailers-api.model';
 
-import { VehicleStatusDto } from '../../../../core/models/vehicle-status.model';
+import { VehicleStatusDto } from '../../../../api-services/vehicles/vehicle-statuses.model';
 import { PageResult } from '../../../../core/models/paging/page-result';
 
 @Component({
