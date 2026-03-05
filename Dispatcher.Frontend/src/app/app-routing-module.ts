@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {myAuthData, myAuthGuard} from './core/guards/my-auth-guard';
+import { NotFoundComponent } from './modules/not-found/not-found.component';
 
 const routes: Routes = [
   {
@@ -27,8 +28,17 @@ const routes: Routes = [
     loadChildren: () =>
       import('./modules/auth/auth-module').then(m => m.AuthModule)
   },
+  {
+    path: 'settings',
+    canActivate: [myAuthGuard],
+    data: myAuthData({ requireAuth: true }),
+    loadChildren: () =>
+      import('./modules/settings/settings-module').then(m => m.SettingsModule)
+  },
+  // named route so child modules can redirect here
+  { path: 'not-found', component: NotFoundComponent },
   // fallback 404
-  { path: '**', redirectTo: '' }
+  { path: '**', component: NotFoundComponent }
 ];
 
 @NgModule({

@@ -2,11 +2,11 @@
   <div class="flex items-"></div>
 <div class="table"></div>
   <!-- Animated Background Scene -->
-  <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+  <div class="absolute inset-0 bg-linear-to-br from-slate-900 via-blue-900 to-slate-900">
     <!-- Animated truck scene - blurred background -->
     <div class="absolute inset-0 blur-sm opacity-40">
       <!-- Sky gradient -->
-      <div class="absolute inset-0 bg-gradient-to-b from-blue-950 via-blue-900 to-slate-800"></div>
+      <div class="absolute inset-0 bg-linear-to-b from-blue-950 via-blue-900 to-slate-800"></div>
 
       <!-- Stars/dots for depth -->
       <div class="stars-container">
@@ -27,7 +27,7 @@
       </div>
 
       <!-- Road with perspective -->
-      <div class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-b from-gray-700/50 to-gray-800">
+      <div class="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-b from-gray-700/50 to-gray-800">
         <!-- Road markings with perspective -->
         <div class="road-markings">
           <!-- Center dashed line -->
@@ -81,7 +81,7 @@
     </div>
 
     <!-- Atmospheric overlay for depth -->
-    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-slate-900/40"></div>
+    <div class="absolute inset-0 bg-linear-to-t from-slate-900/60 via-transparent to-slate-900/40"></div>
 
     <!-- Subtle light rays -->
     <div class="absolute inset-0 opacity-10">
@@ -127,7 +127,7 @@
           <!-- Login Form -->
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
             <!-- Email Field -->
-            <div class="form-control min-h-[100px]">
+            <div class="form-control min-h-25">
               <label class="label">
                 <span class="label-text font-semibold text-sm uppercase tracking-wide">Email Address</span>
               </label>
@@ -149,7 +149,7 @@
                   [class.input-error]="form.controls.email.invalid && form.controls.email.touched && !emailFocused"
                 />
               </div>
-              <div class="min-h-[24px]">
+              <div class="min-h-6">
                 @if (form.controls.email.hasError('required') && form.controls.email.touched) {
                   <label class="label pt-1 pb-0 animate-fade-in">
                     <span class="label-text-alt text-error flex items-center gap-1">
@@ -174,7 +174,7 @@
             </div>
 
             <!-- Password Field -->
-            <div class="form-control min-h-[100px]">
+            <div class="form-control min-h-25">
               <label class="label">
                 <span class="label-text font-semibold text-sm uppercase tracking-wide">Password</span>
               </label>
@@ -212,7 +212,7 @@
                   }
                 </button>
               </div>
-              <div class="min-h-[24px]">
+              <div class="min-h-6">
                 @if (form.controls.password.hasError('required') && form.controls.password.touched) {
                   <label class="label pt-1 pb-0 animate-fade-in">
                     <span class="label-text-alt text-error flex items-center gap-1">

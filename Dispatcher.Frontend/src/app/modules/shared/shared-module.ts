@@ -8,7 +8,8 @@ import { FitConfirmDialogComponent } from './components/fit-confirm-dialog/fit-c
 import {DialogHelperService} from './services/dialog-helper.service';
 import { FitLoadingBarComponent } from './components/fit-loading-bar/fit-loading-bar.component';
 import { FitTableSkeletonComponent } from './components/fit-table-skeleton/fit-table-skeleton.component';
-
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { RouterModule } from '@angular/router';        
 
 
 @NgModule({
@@ -16,13 +17,15 @@ import { FitTableSkeletonComponent } from './components/fit-table-skeleton/fit-t
     FitPaginatorBarComponent,
     FitConfirmDialogComponent,
     FitLoadingBarComponent,
-    FitTableSkeletonComponent
+    FitTableSkeletonComponent,
+    SidebarComponent
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
     TranslateModule,
+     RouterModule,       
     ...materialModules
   ],
   providers: [
@@ -36,6 +39,8 @@ import { FitTableSkeletonComponent } from './components/fit-table-skeleton/fit-t
     FormsModule,
     FitLoadingBarComponent,
     FitTableSkeletonComponent,
+    RouterModule,       
+    SidebarComponent,   
     materialModules
   ]
 })
