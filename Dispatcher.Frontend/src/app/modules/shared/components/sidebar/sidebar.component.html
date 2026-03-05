@@ -1,0 +1,67 @@
+<aside class="sidebar">
+
+  <!-- ── LANGUAGE SWITCHER ─────────────────────────────── -->
+  @if (languages.length > 0) {
+    <div class="lang-switcher">
+      @for (lang of languages; track lang.code) {
+        <button
+          class="lang-btn"
+          [class.lang-btn--active]="lang.code === currentLang"
+          (click)="languageChange.emit(lang.code)"
+          [title]="lang.name">
+          <span>{{ lang.flag }}</span>
+          <span>{{ lang.name }}</span>
+        </button>
+      }
+    </div>
+  }
+
+  <!-- ── LOGO ────────────────────────────────────────── -->
+  <div class="sidebar-logo">
+    <div class="logo-icon">🚚</div>
+    <div>
+      <div class="logo-text">Truck Dispatcher</div>
+      <div class="logo-sub">Fleet Management System</div>
+    </div>
+  </div>
+
+  <!-- ── NAV ITEMS ─────────────────────────────────── -->
+  <nav class="nav-section">
+    <div class="nav-section-label">{{ 'ADMIN_PANEL.MENU.MANAGEMENT' | translate }}</div>
+    <ul>
+      @for (item of navItems; track item.route) {
+        <li class="nav-item"
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.route.endsWith('dashboard') }">
+          <i [class]="item.icon"></i>
+          <span>{{ item.label | translate }}</span>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- ── BOTTOM USER CARD ───────────────────────────────── -->
+<div class="sidebar-bottom">
+  <a class="sidebar-user" [routerLink]="profileRoute()">
+    <div class="user-avatar-sm">
+      {{ auth.currentUser()?.email?.charAt(0)?.toUpperCase() }}
+    </div>
+    <div class="user-info">
+      <div class="user-name-sm">{{ auth.currentUser()?.email }}</div>
+      <div class="user-role-sm">{{ roleLabel() }}</div>
+    </div>
+  </a>
+
+  <div class="sidebar-actions">
+    <a class="action-btn" routerLink="/settings" title="Settings">
+      <i class="ph-duotone ph-gear"></i>
+    </a>
+    <button class="action-btn action-btn--logout" (click)="onLogout()" title="Logout">
+      <i class="ph-duotone ph-sign-out"></i>
+    </button>
+  </div>
+</div>
+
+
+</aside>

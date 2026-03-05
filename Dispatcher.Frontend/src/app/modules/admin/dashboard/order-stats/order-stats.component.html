@@ -3,112 +3,62 @@
   <!-- ================= CURRENT MONTH KPIs ================= -->
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
 
-<!-- TOTAL REVENUE -->
-<div class="card bg-base-100 shadow">
-  <div class="card-body flex-row items-center gap-4">
-<div class="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
-  <svg xmlns="http://www.w3.org/2000/svg"
-       fill="none"
-       viewBox="0 0 24 24"
-       stroke-width="1.5"
-       stroke="currentColor"
-       class="w-7 h-7">
-    <path stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0
-             1.172-.879 1.172-2.303 0-3.182
-             C13.536 12.219 12.768 12 12 12
-             c-.725 0-1.45-.22-2.003-.659
-             -1.106-.879-1.106-2.303 0-3.182
-             s2.9-.879 4.006 0l.415.33
-             M21 12a9 9 0 1 1-18 0
-             9 9 0 0 1 18 0Z" />
-  </svg>
-</div>
-    <div>
-      <div class="text-sm text-base-content/70">Total Revenue</div>
-      <div class="text-2xl font-bold">
-        {{ currentMonth.totalRevenue | currency:'EUR' }}
-      </div>
-    </div>
-  </div>
-</div>
-
-
-    <!-- Monthly Revenue -->
+    <!-- TOTAL REVENUE -->
     <div class="card bg-base-100 shadow">
       <div class="card-body flex-row items-center gap-4">
-<div class="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
-  <svg xmlns="http://www.w3.org/2000/svg"
-       fill="none"
-       viewBox="0 0 24 24"
-       stroke-width="1.5"
-       stroke="currentColor"
-       class="w-7 h-7">
-    <path stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0
-             1.172-.879 1.172-2.303 0-3.182
-             C13.536 12.219 12.768 12 12 12
-             c-.725 0-1.45-.22-2.003-.659
-             -1.106-.879-1.106-2.303 0-3.182
-             s2.9-.879 4.006 0l.415.33
-             M21 12a9 9 0 1 1-18 0
-             9 9 0 0 1 18 0Z" />
-  </svg>
-</div>
+        <div class="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </div>
         <div>
-          <div class="text-sm text-base-content/70">Monthly Revenue</div>
-          <div class="text-2xl font-bold">
-            {{ currentMonth.revenue | currency:'EUR' }}
-          </div>
+          <div class="text-sm text-base-content/70">{{ 'DASHBOARD.TOTAL_REVENUE' | translate }}</div>
+          <div class="text-2xl font-bold">{{ currentMonth.totalRevenue | currency:'EUR' }}</div>
         </div>
       </div>
     </div>
 
-    <!-- Orders -->
+    <!-- MONTHLY REVENUE -->
     <div class="card bg-base-100 shadow">
       <div class="card-body flex-row items-center gap-4">
-<div class="w-14 h-14 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center">
-  <svg xmlns="http://www.w3.org/2000/svg"
-       class="w-7 h-7"
-       fill="none"
-       viewBox="0 0 24 24"
-       stroke="currentColor"
-       stroke-width="2">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M20.25 6.375c0 .621-.504 1.125-1.125 1.125H4.875A1.125 1.125 0 013.75 6.375m16.5 0v11.25c0 .621-.504 1.125-1.125 1.125H4.875A1.125 1.125 0 013.75 17.625V6.375m6 4.875h4.5" />
-  </svg>
-</div>
+        <div class="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </div>
         <div>
-          <div class="text-sm text-base-content/70">Orders This Month</div>
-          <div class="text-2xl font-bold">
-            {{ currentMonth.totalOrders }}
-          </div>
+          <div class="text-sm text-base-content/70">{{ 'DASHBOARD.MONTHLY_REVENUE' | translate }}</div>
+          <div class="text-2xl font-bold">{{ currentMonth.revenue | currency:'EUR' }}</div>
         </div>
       </div>
     </div>
 
-
-    <!-- Avg Order Value -->
+    <!-- ORDERS THIS MONTH -->
     <div class="card bg-base-100 shadow">
       <div class="card-body flex-row items-center gap-4">
-<div class="w-14 h-14 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center">
-  <svg xmlns="http://www.w3.org/2000/svg"
-       class="w-7 h-7"
-       fill="none"
-       viewBox="0 0 24 24"
-       stroke="currentColor"
-       stroke-width="2">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M15.75 15.75h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zM15.75 12.75h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zM15.75 9.75h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zM6 3h12a2.25 2.25 0 012.25 2.25v13.5A2.25 2.25 0 0118 21H6a2.25 2.25 0 01-2.25-2.25V5.25A2.25 2.25 0 016 3z" />
-  </svg>
-</div>
+        <div class="w-14 h-14 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 .621-.504 1.125-1.125 1.125H4.875A1.125 1.125 0 013.75 6.375m16.5 0v11.25c0 .621-.504 1.125-1.125 1.125H4.875A1.125 1.125 0 013.75 17.625V6.375m6 4.875h4.5" />
+          </svg>
+        </div>
         <div>
-          <div class="text-sm text-base-content/70">Avg Order Value</div>
-          <div class="text-2xl font-bold">
-            {{ currentMonth.avgOrderValue | currency:'EUR' }}
-          </div>
+          <div class="text-sm text-base-content/70">{{ 'DASHBOARD.ORDERS_THIS_MONTH' | translate }}</div>
+          <div class="text-2xl font-bold">{{ currentMonth.totalOrders }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AVG ORDER VALUE -->
+    <div class="card bg-base-100 shadow">
+      <div class="card-body flex-row items-center gap-4">
+        <div class="w-14 h-14 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zM15.75 12.75h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zM15.75 9.75h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008zM6 3h12a2.25 2.25 0 012.25 2.25v13.5A2.25 2.25 0 0118 21H6a2.25 2.25 0 01-2.25-2.25V5.25A2.25 2.25 0 016 3z" />
+          </svg>
+        </div>
+        <div>
+          <div class="text-sm text-base-content/70">{{ 'DASHBOARD.AVG_ORDER_VALUE' | translate }}</div>
+          <div class="text-2xl font-bold">{{ currentMonth.avgOrderValue | currency:'EUR' }}</div>
         </div>
       </div>
     </div>
@@ -117,293 +67,242 @@
 
   <!-- ================= FILTER ================= -->
   <div class="flex flex-wrap gap-4 items-center">
-<select class="select select-bordered" [(ngModel)]="selectedMonth">
-  <option [ngValue]="null">All months</option>
-
-  <option *ngFor="let m of months" [ngValue]="m.value">
-    {{ m.label }}
-  </option>
-</select>
-
+    <select class="select select-bordered" [(ngModel)]="selectedMonth">
+      <option [ngValue]="null">{{ 'DASHBOARD.ALL_MONTHS' | translate }}</option>
+      @for (m of months; track m.value) {
+        <option [ngValue]="m.value">{{ m.label }}</option>
+      }
+    </select>
 
     <select class="select select-bordered" [(ngModel)]="selectedYear">
-      <option *ngFor="let y of years" [value]="y">
-        {{ y }}
-      </option>
+      @for (y of years; track y) {
+        <option [value]="y">{{ y }}</option>
+      }
     </select>
 
     <button class="btn btn-primary" (click)="loadStats()">
-      Apply
+      {{ 'COMMON.APPLY' | translate }}
     </button>
   </div>
 
-<!-- ================= ORDERS REPORT ================= -->
-<div *ngIf="ordersReport as report" class="card bg-base-100 shadow">
-  <div class="card-body">
+  <!-- ================= ORDERS REPORT ================= -->
+  @if (ordersReport; as report) {
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
 
-    <!-- HEADER -->
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-      <h3 class="text-lg font-semibold">
-        {{ report.periodLabel }} – Orders Report
-      </h3>
+        <!-- HEADER -->
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <h3 class="text-lg font-semibold">
+            {{ report.periodLabel }} – {{ 'DASHBOARD.ORDERS_REPORT' | translate }}
+          </h3>
+          <div class="badge badge-outline badge-lg">
+            {{ 'DASHBOARD.TOTAL_ORDERS' | translate }}: {{ report.totalOrders }}
+          </div>
+        </div>
 
-      <div class="badge badge-outline badge-lg">
-        Total Orders: {{ report.totalOrders }}
+        <!-- FINANCE -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-8">
+          <div class="stat bg-base-200 rounded-lg">
+            <div class="stat-title">{{ 'DASHBOARD.TOTAL_REVENUE' | translate }}</div>
+            <div class="stat-value text-success">{{ report.totalRevenue | currency:'EUR' }}</div>
+          </div>
+          <div class="stat bg-base-200 rounded-lg">
+            <div class="stat-title">{{ 'DASHBOARD.AVG_ORDER_VALUE' | translate }}</div>
+            <div class="stat-value">{{ report.avgOrderValue | currency:'EUR' }}</div>
+          </div>
+          <div class="stat bg-base-200 rounded-lg">
+            <div class="stat-title">{{ 'DASHBOARD.MAX_ORDER' | translate }}</div>
+            <div class="stat-value text-primary">{{ report.maxOrderValue | currency:'EUR' }}</div>
+          </div>
+          <div class="stat bg-base-200 rounded-lg">
+            <div class="stat-title">{{ 'DASHBOARD.MIN_ORDER' | translate }}</div>
+            <div class="stat-value text-warning">{{ report.minOrderValue | currency:'EUR' }}</div>
+          </div>
+        </div>
+
+        <!-- ORDER FLOW -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+          <div class="stat bg-base-200 rounded-lg">
+            <div class="stat-title">{{ 'DASHBOARD.APPROVAL_RATE' | translate }}</div>
+            <div class="stat-value text-success">{{ report.approvalRate | number:'1.0-2' }}%</div>
+          </div>
+          <div class="stat bg-base-200 rounded-lg">
+            <div class="stat-title">{{ 'DASHBOARD.CANCEL_RATE' | translate }}</div>
+            <div class="stat-value text-error">{{ report.cancelRate | number:'1.0-2' }}%</div>
+          </div>
+          <div class="stat bg-base-200 rounded-lg">
+            <div class="stat-title">{{ 'DASHBOARD.AVG_DELIVERY_TIME' | translate }}</div>
+            <div class="stat-value">{{ report.avgDeliveryTimeDays | number:'1.0-1' }} {{ 'DASHBOARD.DAYS' | translate }}</div>
+          </div>
+        </div>
+
+        <!-- BREAKDOWN -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+          <div class="bg-base-200 rounded-lg p-4">
+            <h4 class="font-semibold mb-3">{{ 'DASHBOARD.REVENUE_BY_CURRENCY' | translate }}</h4>
+            @for (c of report.revenueByCurrency | keyvalue; track c.key) {
+              <div class="flex justify-between py-1 text-sm">
+                <span>{{ c.key }}</span>
+                <span class="font-semibold">{{ c.value | currency:c.key }}</span>
+              </div>
+            }
+          </div>
+          <div class="bg-base-200 rounded-lg p-4">
+            <h4 class="font-semibold mb-3">{{ 'DASHBOARD.ORDER_PRIORITY' | translate }}</h4>
+            @for (p of report.priorityStats | keyvalue; track p.key) {
+              <div class="flex justify-between py-1 text-sm">
+                <span>{{ p.key }}</span>
+                <span class="font-semibold">{{ p.value }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- TOP ITEMS -->
+        <div class="flex items-center justify-between mb-4">
+          <h4 class="font-semibold text-base-content">{{ 'DASHBOARD.TOP_ITEMS' | translate }}</h4>
+          <div class="tabs tabs-boxed bg-base-200 p-1">
+            <a class="tab gap-2" [class.tab-active]="activeItemsTab === 'selling'" (click)="activeItemsTab = 'selling'">
+              🔥 {{ 'DASHBOARD.TOP_SELLING' | translate }}
+            </a>
+            <a class="tab gap-2" [class.tab-active]="activeItemsTab === 'profitable'" (click)="activeItemsTab = 'profitable'">
+              💰 {{ 'DASHBOARD.MOST_PROFITABLE' | translate }}
+            </a>
+            <a class="tab gap-2" [class.tab-active]="activeItemsTab === 'cancelled'" (click)="activeItemsTab = 'cancelled'">
+              ❌ {{ 'ORDERS.STATUS.CANCELLED' | translate }}
+            </a>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-lg border border-base-300">
+
+          <!-- TOP SELLING -->
+          @if (activeItemsTab === 'selling') {
+            <table class="table table-sm">
+              <thead class="bg-base-200">
+                <tr>
+                  <th>{{ 'DASHBOARD.ITEM' | translate }}</th>
+                  <th class="text-right">{{ 'COMMON.QUANTITY' | translate }}</th>
+                  <th class="text-right">{{ 'DASHBOARD.REVENUE' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of report.topSellingItems; track item.name) {
+                  <tr class="hover:bg-base-200 transition">
+                    <td>{{ item.name }}</td>
+                    <td class="text-right">{{ item.quantity }}</td>
+                    <td class="text-right font-semibold text-success">{{ item.revenue | currency:'EUR' }}</td>
+                  </tr>
+                }
+                @if (report.topSellingItems.length === 0) {
+                  <tr>
+                    <td colspan="3" class="text-center py-6 text-base-content/60">{{ 'DASHBOARD.NO_SELLING_ITEMS' | translate }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+
+          <!-- MOST PROFITABLE -->
+          @if (activeItemsTab === 'profitable') {
+            <table class="table table-sm">
+              <thead class="bg-base-200">
+                <tr>
+                  <th>{{ 'DASHBOARD.ITEM' | translate }}</th>
+                  <th class="text-right">{{ 'COMMON.QUANTITY' | translate }}</th>
+                  <th class="text-right">{{ 'DASHBOARD.REVENUE' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of report.topProfitableItems; track item.name) {
+                  <tr class="hover:bg-base-200 transition">
+                    <td>{{ item.name }}</td>
+                    <td class="text-right">{{ item.quantity }}</td>
+                    <td class="text-right font-semibold text-primary">{{ item.revenue | currency:'EUR' }}</td>
+                  </tr>
+                }
+                @if (report.topProfitableItems.length === 0) {
+                  <tr>
+                    <td colspan="3" class="text-center py-6 text-base-content/60">{{ 'DASHBOARD.NO_PROFITABLE_ITEMS' | translate }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+
+          <!-- MOST CANCELLED -->
+          @if (activeItemsTab === 'cancelled') {
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>{{ 'DASHBOARD.ITEM' | translate }}</th>
+                  <th class="text-right">{{ 'COMMON.QUANTITY' | translate }}</th>
+                  <th class="text-right text-base-content/50">{{ 'DASHBOARD.REVENUE' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of report.mostCancelledItems; track item.name) {
+                  <tr class="hover:bg-base-200 transition">
+                    <td>{{ item.name }}</td>
+                    <td class="text-right">{{ item.quantity }}</td>
+                    <td class="text-right">—</td>
+                  </tr>
+                }
+                @if (report.mostCancelledItems.length === 0) {
+                  <tr>
+                    <td colspan="3" class="text-center py-6 text-base-content/60">🎉 {{ 'DASHBOARD.NO_CANCELLED_ITEMS' | translate }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+
+        </div>
+
       </div>
     </div>
+  }
 
-    <!-- ================= FINANCE ================= -->
-    <div class="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-8">
-
-      <div class="stat bg-base-200 rounded-lg">
-        <div class="stat-title">Total Revenue</div>
-        <div class="stat-value text-success">
-          {{ report.totalRevenue | currency:'EUR' }}
-        </div>
-      </div>
-
-      <div class="stat bg-base-200 rounded-lg">
-        <div class="stat-title">Avg Order Value</div>
-        <div class="stat-value">
-          {{ report.avgOrderValue | currency:'EUR' }}
-        </div>
-      </div>
-
-      <div class="stat bg-base-200 rounded-lg">
-        <div class="stat-title">Max Order</div>
-        <div class="stat-value text-primary">
-          {{ report.maxOrderValue | currency:'EUR' }}
-        </div>
-      </div>
-
-      <div class="stat bg-base-200 rounded-lg">
-        <div class="stat-title">Min Order</div>
-        <div class="stat-value text-warning">
-          {{ report.minOrderValue | currency:'EUR' }}
-        </div>
-      </div>
-
+  <!-- LOADING -->
+  @if (isLoadingReport) {
+    <div class="flex justify-center py-10">
+      <span class="loading loading-spinner loading-lg"></span>
     </div>
+  }
 
-    <!-- ================= ORDER FLOW ================= -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-
-      <div class="stat bg-base-200 rounded-lg">
-        <div class="stat-title">Approval Rate</div>
-        <div class="stat-value text-success">
-          {{ report.approvalRate | number:'1.0-2' }}%
-        </div>
-      </div>
-
-      <div class="stat bg-base-200 rounded-lg">
-        <div class="stat-title">Cancel Rate</div>
-        <div class="stat-value text-error">
-          {{ report.cancelRate | number:'1.0-2' }}%
-        </div>
-      </div>
-
-      <div class="stat bg-base-200 rounded-lg">
-        <div class="stat-title">Avg Delivery Time</div>
-        <div class="stat-value">
-          {{ report.avgDeliveryTimeDays | number:'1.0-1' }} days
-        </div>
-      </div>
-
+  <!-- ERROR -->
+  @if (reportError) {
+    <div class="alert alert-error shadow">
+      {{ reportError }}
     </div>
-
-    <!-- ================= BREAKDOWN ================= -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-
-      <!-- REVENUE BY CURRENCY -->
-      <div class="bg-base-200 rounded-lg p-4">
-        <h4 class="font-semibold mb-3">Revenue by Currency</h4>
-
-        <div
-          *ngFor="let c of report.revenueByCurrency | keyvalue"
-          class="flex justify-between py-1 text-sm"
-        >
-          <span>{{ c.key }}</span>
-          <span class="font-semibold">
-            {{ c.value | currency:c.key }}
-          </span>
-        </div>
-      </div>
-
-      <!-- PRIORITY -->
-      <div class="bg-base-200 rounded-lg p-4">
-        <h4 class="font-semibold mb-3">Order Priority</h4>
-
-        <div
-          *ngFor="let p of report.priorityStats | keyvalue"
-          class="flex justify-between py-1 text-sm"
-        >
-          <span>{{ p.key }}</span>
-          <span class="font-semibold">{{ p.value }}</span>
-        </div>
-      </div>
-
-    </div>
-
-<!-- ================= TOP ITEMS ================= -->
-<div class="flex items-center justify-between mb-4">
-  <h4 class="font-semibold text-base-content">
-    Top Items
-  </h4>
-
-  <div class="tabs tabs-boxed bg-base-200 p-1">
-    <a
-      class="tab gap-2"
-      [class.tab-active]="activeItemsTab === 'selling'"
-      (click)="activeItemsTab = 'selling'"
-    >
-      🔥 Top Selling
-    </a>
-
-    <a
-      class="tab gap-2"
-      [class.tab-active]="activeItemsTab === 'profitable'"
-      (click)="activeItemsTab = 'profitable'"
-    >
-      💰 Most Profitable
-    </a>
-
-    <a
-      class="tab gap-2"
-      [class.tab-active]="activeItemsTab === 'cancelled'"
-      (click)="activeItemsTab = 'cancelled'"
-    >
-      ❌ Cancelled
-    </a>
-  </div>
-</div>
-
-
-
-<div class="overflow-x-auto rounded-lg border border-base-300">
-
-  <!-- TOP SELLING -->
-  <table *ngIf="activeItemsTab === 'selling'" class="table table-sm">
-    <thead class="bg-base-200">
-      <tr>
-        <th>Item</th>
-        <th class="text-right">Quantity</th>
-        <th class="text-right">Revenue</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of report.topSellingItems" class="hover:bg-base-200 transition">
-        <td>{{ item.name }}</td>
-        <td class="text-right">{{ item.quantity }}</td>
-        <td class="text-right font-semibold text-success">{{ item.revenue | currency:'EUR' }}</td>
-      </tr>
-          <tr *ngIf="report.topSellingItems.length === 0">
-      <td colspan="3" class="text-center py-6 text-base-content/60">
-        No selling items found
-      </td>
-    </tr>
-
-    </tbody>
-  </table>
-
-  <!-- MOST PROFITABLE -->
-  <table *ngIf="activeItemsTab === 'profitable'" class="table table-sm">
-    <thead class="bg-base-200">
-      <tr>
-        <th>Item</th>
-        <th class="text-right">Quantity</th>
-        <th class="text-right">Revenue</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of report.topProfitableItems" class="hover:bg-base-200 transition">
-        <td>{{ item.name }}</td>
-        <td class="text-right">{{ item.quantity }}</td>
-        <td class="text-right font-semibold text-primary">{{ item.revenue | currency:'EUR' }}</td>
-      </tr>
-          <tr *ngIf="report.topProfitableItems.length === 0">
-      <td colspan="3" class="text-center py-6 text-base-content/60">
-        No profitable items found
-      </td>
-    </tr>
-    </tbody>
-  </table>
-
-  <!-- MOST CANCELLED -->
-  <table *ngIf="activeItemsTab === 'cancelled'" class="table table-sm">
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th class="text-right">Quantity</th>
-        <th class="text-right text-base-content/50">Revenue</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of report.mostCancelledItems" class="hover:bg-base-200 transition">
-        <td>{{ item.name }}</td>
-        <td class="text-right">{{ item.quantity }}</td>
-        <td class="text-right">—</td>
-      </tr>
-          <tr *ngIf="report.mostCancelledItems.length === 0">
-      <td colspan="3" class="text-center py-6 text-base-content/60">
-        🎉 No cancelled items
-      </td>
-    </tr>
-    </tbody>
-  </table>
-
-</div>
-
-
-  </div>
-</div>
-
-<!-- LOADING -->
-<div *ngIf="isLoadingReport" class="flex justify-center py-10">
-  <span class="loading loading-spinner loading-lg"></span>
-</div>
-
-<!-- ERROR -->
-<div *ngIf="reportError" class="alert alert-error shadow">
-  {{ reportError }}
-</div>
-
+  }
 
   <!-- ================= CHART FILTER ================= -->
-<div class="flex items-center justify-between gap-4">
-  <h3 class="text-lg font-semibold">
-    Orders & Revenue Trends
-  </h3>
-
-  <div class="flex items-center gap-2">
-    <span class="text-sm text-base-content/70">Year</span>
-
-    <select
-      class="select select-bordered select-sm"
-      [(ngModel)]="selectedYear"
-      (change)="loadCharts(selectedYear)"
-    >
-      <option *ngFor="let y of years" [value]="y">
-        {{ y }}
-      </option>
-    </select>
+  <div class="flex items-center justify-between gap-4">
+    <h3 class="text-lg font-semibold">{{ 'DASHBOARD.ORDERS_REVENUE_TRENDS' | translate }}</h3>
+    <div class="flex items-center gap-2">
+      <span class="text-sm text-base-content/70">{{ 'DASHBOARD.YEAR' | translate }}</span>
+      <select class="select select-bordered select-sm" [(ngModel)]="selectedYear" (change)="loadCharts(selectedYear)">
+        @for (y of years; track y) {
+          <option [value]="y">{{ y }}</option>
+        }
+      </select>
+    </div>
   </div>
-</div>
 
   <!-- ================= CHARTS ================= -->
   <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-    <!-- Monthly Orders Chart -->
     <div class="card bg-base-100 shadow">
       <div class="card-body">
-        <h3 class="font-semibold mb-2">Orders in {{ selectedYear }}</h3>
+        <h3 class="font-semibold mb-2">{{ 'DASHBOARD.ORDERS_IN_YEAR' | translate:{ year: selectedYear } }}</h3>
         <canvas id="ordersByMonthChart"></canvas>
       </div>
     </div>
 
-    <!-- Revenue Chart -->
     <div class="card bg-base-100 shadow">
       <div class="card-body">
-        <h3 class="font-semibold mb-2">Revenue in {{ selectedYear }}</h3>
+        <h3 class="font-semibold mb-2">{{ 'DASHBOARD.REVENUE_IN_YEAR' | translate:{ year: selectedYear } }}</h3>
         <canvas id="revenueByMonthChart"></canvas>
       </div>
     </div>
