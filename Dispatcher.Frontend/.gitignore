@@ -38,6 +38,9 @@ testem.log
 /typings
 __screenshots__/
 
+#Claude
+.claude/*
+
 # System files
 .DS_Store
 Thumbs.db
