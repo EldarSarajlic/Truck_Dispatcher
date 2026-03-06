@@ -7,7 +7,7 @@ export enum UserRole {
 
 export interface CurrentUserDto {
   userId: number;
-  email: string;
+  displayName: string;
   role: UserRole;
   tokenVersion: number;
 }

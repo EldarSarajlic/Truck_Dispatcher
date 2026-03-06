@@ -31,8 +31,8 @@ export class SidebarComponent {
   });
 
   readonly profileRoute = computed(() => {
-    const role = this.auth.currentUser()?.role;
-    return role !== undefined ? `/${UserRole[role].toLowerCase()}/profile` : '/';
+    const displayName = this.auth.currentUser()?.displayName;
+    return displayName ? `/users/${displayName}` : '/';
   });
 
   readonly settingsRoute = '/settings';

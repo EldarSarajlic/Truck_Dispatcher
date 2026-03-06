@@ -107,7 +107,6 @@ export class AuthFacadeService {
   private decodeAndSetUser(token: string): void {
     try {
       const payload = jwtDecode<JwtPayloadDto>(token);
-
       let role: UserRole;
       switch (payload.role) {
         case 'Admin':
@@ -127,7 +126,7 @@ export class AuthFacadeService {
 
       const user: CurrentUserDto = {
         userId: Number(payload.sub),
-        email: payload.email,
+        displayName: payload.display_name,
         role: role,
         tokenVersion: Number(payload.ver),
       };

@@ -18,7 +18,7 @@
 
   <!-- ── LOGO ────────────────────────────────────────── -->
   <div class="sidebar-logo">
-    <div class="logo-icon">🚚</div>
+    <img src="app-logo.png" alt="Logo" class="logo-icon" />
     <div>
       <div class="logo-text">Truck Dispatcher</div>
       <div class="logo-sub">Fleet Management System</div>
@@ -45,10 +45,10 @@
 <div class="sidebar-bottom">
   <a class="sidebar-user" [routerLink]="profileRoute()">
     <div class="user-avatar-sm">
-      {{ auth.currentUser()?.email?.charAt(0)?.toUpperCase() }}
+      {{ auth.currentUser()?.displayName?.charAt(0)?.toUpperCase() }}
     </div>
     <div class="user-info">
-      <div class="user-name-sm">{{ auth.currentUser()?.email }}</div>
+      <div class="user-name-sm">{{ auth.currentUser()?.displayName }}</div>
       <div class="user-role-sm">{{ roleLabel() }}</div>
     </div>
   </a>
