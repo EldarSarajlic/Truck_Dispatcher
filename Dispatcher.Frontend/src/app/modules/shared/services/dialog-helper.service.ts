@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogConfig, DialogType, DialogButton, DialogResult } from '../models/dialog-config.model';
-import {FitConfirmDialogComponent} from '../components/fit-confirm-dialog/fit-confirm-dialog.component';
+import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class DialogHelperService {
    * Opens a custom dialog with full configuration
    */
   open(config: DialogConfig): Observable<DialogResult | undefined> {
-    const dialogRef = this.dialog.open(FitConfirmDialogComponent, {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: config.width || '450px',
       disableClose: config.disableClose || false,
       data: config,

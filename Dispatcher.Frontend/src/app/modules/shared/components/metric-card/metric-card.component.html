@@ -1,0 +1,15 @@
+<div class="metric-card metric-card--{{ variant }}">
+
+  <div class="flex flex-col gap-1">
+    <div class="metric-value">
+      @if (prefix) { <span style="font-size: 1.1rem; opacity: 0.7;">{{ prefix }}</span> }{{ value }}
+    </div>
+    <div class="metric-label">{{ label | translate }}</div>
+    <span class="metric-pill">{{ pill | translate }}</span>
+  </div>
+
+  <div class="metric-icon">
+    <i class="{{ icon }}"></i>
+  </div>
+
+</div>

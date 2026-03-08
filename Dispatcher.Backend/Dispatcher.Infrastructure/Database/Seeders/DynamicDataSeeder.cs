@@ -377,7 +377,7 @@ public static class DynamicDataSeeder
         if (await context.Orders.AnyAsync())
             return;
 
-        // Get test client user
+        // ── Resolve the client user ───────────────────────────────────────────
         var client = await context.Users.FirstOrDefaultAsync(u => u.Email == "string");
         if (client == null)
         {
@@ -385,83 +385,87 @@ public static class DynamicDataSeeder
             return;
         }
 
-        // Get delivery city
+        // ── Resolve delivery cities ───────────────────────────────────────────
         var munich = await context.City.FirstOrDefaultAsync(c => c.Name == "Munich");
         var berlin = await context.City.FirstOrDefaultAsync(c => c.Name == "Berlin");
+        var vienna = await context.City.FirstOrDefaultAsync(c => c.Name == "Vienna");
+        var zagreb = await context.City.FirstOrDefaultAsync(c => c.Name == "Zagreb");
+        var hamburg = await context.City.FirstOrDefaultAsync(c => c.Name == "Hamburg");
 
-        if (munich == null || berlin == null)
+        if (munich == null || berlin == null || vienna == null || zagreb == null || hamburg == null)
         {
             Console.WriteLine("⚠️ Required cities not found, skipping order seed.");
             return;
         }
 
-        // Get inventory items
+        // ── Resolve inventory items ───────────────────────────────────────────
         var laptop = await context.Inventory.FirstAsync(i => i.SKU == "ELEC-001");
         var phone = await context.Inventory.FirstAsync(i => i.SKU == "ELEC-002");
         var battery = await context.Inventory.FirstAsync(i => i.SKU == "AUTO-001");
+        var oil = await context.Inventory.FirstAsync(i => i.SKU == "AUTO-002");
         var chair = await context.Inventory.FirstAsync(i => i.SKU == "FURN-001");
 
-        // Order 1: Electronics order
+        // =========================================================
+        // ORDER 1 — Today minus 1 day | Status: Approved
+        // =========================================================
         var order1 = new OrderEntity
         {
-            OrderNumber = "ORD-2024-001",
+            OrderNumber = "ORD-2025-001",
             ClientUserId = client.Id,
             DeliveryAddress = "Hauptstraße 123, Munich Tech Center",
             DeliveryCityId = munich.Id,
             DeliveryContactPerson = "Hans Müller",
             DeliveryContactPhone = "+49 89 123 4567",
-            OrderDate = DateTime.UtcNow.AddDays(-5),
-            RequestedDeliveryDate = DateTime.UtcNow.AddDays(7),
+            OrderDate = DateTime.UtcNow.AddDays(-1),
+            RequestedDeliveryDate = DateTime.UtcNow.AddDays(6),
             Status = "Approved",
             Priority = "High",
             TotalAmount = 4600.00m,
             Currency = "EUR",
-            SpecialInstructions = "Handle with care - fragile electronics",
+            SpecialInstructions = "Handle with care — fragile electronics",
             Notes = "Client requested morning delivery"
         };
-
         context.Orders.Add(order1);
         await context.SaveChangesAsync();
 
-        // Order 1 Items
-        var order1Items = new List<OrderItemEntity>
+        context.OrderItems.AddRange(new List<OrderItemEntity>
     {
         new OrderItemEntity
         {
-            OrderId = order1.Id,
-            InventoryId = laptop.Id,
-            Quantity = 2,
-            UnitPriceAtTime = laptop.UnitPrice,
-            TotalPrice = 2 * laptop.UnitPrice,
-            TotalWeight = 2 * laptop.UnitWeight,
-            TotalVolume = 2 * laptop.UnitVolume,
-            Notes = "Latest model with extended warranty"
+            OrderId          = order1.Id,
+            InventoryId      = laptop.Id,
+            Quantity         = 2,
+            UnitPriceAtTime  = laptop.UnitPrice,
+            TotalPrice       = 2 * laptop.UnitPrice,
+            TotalWeight      = 2 * laptop.UnitWeight,
+            TotalVolume      = 2 * laptop.UnitVolume,
+            Notes            = "Latest model, extended warranty included"
         },
         new OrderItemEntity
         {
-            OrderId = order1.Id,
-            InventoryId = phone.Id,
-            Quantity = 2,
-            UnitPriceAtTime = phone.UnitPrice,
-            TotalPrice = 2 * phone.UnitPrice,
-            TotalWeight = 2 * phone.UnitWeight,
-            TotalVolume = 2 * phone.UnitVolume
+            OrderId          = order1.Id,
+            InventoryId      = phone.Id,
+            Quantity         = 2,
+            UnitPriceAtTime  = phone.UnitPrice,
+            TotalPrice       = 2 * phone.UnitPrice,
+            TotalWeight      = 2 * phone.UnitWeight,
+            TotalVolume      = 2 * phone.UnitVolume
         }
-    };
+    });
 
-        context.OrderItems.AddRange(order1Items);
-
-        // Order 2: Mixed order
+        // =========================================================
+        // ORDER 2 — Today minus 2 days | Status: Pending
+        // =========================================================
         var order2 = new OrderEntity
         {
-            OrderNumber = "ORD-2024-002",
+            OrderNumber = "ORD-2025-002",
             ClientUserId = client.Id,
             DeliveryAddress = "Berliner Straße 45, Warehouse B",
             DeliveryCityId = berlin.Id,
             DeliveryContactPerson = "Maria Schmidt",
             DeliveryContactPhone = "+49 30 234 5678",
-            OrderDate = DateTime.UtcNow.AddDays(-3),
-            RequestedDeliveryDate = DateTime.UtcNow.AddDays(10),
+            OrderDate = DateTime.UtcNow.AddDays(-2),
+            RequestedDeliveryDate = DateTime.UtcNow.AddDays(9),
             Status = "Pending",
             Priority = "Normal",
             TotalAmount = 950.00m,
@@ -469,40 +473,177 @@ public static class DynamicDataSeeder
             SpecialInstructions = null,
             Notes = null
         };
-
         context.Orders.Add(order2);
         await context.SaveChangesAsync();
 
-        // Order 2 Items
-        var order2Items = new List<OrderItemEntity>
+        context.OrderItems.AddRange(new List<OrderItemEntity>
     {
         new OrderItemEntity
         {
-            OrderId = order2.Id,
-            InventoryId = battery.Id,
-            Quantity = 5,
-            UnitPriceAtTime = battery.UnitPrice,
-            TotalPrice = 5 * battery.UnitPrice,
-            TotalWeight = 5 * battery.UnitWeight,
-            TotalVolume = 5 * battery.UnitVolume
+            OrderId          = order2.Id,
+            InventoryId      = battery.Id,
+            Quantity         = 5,
+            UnitPriceAtTime  = battery.UnitPrice,
+            TotalPrice       = 5 * battery.UnitPrice,
+            TotalWeight      = 5 * battery.UnitWeight,
+            TotalVolume      = 5 * battery.UnitVolume
         },
         new OrderItemEntity
         {
-            OrderId = order2.Id,
-            InventoryId = chair.Id,
-            Quantity = 1,
-            UnitPriceAtTime = chair.UnitPrice,
-            TotalPrice = chair.UnitPrice,
-            TotalWeight = chair.UnitWeight,
-            TotalVolume = chair.UnitVolume,
-            Notes = "Black color preferred"
+            OrderId          = order2.Id,
+            InventoryId      = chair.Id,
+            Quantity         = 1,
+            UnitPriceAtTime  = chair.UnitPrice,
+            TotalPrice       = chair.UnitPrice,
+            TotalWeight      = chair.UnitWeight,
+            TotalVolume      = chair.UnitVolume,
+            Notes            = "Black colour preferred"
         }
-    };
+    });
 
-        context.OrderItems.AddRange(order2Items);
+        // =========================================================
+        // ORDER 3 — Today minus 3 days | Status: InProgress
+        // =========================================================
+        var order3 = new OrderEntity
+        {
+            OrderNumber = "ORD-2025-003",
+            ClientUserId = client.Id,
+            DeliveryAddress = "Ringstraße 8, Vienna Logistics Hub",
+            DeliveryCityId = vienna.Id,
+            DeliveryContactPerson = "Klaus Weber",
+            DeliveryContactPhone = "+43 1 345 6789",
+            OrderDate = DateTime.UtcNow.AddDays(-3),
+            RequestedDeliveryDate = DateTime.UtcNow.AddDays(4),
+            Status = "InProgress",
+            Priority = "Urgent",
+            TotalAmount = 1725.00m,
+            Currency = "EUR",
+            SpecialInstructions = "Temperature-sensitive cargo",
+            Notes = "Coordinate with driver before arrival"
+        };
+        context.Orders.Add(order3);
         await context.SaveChangesAsync();
 
-        Console.WriteLine("✅ Seeded orders with items.");
+        context.OrderItems.AddRange(new List<OrderItemEntity>
+    {
+        new OrderItemEntity
+        {
+            OrderId          = order3.Id,
+            InventoryId      = laptop.Id,
+            Quantity         = 1,
+            UnitPriceAtTime  = laptop.UnitPrice,
+            TotalPrice       = laptop.UnitPrice,
+            TotalWeight      = laptop.UnitWeight,
+            TotalVolume      = laptop.UnitVolume
+        },
+        new OrderItemEntity
+        {
+            OrderId          = order3.Id,
+            InventoryId      = oil.Id,
+            Quantity         = 5,
+            UnitPriceAtTime  = oil.UnitPrice,
+            TotalPrice       = 5 * oil.UnitPrice,
+            TotalWeight      = 5 * oil.UnitWeight,
+            TotalVolume      = 5 * oil.UnitVolume
+        }
+    });
+
+        // =========================================================
+        // ORDER 4 — Today minus 4 days | Status: Pending
+        // =========================================================
+        var order4 = new OrderEntity
+        {
+            OrderNumber = "ORD-2025-004",
+            ClientUserId = client.Id,
+            DeliveryAddress = "Ilica 220, Zagreb Distribution Center",
+            DeliveryCityId = zagreb.Id,
+            DeliveryContactPerson = "Ana Horvat",
+            DeliveryContactPhone = "+385 1 456 7890",
+            OrderDate = DateTime.UtcNow.AddDays(-4),
+            RequestedDeliveryDate = DateTime.UtcNow.AddDays(8),
+            Status = "Pending",
+            Priority = "Normal",
+            TotalAmount = 2200.00m,
+            Currency = "EUR",
+            SpecialInstructions = null,
+            Notes = "Business hours delivery only"
+        };
+        context.Orders.Add(order4);
+        await context.SaveChangesAsync();
+
+        context.OrderItems.AddRange(new List<OrderItemEntity>
+    {
+        new OrderItemEntity
+        {
+            OrderId          = order4.Id,
+            InventoryId      = phone.Id,
+            Quantity         = 1,
+            UnitPriceAtTime  = phone.UnitPrice,
+            TotalPrice       = phone.UnitPrice,
+            TotalWeight      = phone.UnitWeight,
+            TotalVolume      = phone.UnitVolume
+        },
+        new OrderItemEntity
+        {
+            OrderId          = order4.Id,
+            InventoryId      = battery.Id,
+            Quantity         = 10,
+            UnitPriceAtTime  = battery.UnitPrice,
+            TotalPrice       = 10 * battery.UnitPrice,
+            TotalWeight      = 10 * battery.UnitWeight,
+            TotalVolume      = 10 * battery.UnitVolume
+        }
+    });
+
+        // =========================================================
+        // ORDER 5 — Today minus 6 days | Status: Approved
+        // =========================================================
+        var order5 = new OrderEntity
+        {
+            OrderNumber = "ORD-2025-005",
+            ClientUserId = client.Id,
+            DeliveryAddress = "Reeperbahn 1, Hamburg Port",
+            DeliveryCityId = hamburg.Id,
+            DeliveryContactPerson = "Erik Bauer",
+            DeliveryContactPhone = "+49 40 567 8901",
+            OrderDate = DateTime.UtcNow.AddDays(-6),
+            RequestedDeliveryDate = DateTime.UtcNow.AddDays(3),
+            Status = "Approved",
+            Priority = "High",
+            TotalAmount = 2200.00m,
+            Currency = "EUR",
+            SpecialInstructions = "Deliver to loading dock 3",
+            Notes = null
+        };
+        context.Orders.Add(order5);
+        await context.SaveChangesAsync();
+
+        context.OrderItems.AddRange(new List<OrderItemEntity>
+    {
+        new OrderItemEntity
+        {
+            OrderId          = order5.Id,
+            InventoryId      = chair.Id,
+            Quantity         = 4,
+            UnitPriceAtTime  = chair.UnitPrice,
+            TotalPrice       = 4 * chair.UnitPrice,
+            TotalWeight      = 4 * chair.UnitWeight,
+            TotalVolume      = 4 * chair.UnitVolume
+        },
+        new OrderItemEntity
+        {
+            OrderId          = order5.Id,
+            InventoryId      = laptop.Id,
+            Quantity         = 1,
+            UnitPriceAtTime  = laptop.UnitPrice,
+            TotalPrice       = laptop.UnitPrice,
+            TotalWeight      = laptop.UnitWeight,
+            TotalVolume      = laptop.UnitVolume
+        }
+    });
+
+        await context.SaveChangesAsync();
+        Console.WriteLine("✅ Seeded 5 orders with items (all within last 7 days).");
     }
 
     #region Vehicle Entities
@@ -866,12 +1007,12 @@ public static class DynamicDataSeeder
         if (await context.Shipments.AnyAsync())
             return;
 
-        // Get orders
+        // These numbers must match the OrderNumber values set in SeedOrdersAsync
         var order1 = await context.Orders
-            .FirstOrDefaultAsync(o => o.OrderNumber == "ORD-2024-001");
+            .FirstOrDefaultAsync(o => o.OrderNumber == "ORD-2025-001");
 
         var order2 = await context.Orders
-            .FirstOrDefaultAsync(o => o.OrderNumber == "ORD-2024-002");
+            .FirstOrDefaultAsync(o => o.OrderNumber == "ORD-2025-002");
 
         if (order1 == null || order2 == null)
         {
@@ -879,12 +1020,13 @@ public static class DynamicDataSeeder
             return;
         }
 
-
         var sarajevoToZagreb = await context.Routes
-    .FirstOrDefaultAsync(r => r.StartLocation.Name == "Sarajevo" && r.EndLocation.Name == "Zagreb");
+            .FirstOrDefaultAsync(r => r.StartLocation.Name == "Sarajevo"
+                                   && r.EndLocation.Name == "Zagreb");
 
         var sarajevoToBelgrade = await context.Routes
-            .FirstOrDefaultAsync(r => r.StartLocation.Name == "Sarajevo" && r.EndLocation.Name == "Belgrade");
+            .FirstOrDefaultAsync(r => r.StartLocation.Name == "Sarajevo"
+                                   && r.EndLocation.Name == "Belgrade");
 
         if (sarajevoToZagreb == null || sarajevoToBelgrade == null)
         {
@@ -892,29 +1034,26 @@ public static class DynamicDataSeeder
             return;
         }
 
-
-        // Create shipment for first order (Approved order - ready for dispatch)
         var shipment1 = new ShipmentEntity
         {
             OrderId = order1.Id,
-            RouteId = sarajevoToZagreb.Id,// Links to ORD-2024-001
-            Weight = 5.6m,        // Total weight from order items (2 laptops + 2 phones)
-            Volume = 0.032m,      // Total volume
+            RouteId = sarajevoToZagreb.Id,
+            Weight = 5.6m,
+            Volume = 0.032m,
             PickupLocation = "Sarajevo Central Warehouse, Butmirska cesta 100",
             Status = "ReadyForDispatch",
-            Description = "Electronics shipment - laptops and smartphones for Munich Tech Center"
+            Description = "Electronics shipment — laptops and smartphones for Munich Tech Center"
         };
 
-        // Create shipment for second order (Pending order - not yet ready)
         var shipment2 = new ShipmentEntity
         {
             OrderId = order2.Id,
-            RouteId = sarajevoToBelgrade.Id,// Links to ORD-2024-002
-            Weight = 93.0m,       // Total weight (5 batteries + 1 chair)
-            Volume = 0.575m,      // Total volume
+            RouteId = sarajevoToBelgrade.Id,
+            Weight = 93.0m,
+            Volume = 0.575m,
             PickupLocation = "Sarajevo South Warehouse, Industrija BB",
             Status = "Pending",
-            Description = "Mixed shipment - automotive batteries and office furniture for Berlin"
+            Description = "Mixed shipment — automotive batteries and office furniture for Berlin"
         };
 
         context.Shipments.AddRange(shipment1, shipment2);

@@ -1,12 +1,12 @@
 import {Component, Input} from '@angular/core';
 
 @Component({
-  selector: 'app-fit-table-skeleton',
+  selector: 'app-table-skeleton',
   standalone: false,
-  templateUrl: './fit-table-skeleton.component.html',
-  styleUrl: './fit-table-skeleton.component.scss',
+  templateUrl: './table-skeleton.component.html',
+  styleUrl: './table-skeleton.component.scss',
 })
-export class FitTableSkeletonComponent {
+export class TableSkeletonComponent {
   @Input() rows: number = 5;
   @Input() columns: number = 3;
   @Input() showActions: boolean = true;
