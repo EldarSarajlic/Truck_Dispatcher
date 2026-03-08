@@ -16,13 +16,14 @@ export interface MetricCard {
   styleUrl:    './metric-card.component.scss',
 })
 export class MetricCardComponent {
-  @Input({ required: true }) label!:   string;
-  @Input({ required: true }) value!:   number | string;
-  @Input({ required: true }) variant!: 'amber' | 'green' | 'blue' | 'violet';
-  @Input({ required: true }) icon!:    string;
-  @Input({ required: true }) pill!:    string;
+  @Input() label!:   string;
+  @Input() value!:   number | string;
+  @Input() variant!: 'amber' | 'green' | 'blue' | 'violet';
+  @Input() icon!:    string;
+  @Input() pill!:    string;
   @Input() prefix?: string;
   @Input() index:   number = 0;
+  @Input() loading: boolean = false;
 
   // Replaces the nth-child stagger in SCSS — each card enters 60ms after the previous.
   @HostBinding('style.animation-delay')

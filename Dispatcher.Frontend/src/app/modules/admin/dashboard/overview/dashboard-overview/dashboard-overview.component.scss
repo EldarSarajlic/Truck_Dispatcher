@@ -30,14 +30,27 @@
 }
 
 
+// ── Skeleton shimmer ──────────────────────────────────────────────────────────
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #1b1b29 25%, #2a2a3d 50%, #1b1b29 75%);
+  background-size: 1200px 100%;
+  animation: shimmer 1.6s infinite linear;
+  border-radius: 6px;
+}
+
+
 // ── Skeleton metric placeholder ────────────────────────────────────────────────
 // Height matches the real metric card so there is no layout shift on load.
 .skeleton-metric {
   background:    #15151f;
   border:        1px solid #252535;
   border-radius: 16px;
-  padding:       20px;
-  height:        108px;
+  padding:       20px 20px 24px;
 }
 
 

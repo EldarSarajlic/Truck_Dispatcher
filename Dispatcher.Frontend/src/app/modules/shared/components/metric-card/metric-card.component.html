@@ -1,15 +1,24 @@
 <div class="metric-card metric-card--{{ variant }}">
 
-  <div class="flex flex-col gap-1">
-    <div class="metric-value">
-      @if (prefix) { <span style="font-size: 1.1rem; opacity: 0.7;">{{ prefix }}</span> }{{ value }}
+  @if (loading) {
+    <div class="mc-sk-left">
+      <div class="mc-sk mc-sk-value"></div>
+      <div class="mc-sk mc-sk-label"></div>
+      <div class="mc-sk mc-sk-pill"></div>
     </div>
-    <div class="metric-label">{{ label | translate }}</div>
-    <span class="metric-pill">{{ pill | translate }}</span>
-  </div>
+    <div class="mc-sk mc-sk-icon"></div>
+  } @else {
+    <div class="flex flex-col gap-1">
+      <div class="metric-value">
+        @if (prefix) { <span style="font-size: 1.1rem; opacity: 0.7;">{{ prefix }}</span> }{{ value }}
+      </div>
+      <div class="metric-label">{{ label | translate }}</div>
+      <span class="metric-pill">{{ pill | translate }}</span>
+    </div>
 
-  <div class="metric-icon">
-    <i class="{{ icon }}"></i>
-  </div>
+    <div class="metric-icon">
+      <i class="{{ icon }}"></i>
+    </div>
+  }
 
 </div>

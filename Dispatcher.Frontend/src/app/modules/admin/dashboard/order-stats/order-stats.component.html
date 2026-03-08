@@ -7,11 +7,7 @@
     <!-- Metric card skeletons -->
     <div class="metrics-grid">
       @for (i of [1, 2, 3, 4]; track i) {
-        <div class="skeleton-metric">
-          <div class="skeleton" style="height:2rem;width:5rem;margin-bottom:12px;"></div>
-          <div class="skeleton" style="height:0.75rem;width:7rem;margin-bottom:8px;border-radius:4px;"></div>
-          <div class="skeleton" style="height:1.25rem;width:5rem;border-radius:20px;"></div>
-        </div>
+        <app-metric-card [loading]="true" />
       }
     </div>
   } @else if (summaryError) {

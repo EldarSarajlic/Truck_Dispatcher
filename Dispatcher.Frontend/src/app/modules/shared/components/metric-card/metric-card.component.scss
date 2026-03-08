@@ -117,6 +117,31 @@
 }
 
 
+// ── Skeleton loading state ─────────────────────────────────────────────────────
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+.mc-sk {
+  background:      linear-gradient(90deg, #1b1b29 25%, #2a2a3d 50%, #1b1b29 75%);
+  background-size: 1200px 100%;
+  animation:       shimmer 1.6s infinite linear;
+  border-radius:   6px;
+}
+
+.mc-sk-left {
+  display:        flex;
+  flex-direction: column;
+  gap:            10px;
+}
+
+.mc-sk-value { height: 2rem;    width: 5rem; }
+.mc-sk-label { height: 0.75rem; width: 7rem; }
+.mc-sk-pill  { height: 1.25rem; width: 5rem; border-radius: 20px; }
+.mc-sk-icon  { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; }
+
+
 // ── Accessibility: respect reduced-motion preference ──────────────────────────
 @media (prefers-reduced-motion: reduce) {
   .metric-card {

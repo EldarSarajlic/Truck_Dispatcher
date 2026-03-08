@@ -8,11 +8,7 @@
     <!-- Metric card skeletons -->
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       @for (i of [1, 2, 3, 4]; track i) {
-        <div class="skeleton-metric">
-          <div class="skeleton h-8 w-16 mb-3 rounded-lg"></div>
-          <div class="skeleton h-4 w-28 mb-2 rounded"></div>
-          <div class="skeleton h-5 w-20 rounded-full"></div>
-        </div>
+        <app-metric-card [loading]="true" />
       }
     </div>
 
