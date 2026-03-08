@@ -1,21 +1,19 @@
-// src/app/modules/shared/components/fit-confirm-dialog/fit-fit-confirm-dialog.component.ts
-
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogConfig, DialogButton, DialogType, DialogResult } from '../../models/dialog-config.model';
 
 @Component({
-  selector: 'app-fit-confirm-dialog',
+  selector: 'app-confirm-dialog',
   standalone: false,
-  templateUrl: './fit-confirm-dialog.component.html',
-  styleUrls: ['./fit-confirm-dialog.component.scss']
+  templateUrl: './confirm-dialog.component.html',
+  styleUrls: ['./confirm-dialog.component.scss']
 })
-export class FitConfirmDialogComponent {
+export class ConfirmDialogComponent {
   DialogType = DialogType;
 
   constructor(
-    public dialogRef: MatDialogRef<FitConfirmDialogComponent>,
+    public dialogRef: MatDialogRef<ConfirmDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public config: DialogConfig,
     private translate: TranslateService
   ) {}

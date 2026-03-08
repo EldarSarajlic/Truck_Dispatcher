@@ -106,6 +106,39 @@ html[data-theme="dark"] {
 }
 
 /* ===========================
+   CUSTOM SCROLLBARS
+   =========================== */
+
+/* Chromium / Safari / Edge */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0b12;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6366f1, #8b5cf6);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #818cf8, #a78bfa);
+}
+
+::-webkit-scrollbar-corner {
+  background: #0b0b12;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #6366f1 #0b0b12;
+}
+
+/* ===========================
    DAISYUI COMPONENT OVERRIDES
    =========================== */
 .card {

@@ -1,249 +1,197 @@
-<div class="flex flex-col gap-10">
+<div class="page-wrapper flex flex-col gap-6">
 
-  <!-- ================= LOADING ================= -->
-  @if (isLoading) {
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-      @for (i of [1,2,3,4]; track i) {
-        <div class="card bg-base-100 shadow p-6">
-          <div class="skeleton h-5 w-24 mb-4"></div>
-          <div class="skeleton h-10 w-32 mb-2"></div>
-          <div class="skeleton h-4 w-20"></div>
+  <!-- ============================================================
+       LOADING STATE
+       ============================================================ -->
+  @if (isLoading()) {
+
+    <!-- Metric card skeletons -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="skeleton-metric">
+          <div class="skeleton h-8 w-16 mb-3 rounded-lg"></div>
+          <div class="skeleton h-4 w-28 mb-2 rounded"></div>
+          <div class="skeleton h-5 w-20 rounded-full"></div>
         </div>
       }
     </div>
+
+    <!-- Table skeleton -->
+    <div class="section-card">
+      <div class="section-card-header">
+        <div class="skeleton h-5 w-36 rounded"></div>
+      </div>
+      <div class="p-4 flex flex-col gap-3">
+        @for (i of [1, 2, 3, 4, 5]; track i) {
+          <div class="skeleton h-10 w-full rounded-lg"></div>
+        }
+      </div>
+    </div>
+
   }
 
-  <!-- ================= ERROR ================= -->
-  @if (error) {
-    <div class="alert alert-error shadow">
-      <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-           stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M12 9v2m0 4h.01
-                 M10.29 3.86l-8.02 14
-                 A1 1 0 003.14 19h17.72
-                 a1 1 0 00.87-1.5l-8.02-14
-                 a1 1 0 00-1.74 0z"/>
-      </svg>
-      <span>{{ error }}</span>
+  <!-- ============================================================
+       ERROR STATE
+       ============================================================ -->
+  @else if (hasError()) {
+    <div class="flex flex-col items-center justify-center gap-4 py-20">
+      <i class="ph-duotone ph-warning-circle" style="font-size: 48px; color: #f87171;"></i>
+      <p style="color: #7878a0; font-size: 0.85rem;">{{ 'DASHBOARD.FAILED_TO_LOAD' | translate }}</p>
     </div>
   }
 
-  <!-- ================= DASHBOARD OVERVIEW ================= -->
-  @if (!isLoading && dashboardStats; as stats) {
+  <!-- ============================================================
+       REAL CONTENT
+       ============================================================ -->
+  @else if (dashboardStats(); as stats) {
 
-    <!-- ================= METRICS ================= -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+    <!-- ── Metric Cards ──────────────────────────────────────────── -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
 
-      <!-- TOTAL SALES -->
-      <div class="card bg-base-100 shadow">
-        <div class="card-body flex-row items-center gap-4">
-          <div class="w-14 h-14 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8"
-                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M14 4a6 6 0 00-6 6v4a6 6 0 006 6m-8-6h8m-8-4h8"/>
-            </svg>
-          </div>
-          <div>
-            <div class="text-sm font-medium text-base-content/80">{{ 'DASHBOARD.TOTAL_SALES' | translate }}</div>
-            <div class="text-2xl font-bold">
-              {{ stats.totalSales | currency:'EUR':'symbol':'1.0-0' }}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TOTAL ORDERS -->
-      <div class="card bg-base-100 shadow">
-        <div class="card-body flex-row items-center gap-4">
-          <div class="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8"
-                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M9 12h6m-6 4h6m-7 4h8
-                       a2 2 0 002-2V6a2 2 0 00-2-2H8a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
-          </div>
-          <div>
-            <div class="text-sm font-medium text-base-content/80">{{ 'DASHBOARD.TOTAL_ORDERS' | translate }}</div>
-            <div class="text-2xl font-bold">{{ stats.totalOrders }}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TOTAL USERS -->
-      <div class="card bg-base-100 shadow">
-        <div class="card-body flex-row items-center gap-4">
-          <div class="w-14 h-14 rounded-full bg-violet-500/10 text-violet-600 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8"
-                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M17 20h5v-2a4 4 0 00-4-4h-1
-                       M9 20H4v-2a4 4 0 014-4h1
-                       m4-4a4 4 0 100-8 4 4 0 000 8z"/>
-            </svg>
-          </div>
-          <div>
-            <div class="text-sm font-medium text-base-content/80">{{ 'DASHBOARD.TOTAL_USERS' | translate }}</div>
-            <div class="text-2xl font-bold">{{ stats.totalUsers }}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PENDING ORDERS -->
-      <div class="card bg-base-100 shadow">
-        <div class="card-body flex-row items-center gap-4">
-          <div class="w-14 h-14 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8"
-                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M12 9v2m0 4h.01
-                       M10.29 3.86l-8.02 14
-                       A1 1 0 003.14 19h17.72
-                       a1 1 0 00.87-1.5l-8.02-14
-                       a1 1 0 00-1.74 0z"/>
-            </svg>
-          </div>
-          <div>
-            <div class="text-sm font-medium text-base-content/80">{{ 'DASHBOARD.PENDING_ORDERS' | translate }}</div>
-            <div class="text-2xl font-bold">{{ stats.pendingOrders }}</div>
-          </div>
-        </div>
-      </div>
+      @for (card of metricCards(); track card.label; let i = $index) {
+        <app-metric-card
+          [label]="card.label"
+          [value]="card.value"
+          [variant]="card.variant"
+          [icon]="card.icon"
+          [pill]="card.pill"
+          [prefix]="card.prefix"
+          [index]="i"
+        />
+      }
 
     </div>
 
-    <!-- ================= RECENT ORDERS ================= -->
-    <div class="card bg-base-100 shadow">
-      <div class="card-body">
+    <!-- ── Recent Orders Table ───────────────────────────────────── -->
+    <div class="section-card">
 
-        <h3 class="text-lg font-semibold mb-4">
+      <div class="section-card-header">
+        <h3>
+          <i class="ph-duotone ph-clock-clockwise"></i>
           {{ 'DASHBOARD.RECENT_ORDERS' | translate }}
         </h3>
-
-        <!-- EMPTY -->
-        @if (stats.recentOrders.length === 0) {
-          <div class="text-center text-base-content/60 py-10">
-            {{ 'DASHBOARD.NO_RECENT_ORDERS' | translate }}
-          </div>
-        }
-
-        <!-- LIST -->
-        @if (stats.recentOrders.length > 0) {
-          <div class="divide-y divide-base-content/10">
-            @for (sale of stats.recentOrders; track sale.reference) {
-              <div
-                (click)="openOrderModal(sale)"
-                class="flex items-center justify-between py-4 px-3
-                       rounded-lg cursor-pointer
-                       hover:bg-base-200 transition">
-
-                <!-- LEFT -->
-                <div class="flex items-center gap-3">
-                  <span
-                    class="w-2.5 h-2.5 rounded-full"
-                    [ngClass]="{
-                      'bg-success': sale.status === 'Approved',
-                      'bg-primary': sale.status === 'InProgress',
-                      'bg-info': sale.status === 'Completed',
-                      'bg-warning': sale.status === 'Pending',
-                      'bg-error': sale.status === 'Cancelled'
-                    }"
-                  ></span>
-
-                  <div>
-                    <div class="font-semibold">{{ sale.reference }}</div>
-                    <div class="text-sm text-base-content/70">
-                      {{ sale.client }}
-                    </div>
-                  </div>
-                </div>
-
-                <!-- RIGHT -->
-                <div class="text-right">
-                  <div class="font-bold text-success">
-                    {{ sale.price | currency:'EUR' }}
-                  </div>
-                  <div class="text-xs text-base-content/60">
-                    {{ sale.date | date:'dd.MM.yyyy HH:mm' }}
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
-        }
       </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-idx">#</th>
+            <th>{{ 'DASHBOARD.REFERENCE' | translate }}</th>
+            <th>{{ 'DASHBOARD.CLIENT' | translate }}</th>
+            <th>{{ 'COMMON.DATE' | translate }}</th>
+            <th>{{ 'COMMON.STATUS' | translate }}</th>
+            <th>{{ 'COMMON.TOTAL' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          @for (order of stats.recentOrders; track order.reference; let i = $index) {
+            <tr class="fleet-row" (click)="openOrderModal(order)">
+              <td class="col-idx-cell">{{ (i + 1).toString().padStart(2, '0') }}</td>
+              <td>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 600;">
+                  {{ order.reference }}
+                </span>
+              </td>
+              <td style="color: #7878a0; font-size: 0.78rem;">{{ order.client }}</td>
+              <td style="color: #7878a0; font-size: 0.78rem;">{{ order.date | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <span class="status-badge {{ statusClass(order.status) }}">
+                  {{ statusKey(order.status) | translate }}
+                </span>
+              </td>
+              <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+                €{{ order.price.toLocaleString('de-DE', { minimumFractionDigits: 2 }) }}
+              </td>
+            </tr>
+          }
+
+          @if (stats.recentOrders.length === 0) {
+            <tr>
+              <td colspan="6" class="empty-row">
+                <i class="ph-duotone ph-package"></i>
+                {{ 'DASHBOARD.NO_RECENT_ORDERS' | translate }}
+              </td>
+            </tr>
+          }
+
+        </tbody>
+      </table>
+
     </div>
 
   }
+
 </div>
-<!-- ================= MODAL ================= -->
-<dialog class="modal" [open]="selectedOrder">
-  <div class="modal-box max-w-2xl ">
 
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-lg font-semibold">
-        {{ 'DASHBOARD.ORDER' | translate }} {{ selectedOrder?.reference }}
-      </h3>
-      <button class="btn btn-sm btn-circle btn-ghost"
-              (click)="closeOrderModal()">✕</button>
-    </div>
+<!-- ============================================================
+     ORDER DETAIL MODAL
+     Only rendered when selectedOrder() is set.
+     Uses inline click-outside pattern: clicking the overlay backdrop
+     (the outer div) closes the modal, while clicks on the inner
+     modal box do not bubble up thanks to stopPropagation.
+     ============================================================ -->
+@if (selectedOrder(); as order) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);"
+    (click)="closeOrderModal()"
+  >
+    <div
+      class="flex flex-col gap-4 p-6 rounded-2xl w-full max-w-md"
+      style="background: #15151f; border: 1px solid #252535; box-shadow: 0 24px 64px rgba(0,0,0,0.5);"
+      (click)="$event.stopPropagation()"
+    >
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-
-      <div>
-        <span class="font-medium">{{ 'DASHBOARD.CLIENT' | translate }}</span>
-        <div>{{ selectedOrder?.client }}</div>
+      <!-- Header -->
+      <div class="flex items-center justify-between">
+        <h2 style="font-size: 0.92rem; font-weight: 700; color: #e8e8f0; display: flex; align-items: center; gap: 8px;">
+          <i class="ph-duotone ph-receipt" style="font-size: 18px; color: #a78bfa;"></i>
+          {{ 'DASHBOARD.ORDER_DETAIL' | translate }}
+        </h2>
       </div>
 
-      <div>
-        <span class="font-medium">{{ 'COMMON.STATUS' | translate }}</span>
-        <div class="mt-1">
-          <span class="badge"
-            [ngClass]="{
-              'badge-success': selectedOrder?.status === 'Approved',
-              'badge-primary': selectedOrder?.status === 'InProgress',
-              'badge-info': selectedOrder?.status === 'Completed',
-              'badge-warning': selectedOrder?.status === 'Pending',
-              'badge-error': selectedOrder?.status === 'Cancelled'
-            }">
-            {{ selectedOrder?.status }}
-          </span>
-        </div>
-      </div>
+      <!-- Fields -->
+      <div class="grid grid-cols-2 gap-3">
 
-      <div>
-        <span class="font-medium">{{ 'DASHBOARD.ORDER_DATE' | translate }}</span>
         <div>
-          {{ selectedOrder?.date | date:'dd.MM.yyyy HH:mm' }}
+          <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#44445a;margin-bottom:3px;">{{ 'DASHBOARD.REFERENCE' | translate }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:600;color:#e8e8f0;">{{ order.reference }}</div>
         </div>
+
+        <div>
+          <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#44445a;margin-bottom:3px;">{{ 'DASHBOARD.CLIENT' | translate }}</div>
+          <div style="font-size:0.85rem;font-weight:600;color:#e8e8f0;">{{ order.client }}</div>
+        </div>
+
+        <div>
+          <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#44445a;margin-bottom:3px;">{{ 'COMMON.DATE' | translate }}</div>
+          <div style="font-size:0.85rem;color:#7878a0;">{{ order.date | date:'dd/MM/yyyy' }}</div>
+        </div>
+
+        <div>
+          <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#44445a;margin-bottom:3px;">{{ 'COMMON.TOTAL' | translate }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:600;color:#34d399;">
+            €{{ order.price.toLocaleString('de-DE', { minimumFractionDigits: 2 }) }}
+          </div>
+        </div>
+
+        <div class="col-span-2">
+          <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#44445a;margin-bottom:6px;">{{ 'COMMON.STATUS' | translate }}</div>
+          <span class="status-badge {{ statusClass(order.status) }}">{{ order.status }}</span>
+        </div>
+
       </div>
 
-      <div>
-        <span class="font-medium">{{ 'DASHBOARD.TOTAL_AMOUNT' | translate }}</span>
-        <div class="font-semibold text-success">
-          {{ selectedOrder?.price | currency:'EUR' }}
-        </div>
+      <!-- Footer -->
+      <div class="flex justify-end">
+        <button
+          (click)="closeOrderModal()"
+          style="padding:8px 20px;border-radius:8px;background:#1e1e2d;border:1px solid #252535;
+                 color:#e8e8f0;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;"
+        >{{ 'COMMON.CLOSE' | translate }}</button>
       </div>
 
     </div>
-
-    <div class="modal-action mt-6">
-      <button class="btn btn-outline" (click)="closeOrderModal()">{{ 'DIALOGS.BUTTONS.CLOSE' | translate }}</button>
-      @if (selectedOrder?.status === 'Pending') {
-        <button class="btn btn-success">
-          {{ 'DASHBOARD.APPROVE_ORDER' | translate }}
-        </button>
-      }
-      <button class="btn btn-primary">
-        {{ 'DASHBOARD.VIEW_FULL_ORDER' | translate }}
-      </button>
-    </div>
-
   </div>
-
-  <form method="dialog" class="modal-backdrop">
-    <button (click)="closeOrderModal()">close</button>
-  </form>
-</dialog>
+}

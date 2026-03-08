@@ -1,23 +1,25 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {FitPaginatorBarComponent} from './components/fit-paginator-bar/fit-paginator-bar.component';
-import {materialModules} from './material-modules';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {TranslateModule} from '@ngx-translate/core';
-import { FitConfirmDialogComponent } from './components/fit-confirm-dialog/fit-confirm-dialog.component';
-import {DialogHelperService} from './services/dialog-helper.service';
-import { FitLoadingBarComponent } from './components/fit-loading-bar/fit-loading-bar.component';
-import { FitTableSkeletonComponent } from './components/fit-table-skeleton/fit-table-skeleton.component';
+import { PaginatorBarComponent } from './components/paginator-bar/paginator-bar.component';
+import { materialModules } from './material-modules';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { DialogHelperService } from './services/dialog-helper.service';
+import { LoadingBarComponent } from './components/loading-bar/loading-bar.component';
+import { TableSkeletonComponent } from './components/table-skeleton/table-skeleton.component';
+import { MetricCardComponent } from './components/metric-card/metric-card.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { RouterModule } from '@angular/router';        
+import { RouterModule } from '@angular/router';
 
 
 @NgModule({
   declarations: [
-    FitPaginatorBarComponent,
-    FitConfirmDialogComponent,
-    FitLoadingBarComponent,
-    FitTableSkeletonComponent,
+    PaginatorBarComponent,
+    ConfirmDialogComponent,
+    LoadingBarComponent,
+    TableSkeletonComponent,
+    MetricCardComponent,
     SidebarComponent
   ],
   imports: [
@@ -25,22 +27,23 @@ import { RouterModule } from '@angular/router';
     ReactiveFormsModule,
     FormsModule,
     TranslateModule,
-     RouterModule,       
+    RouterModule,
     ...materialModules
   ],
   providers: [
     DialogHelperService
   ],
-  exports:[
-    FitPaginatorBarComponent,
+  exports: [
+    PaginatorBarComponent,
     CommonModule,
     ReactiveFormsModule,
     TranslateModule,
     FormsModule,
-    FitLoadingBarComponent,
-    FitTableSkeletonComponent,
-    RouterModule,       
-    SidebarComponent,   
+    LoadingBarComponent,
+    TableSkeletonComponent,
+    MetricCardComponent,
+    RouterModule,
+    SidebarComponent,
     materialModules
   ]
 })

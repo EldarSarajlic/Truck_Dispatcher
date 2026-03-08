@@ -1,5 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, HostListener } from '@angular/core';
 import { DashboardApiService } from '../../../../api-services/dashboard/dashboard-api.service';
+import { MetricCard } from '../../../shared/components/metric-card/metric-card.component';
 import {
   GetOrdersDashboardSummaryResponse
 } from '../../../../api-services/dashboard/dashboard-api.model';
@@ -18,7 +19,7 @@ Chart.register(...registerables);
   selector: 'app-order-stats',
   standalone: false,
   templateUrl: './order-stats.component.html',
-  styleUrl: './order-stats.component.css',
+  styleUrl: './order-stats.component.scss',
 })
 export class OrderStatsComponent implements OnInit {
 
@@ -26,6 +27,8 @@ export class OrderStatsComponent implements OnInit {
 
   // ================= LOADING =================
   isLoadingSummary = false;
+  summaryError?: string;
+  chartsError?: string;
 
   // ================= CURRENT MONTH SUMMARY =================
   currentMonth = {
@@ -59,8 +62,59 @@ export class OrderStatsComponent implements OnInit {
 
   years = [2023, 2024, 2025,2026];
 
-  selectedMonth = new Date().getMonth() + 1;
+  selectedMonth: number | null = new Date().getMonth() + 1;
   selectedYear = new Date().getFullYear();
+
+  // ================= DROPDOWN STATE =================
+  monthDropdownOpen      = false;
+  yearDropdownOpen       = false;
+  chartsYearDropdownOpen = false;
+
+  @HostListener('document:click')
+  closeDropdowns(): void {
+    this.monthDropdownOpen      = false;
+    this.yearDropdownOpen       = false;
+    this.chartsYearDropdownOpen = false;
+  }
+
+  toggleMonthDropdown(e: Event): void {
+    e.stopPropagation();
+    this.monthDropdownOpen = !this.monthDropdownOpen;
+    this.yearDropdownOpen  = false;
+  }
+
+  toggleYearDropdown(e: Event): void {
+    e.stopPropagation();
+    this.yearDropdownOpen       = !this.yearDropdownOpen;
+    this.monthDropdownOpen      = false;
+    this.chartsYearDropdownOpen = false;
+  }
+
+  toggleChartsYearDropdown(e: Event): void {
+    e.stopPropagation();
+    this.chartsYearDropdownOpen = !this.chartsYearDropdownOpen;
+    this.monthDropdownOpen      = false;
+    this.yearDropdownOpen       = false;
+  }
+
+  selectChartsYear(value: number, e: Event): void {
+    e.stopPropagation();
+    this.selectedYear           = value;
+    this.chartsYearDropdownOpen = false;
+    this.loadCharts(value);
+  }
+
+  selectMonth(value: number | null, e: Event): void {
+    e.stopPropagation();
+    this.selectedMonth     = value;
+    this.monthDropdownOpen = false;
+  }
+
+  selectYear(value: number, e: Event): void {
+    e.stopPropagation();
+    this.selectedYear     = value;
+    this.yearDropdownOpen = false;
+  }
 
   // ============================================================
 
@@ -76,6 +130,7 @@ export class OrderStatsComponent implements OnInit {
    */
   loadCurrentMonthSummary(): void {
     this.isLoadingSummary = true;
+    this.summaryError = undefined;
 
     this.dashboardApi.getOrdersSummary().subscribe({
       next: (result) => {
@@ -90,6 +145,7 @@ export class OrderStatsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load order summary', err);
+        this.summaryError = 'Failed to load summary data.';
         this.isLoadingSummary = false;
       }
     });
@@ -101,15 +157,19 @@ isLoadingCharts = false;
 
 loadCharts(year: number): void {
   this.isLoadingCharts = true;
+  this.chartsError = undefined;
 
   this.dashboardApi.getOrdersCharts(year).subscribe({
     next: (res) => {
-      this.renderOrdersChart(res.ordersByMonth);
-      this.renderRevenueChart(res.revenueByMonth);
       this.isLoadingCharts = false;
+      setTimeout(() => {
+        this.renderOrdersChart(res.ordersByMonth);
+        this.renderRevenueChart(res.revenueByMonth);
+      }, 0);
     },
     error: (err) => {
       console.error('Failed to load charts', err);
+      this.chartsError = 'Failed to load chart data.';
       this.isLoadingCharts = false;
     }
   });
@@ -157,10 +217,11 @@ activeItemsTab: 'selling' | 'profitable' | 'cancelled' = 'selling';
 loadOrdersReport(): void {
   this.isLoadingReport = true;
   this.reportError = undefined;
+  this.ordersReport = undefined;
 
 this.dashboardApi.getOrdersReport(
   this.selectedYear,
-  this.selectedMonth
+  this.selectedMonth ?? undefined
 ).subscribe({
   next: (res) => {
     this.ordersReport = res;
@@ -186,5 +247,42 @@ this.dashboardApi.getOrdersReport(
   get selectedMonthLabel(): string {
     const month = this.months.find(m => m.value === this.selectedMonth);
     return month ? month.label : '';
+  }
+
+  get metricCards(): MetricCard[] {
+    const fmt = (n: number) => n.toLocaleString('de-DE', { maximumFractionDigits: 0 });
+    return [
+      {
+        label:   'DASHBOARD.TOTAL_REVENUE',
+        value:   fmt(this.currentMonth.totalRevenue),
+        variant: 'green',
+        icon:    'ph-duotone ph-currency-eur',
+        pill:    'DASHBOARD.YEAR_TO_DATE',
+        prefix:  '€',
+      },
+      {
+        label:   'DASHBOARD.MONTHLY_REVENUE',
+        value:   fmt(this.currentMonth.revenue),
+        variant: 'blue',
+        icon:    'ph-duotone ph-trend-up',
+        pill:    'DASHBOARD.CURRENT_MONTH',
+        prefix:  '€',
+      },
+      {
+        label:   'DASHBOARD.TOTAL_ORDERS',
+        value:   this.currentMonth.totalOrders,
+        variant: 'violet',
+        icon:    'ph-duotone ph-clipboard-text',
+        pill:    'DASHBOARD.ALL_TIME',
+      },
+      {
+        label:   'DASHBOARD.AVG_ORDER_VALUE',
+        value:   fmt(this.currentMonth.avgOrderValue),
+        variant: 'amber',
+        icon:    'ph-duotone ph-receipt',
+        pill:    'DASHBOARD.PER_ORDER',
+        prefix:  '€',
+      },
+    ];
   }
 }

@@ -1,0 +1,219 @@
+// ============================================================
+// dashboard-overview.component.scss
+//
+// This file is LAYER 3 of the three-layer styling system.
+// It handles ONLY what Tailwind and DaisyUI cannot express:
+//   - @keyframes animations
+//   - nth-child stagger (no JS required)
+//   - ::before / ::after pseudo-elements
+//   - Colour variant classes for status badges
+//   - Hover systems that involve multiple child elements
+//
+// Metric card styles live in:
+//   shared/components/metric-card/metric-card.component.scss
+//
+// Tailwind handles: layout, spacing, overflow (grid, gap, flex)
+// DaisyUI handles:  nothing on this page (we use custom card shapes)
+// SCSS handles:     everything visual and animated
+// ============================================================
+
+// ── Page entrance ─────────────────────────────────────────────────────────────
+// Runs once when the component mounts. The 350ms duration is intentionally
+// brief — this is a business tool, not a portfolio site.
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-wrapper {
+  animation: page-in 350ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+
+// ── Skeleton metric placeholder ────────────────────────────────────────────────
+// Height matches the real metric card so there is no layout shift on load.
+.skeleton-metric {
+  background:    #15151f;
+  border:        1px solid #252535;
+  border-radius: 16px;
+  padding:       20px;
+  height:        108px;
+}
+
+
+// ── Section card (table wrapper) ──────────────────────────────────────────────
+.section-card {
+  background:    #15151f;
+  border:        1px solid #252535;
+  border-radius: 16px;
+  overflow:      hidden;
+  transition:    border-color 280ms ease;
+
+  &:hover { border-color: #3a3a55; }
+}
+
+.section-card-header {
+  padding:     16px 20px;
+  border-bottom: 1px solid #252535;
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+
+  h3 {
+    font-size:   0.88rem;
+    font-weight: 700;
+    color:       #e8e8f0;
+    display:     flex;
+    align-items: center;
+    gap:         8px;
+    flex:        1;
+
+    // Phosphor duotone icons sit as <i> tags inline with the heading text
+    i { color: #a78bfa; font-size: 18px; }
+  }
+}
+
+
+// ── Data table ────────────────────────────────────────────────────────────────
+.data-table {
+  width:           100%;
+  border-collapse: collapse;
+
+  thead th {
+    padding:         10px 16px;
+    font-size:       0.65rem;
+    font-weight:     700;
+    text-transform:  uppercase;
+    letter-spacing:  0.1em;
+    color:           #44445a;
+    text-align:      left;
+    border-bottom:   1px solid #252535;
+    background:      #111119;
+    white-space:     nowrap;
+
+    // The # column header is visually invisible — it just reserves space
+    &.col-idx { width: 48px; text-align: center; color: transparent; user-select: none; }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #252535;
+    transition:    background 180ms ease;
+    cursor:        pointer;
+
+    &:last-child { border-bottom: none; }
+    &:hover      { background: rgba(99, 102, 241, 0.05); }
+
+    // The left-rail accent lives on the first <td>, not the <tr>.
+    // This is because border-collapse: collapse ignores tr borders
+    // in some browsers. The td approach is reliable everywhere.
+    &:hover td:first-child { border-left-color: #6366f1; }
+  }
+
+  tbody td {
+    padding:        12px 16px;
+    font-size:      0.8rem;
+    color:          #e8e8f0;
+    vertical-align: middle;
+  }
+
+  tbody td:first-child {
+    border-left: 3px solid transparent;
+    transition:  border-color 200ms ease;
+  }
+}
+
+
+// ── Row index cell ─────────────────────────────────────────────────────────────
+// Numbers are formatted as 01, 02, 03 (padStart in the template).
+.col-idx-cell {
+  font-family: 'JetBrains Mono', monospace;
+  font-size:   0.62rem;
+  font-weight: 500;
+  color:       #44445a;
+  text-align:  center;
+  width:       48px;
+  user-select: none;
+  // Override the left-rail so the index column never gets the purple border
+  border-left: 3px solid transparent !important;
+}
+
+// The index number brightens when its row is hovered
+.fleet-row:hover .col-idx-cell { color: #6366f1; }
+
+
+// ── Table row stagger animation ───────────────────────────────────────────────
+@keyframes row-in {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.fleet-row {
+  animation: row-in 350ms ease both;
+
+  &:nth-child(1) { animation-delay:  80ms; }
+  &:nth-child(2) { animation-delay: 140ms; }
+  &:nth-child(3) { animation-delay: 200ms; }
+  &:nth-child(4) { animation-delay: 260ms; }
+  &:nth-child(5) { animation-delay: 320ms; }
+}
+
+
+// ── Status badges ──────────────────────────────────────────────────────────────
+// The pulsing dot ::before is a keyframe that can't be done with a Tailwind class.
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.75); }
+}
+
+.status-badge {
+  display:     inline-flex;
+  align-items: center;
+  gap:         5px;
+  padding:     3px 10px;
+  border-radius: 20px;
+  font-size:   0.68rem;
+  font-weight: 600;
+
+  &::before {
+    content:       '';
+    width:  5px; height: 5px;
+    border-radius: 50%;
+    flex-shrink:   0;
+    animation:     dot-pulse 2s infinite;
+  }
+}
+
+.status--pending     { background: rgba(251,191, 36,0.12); color: #fbbf24; border: 1px solid rgba(251,191, 36,0.25); &::before { background: #fbbf24; } }
+.status--approved    { background: rgba( 52,211,153,0.12); color: #34d399; border: 1px solid rgba( 52,211,153,0.25); &::before { background: #34d399; } }
+.status--in-progress { background: rgba( 56,189,248,0.12); color: #38bdf8; border: 1px solid rgba( 56,189,248,0.25); &::before { background: #38bdf8; } }
+.status--completed   { background: rgba( 99,102,241,0.12); color: #a78bfa; border: 1px solid rgba( 99,102,241,0.25); &::before { background: #a78bfa; } }
+.status--cancelled   { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.25); &::before { background: #f87171; } }
+
+
+// ── Empty state ────────────────────────────────────────────────────────────────
+.empty-row {
+  text-align: center;
+  padding:    60px 20px !important;
+  color:      #44445a;
+  font-size:  0.85rem;
+
+  i {
+    font-size:      40px;
+    display:        block;
+    margin-bottom:  10px;
+    opacity:        0.25;
+  }
+}
+
+
+// ── Accessibility: respect reduced-motion preference ──────────────────────────
+// Users who have enabled "reduce motion" in their OS settings should never
+// see animations. This disables every animation and transition in one block.
+@media (prefers-reduced-motion: reduce) {
+  .page-wrapper,
+  .fleet-row,
+  .status-badge::before {
+    animation:  none !important;
+    transition: none !important;
+  }
+}
