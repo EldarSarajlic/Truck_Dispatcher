@@ -6,7 +6,7 @@
 [![Tailwind](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
 [![DaisyUI](https://img.shields.io/badge/DaisyUI-v5-5A0EF8?logo=daisyui)](https://daisyui.com/)
 
-> **Status:** Ongoing — Backend API complete, frontend under active development.
+> **Status:** Ongoing
 
 A full-stack logistics platform for trucking companies, replacing paper-based workflows with a digital system that manages the entire pipeline from client ordering through dispatch to delivery.
 
@@ -65,7 +65,7 @@ Orders and Shipments are intentionally separate entities with distinct status li
 
 ## Architecture
 
-### Backend — Clean Architecture
+### Backend — Clean Architecture (CQRS Pattern)
 
 ```
 Dispatcher.Backend/
@@ -191,8 +191,8 @@ The project follows strict conventions documented in `FRONTEND-GUIDE.md`:
 
 ## Team
 
-| Name | GitHub |
-|---|---|
+| Name | 
+|---|
 | Eldar Sarajlić |
 | Haris Šarić | 
 | Ali Mustafić  |
