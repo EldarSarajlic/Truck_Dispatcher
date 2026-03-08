@@ -1,442 +1,200 @@
-# 🚛 Truck Dispatcher - Complete Logistics Management System (ONGOING)
+# 🚛 Truck Dispatcher — Logistics Management System
 
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
-[![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular)](https://angular.io/)
+[![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular)](https://angular.dev/)
 [![SQL Server](https://img.shields.io/badge/SQL%20Server-2022-CC2927?logo=microsoftsqlserver)](https://www.microsoft.com/sql-server)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Tailwind](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
+[![DaisyUI](https://img.shields.io/badge/DaisyUI-v5-5A0EF8?logo=daisyui)](https://daisyui.com/)
 
-A modern, full-stack logistics management platform designed for trucking companies to streamline their entire workflow—from client ordering to delivery completion. Built with Clean Architecture principles and industry best practices.
+> **Status:** Ongoing — Backend API complete, frontend under active development.
 
-## 📋 Table of Contents
+A full-stack logistics platform for trucking companies, replacing paper-based workflows with a digital system that manages the entire pipeline from client ordering through dispatch to delivery.
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [Technology Stack](#-technology-stack)
-- [Architecture](#-architecture)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [User Roles](#-user-roles)
-- [Development Status](#-development-status)
-- [Screenshots](#-screenshots)
-- [Contributing](#-contributing)
-- [License](#-license)
+---
 
-## 🎯 Overview
+## Overview
 
-Truck Dispatcher is a comprehensive logistics management system that replaces traditional paper-based workflows with a modern digital platform. The system manages four distinct user roles, each with tailored interfaces and capabilities, creating a seamless workflow from product ordering through shipment creation to final delivery.
+The system is built around four user roles, each with a dedicated interface:
 
-### What Makes This Different?
+**Client** places an order → **Dispatcher** reviews and approves it → creates a **Shipment** → assigns a **Truck**, **Trailer**, and **Driver** via a **Dispatch** → **Driver** completes the delivery.
 
-Unlike generic e-commerce platforms, this system is purpose-built for logistics operations:
-- **Dispatcher-centric workflow**: Orders require approval before shipment creation
-- **Resource management**: Assign trucks, trailers, and drivers to specific routes
-- **Real-time tracking**: GPS integration for live shipment monitoring
-- **Role-based access**: Four specialized interfaces (Admin, Dispatcher, Driver, Client)
-- **Complete audit trail**: Track every step from order placement to delivery completion
+Orders and Shipments are intentionally separate entities with distinct status lifecycles and role ownership.
 
-## ✨ Key Features
+---
 
-### Core Functionality
-- 🔐 **JWT Authentication** with refresh token rotation
-- 👥 **Multi-role System**: Admin, Dispatcher, Driver, Client
-- 📦 **Order Management**: Client ordering with dispatcher approval workflow
-- 🚚 **Shipment Creation**: Assign routes, vehicles, and drivers
-- 📍 **GPS Tracking**: Real-time location tracking with Leaflet maps
-- 💬 **Real-time Chat**: SignalR-powered messaging between users
-- 📊 **Inventory Management**: Track products, categories, and stock levels
-- 🚛 **Vehicle Management**: Trucks and trailers with maintenance tracking
-- 📱 **Responsive Design**: Works seamlessly on desktop and mobile
-
-### Technical Highlights
-- **Clean Architecture**: Clear separation of concerns (Domain, Application, Infrastructure, API)
-- **CQRS Pattern**: Using MediatR for command/query separation
-- **Entity Framework Core**: Code-first approach with migrations
-- **Soft Delete**: Audit-friendly data management
-- **Automated Testing**: Unit and integration test coverage
-- **API Documentation**: Swagger/OpenAPI integration
-- **Internationalization**: Multi-language support (English, Bosnian)
-
-## 🛠 Technology Stack
+## Tech Stack
 
 ### Backend
-- **Framework**: .NET 8.0
-- **Architecture**: Clean Architecture + CQRS
-- **ORM**: Entity Framework Core 8.0
-- **Database**: Microsoft SQL Server 2022
-- **Authentication**: JWT with refresh tokens
-- **Validation**: FluentValidation
-- **Mediator**: MediatR
-- **Real-time**: SignalR (planned)
+
+| Layer | Technology |
+|---|---|
+| Framework | .NET 8, ASP.NET Core |
+| Architecture | Clean Architecture + CQRS (MediatR) |
+| ORM | Entity Framework Core 8 (Code-First) |
+| Database | Microsoft SQL Server 2022 |
+| Auth | JWT with refresh token rotation |
+| Validation | FluentValidation |
+| Real-time | SignalR |
+| Docs | Swagger / OpenAPI |
 
 ### Frontend
-- **Framework**: Angular 21 (Standalone Components)
-- **UI Library**: Angular Material + Tailwind CSS
-- **State Management**: RxJS + Signals
-- **HTTP**: Angular HttpClient with interceptors
-- **Routing**: Angular Router with guards
-- **Maps**: Leaflet (planned)
-- **Forms**: Reactive Forms with validators
 
-### DevOps & Tools
-- **Version Control**: Git + GitHub
-- **Project Management**: Azure DevOps
-- **Database Migrations**: EF Core Migrations
-- **API Testing**: Swagger UI
-- **Development**: Visual Studio 2022 / VS Code
+| Layer | Technology |
+|---|---|
+| Framework | Angular 21 (NgModule-based, not standalone) |
+| Styling | Three-layer system: Tailwind v4 (layout) → DaisyUI v5 (components) → Component SCSS (animations, pseudo-elements) |
+| State | Angular Signals for local state, RxJS for HTTP streams |
+| Icons | Phosphor Icons (duotone) |
+| Charts | Chart.js |
+| Maps | Leaflet.js |
+| i18n | ngx-translate (English, Bosnian) |
+| HTTP | Angular HttpClient with interceptors (auth, loading bar, error logging) |
 
-## 🏗 Architecture
+### Tools
 
-### Backend Architecture
+| Purpose | Tool |
+|---|---|
+| IDE | VS Code | VS
+| Version Control | Git + GitHub |
+| Git Client | SourceTree |
+| Project Management | Azure DevOps (sprints, user stories) |
+| API Testing | Swagger UI |
+| Prototyping | Single-file HTML mockups |
+
+---
+
+## Architecture
+
+### Backend — Clean Architecture
 
 ```
 Dispatcher.Backend/
-├── Dispatcher.API/              # Entry point, Controllers, Middleware
-│   ├── Controllers/             # REST API endpoints
-│   ├── Middleware/              # Custom middleware
-│   └── DependencyInjection.cs   # Service registration
-│
-├── Dispatcher.Application/      # Business logic, CQRS handlers
-│   ├── Auth/                    # Authentication commands/queries
-│   ├── Orders/                  # Order management
-│   ├── Shipments/              # Shipment operations
-│   ├── Vehicles/               # Vehicle management
-│   └── Abstractions/           # Interfaces
-│
-├── Dispatcher.Domain/           # Entities, Business rules
-│   ├── Entities/
-│   │   ├── Identity/           # User, Role, RefreshToken
-│   │   ├── Vehicles/           # Truck, Trailer, VehicleStatus
-│   │   ├── Orders/             # Order, OrderItem
-│   │   ├── Shipments/          # Shipment, Route
-│   │   ├── Inventory/          # Product, Category
-│   │   ├── Chat/               # Message, Notification
-│   │   └── Dispatches/         # Dispatch assignments
-│   └── Common/                 # Base entities, interfaces
-│
-└── Dispatcher.Infrastructure/   # Data access, External services
-    ├── Database/
-    │   ├── DatabaseContext.cs  # EF Core DbContext
-    │   ├── Configurations/     # Entity configurations
-    │   └── Seeders/            # Data seeding
-    └── Services/               # External integrations
+├── Dispatcher.API              → Controllers, middleware, DI registration
+├── Dispatcher.Application      → CQRS handlers (Commands + Queries), FluentValidation
+├── Dispatcher.Domain           → Entities, enums, business rules
+├── Dispatcher.Infrastructure   → EF Core DbContext, migrations, seeders, external services
+├── Dispatcher.Shared           → Cross-cutting helpers
+└── Dispatcher.Tests            → Unit and integration tests
 ```
 
-### Frontend Architecture
+### Frontend — Feature Modules
 
 ```
-Dispatcher.Frontend/
-├── src/
-│   ├── app/
-│   │   ├── api-services/       # HTTP services (1:1 with backend)
-│   │   │   ├── auth/
-│   │   │   ├── orders/
-│   │   │   ├── products/
-│   │   │   └── ...
-│   │   │
-│   │   ├── core/               # Core functionality
-│   │   │   ├── components/     # Reusable base components
-│   │   │   ├── guards/         # Route guards
-│   │   │   ├── interceptors/   # HTTP interceptors
-│   │   │   ├── models/         # Shared models
-│   │   │   └── services/       # Core services (auth, state)
-│   │   │
-│   │   ├── modules/            # Feature modules
-│   │   │   ├── admin/          # Admin interface
-│   │   │   ├── auth/           # Login/Register
-│   │   │   ├── dispatcher/     # Dispatcher interface (planned)
-│   │   │   ├── driver/         # Driver interface (planned)
-│   │   │   └── client/         # Client interface (planned)
-│   │   │
-│   │   └── shared/             # Shared components/utilities
-│   │
-│   ├── assets/                 # Static assets
-│   └── environments/           # Environment configs
+Dispatcher.Frontend/src/app/
+├── api-services/       → HTTP services (one per backend resource)
+├── core/               → Guards, interceptors, auth services, models
+├── modules/
+│   ├── admin/          → Dashboard, Users, Vehicles, Trailers, Inventory
+│   ├── auth/           → Login, Forgot Password
+│   ├── client/         → Dashboard, Catalog, My Orders
+│   ├── dispatcher/     → Dispatch Board, Shipments, Live Tracking, Orders
+│   ├── driver/         → Dashboard, My Assignments
+│   ├── settings/       → User settings
+│   ├── shared/         → SharedModule (sidebar, pipes, common components)
+│   └── not-found/      → 404 page
+└── shared/             → Cross-module utilities
 ```
 
-## 📁 Project Structure
+---
 
-### Database Entities
+## Domain Entities
 
-**Core Entities:**
-- `UserEntity` - System users with role-based access
-- `RefreshTokenEntity` - JWT refresh token management
-- `TruckEntity` - Commercial vehicles
-- `TrailerEntity` - Cargo trailers
-- `VehicleStatusEntity` - Vehicle availability status
-- `OrderEntity` - Client orders
-- `OrderItemEntity` - Individual order items
-- `ShipmentEntity` - Approved orders ready for transport
-- `RouteEntity` - Delivery routes
-- `DispatchEntity` - Shipment assignments (truck + driver + route)
-- `InventoryEntity` - Product catalog
-- `MessageEntity` - Chat messages
-- `NotificationEntity` - System notifications
-- `PhotoEntity` - Image uploads with metadata
+The core data model:
 
-### Key Features by Entity
+- **UserEntity** — multi-role (Admin, Dispatcher, Driver, Client) with JWT refresh tokens
+- **OrderEntity / OrderItemEntity** — client orders linked to inventory, with priority and delivery info
+- **ShipmentEntity** — created from an approved order, linked to a route (one-to-one with Order)
+- **DispatchEntity** — assigns truck + driver + trailer to a shipment
+- **RouteEntity** — origin and destination cities
+- **TruckEntity / TrailerEntity** — vehicles with status tracking and maintenance records
+- **InventoryEntity** — product catalog with stock levels
+- **MessageEntity / NotificationEntity** — chat and system notifications
+- **CityEntity / CountryEntity** — location reference data
+- **ServiceCompanyEntity / TruckServiceAssignmentEntity** — maintenance service tracking
 
-**Users & Authentication:**
-- Multi-role system (Admin, Dispatcher, Driver, Client)
-- JWT authentication with refresh tokens
-- Password hashing with security best practices
-- Account lockout and two-factor authentication support
+---
 
-**Vehicle Management:**
-- Trucks: License plate, VIN, make/model, capacity
-- Trailers: Registration, capacity, maintenance tracking
-- Status tracking: Available, In Transit, Maintenance
-- GPS device integration
-
-**Order Management:**
-- Client order placement
-- Multi-item orders with inventory validation
-- Order status workflow: Pending → Approved → InTransit → Delivered
-- Dispatcher approval required before shipment
-
-**Shipment & Dispatch:**
-- Route planning with origin/destination
-- Resource assignment (truck, trailer, driver)
-- Scheduled vs. actual departure/arrival times
-- Delivery confirmation with signature and photos
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download)
 - [Node.js 20+](https://nodejs.org/) and npm
-- [SQL Server 2022](https://www.microsoft.com/sql-server) or [SQL Server Express](https://www.microsoft.com/sql-server/sql-server-downloads) (free)
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) or [VS Code](https://code.visualstudio.com/)
+- [SQL Server 2022](https://www.microsoft.com/sql-server) (Express edition is fine)
 
-### Backend Setup
+### Backend
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/EldarSarajlic/Truck_Dispatcher.git
-   cd Truck_Dispatcher/Dispatcher.Backend
-   ```
+```bash
+git clone https://github.com/EldarSarajlic/Truck_Dispatcher.git
+cd Truck_Dispatcher/Dispatcher.Backend
 
-2. **Configure the database**
-   - Update `appsettings.json` with your SQL Server connection string:
-   ```json
-   {
-     "ConnectionStrings": {
-       "DefaultConnection": "Server=localhost;Database=DispatcherDb;Trusted_Connection=True;TrustServerCertificate=True"
-     }
-   }
-   ```
-   
-   Or with SQL Server authentication:
-   ```json
-   {
-     "ConnectionStrings": {
-       "DefaultConnection": "Server=localhost;Database=DispatcherDb;User Id=sa;Password=YourPassword;TrustServerCertificate=True"
-     }
-   }
-   ```
+# Configure your connection string in appsettings.json
+# Then run migrations and start:
+dotnet ef database update --project Dispatcher.Infrastructure
+cd Dispatcher.API
+dotnet run
+```
 
-3. **Run migrations**
-   ```bash
-   dotnet ef database update --project Dispatcher.Infrastructure
-   ```
+API runs at `https://localhost:7260` — Swagger UI at `/swagger`.
 
-4. **Start the API**
-   ```bash
-   cd Dispatcher.API
-   dotnet run
-   ```
-   
-   The API will be available at `https://localhost:7260`
+### Frontend
 
-### Frontend Setup
+```bash
+cd Truck_Dispatcher/Dispatcher.Frontend
+npm install
+npm start
+```
 
-1. **Navigate to frontend directory**
-   ```bash
-   cd Truck_Dispatcher/Dispatcher.Frontend
-   ```
+App runs at `http://localhost:4200`.
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+### Seeded Test Accounts
 
-3. **Configure environment**
-   - Update `src/environments/environment.ts` with your API URL:
-   ```typescript
-   export const environment = {
-     production: false,
-     apiUrl: 'https://localhost:7260/api'
-   };
-   ```
+| Email | Password | Role |
+|---|---|---|
+| admin@dispatcher.local | Admin123! | Admin |
+| dispatcher@dispatcher.local | Dispatcher123! | Dispatcher |
+| driver@dispatcher.local | Driver123! | Driver |
+| client@test.com | Client123! | Client |
 
-4. **Start development server**
-   ```bash
-   npm start
-   ```
-   
-   The application will open at `http://localhost:4200`
-
-### Default Users
-
-After seeding, the following test accounts are available:
-
-| Email | Password | Role | Description |
-|-------|----------|------|-------------|
-| admin@dispatcher.local | Admin123! | Admin | Full system access |
-| dispatcher@dispatcher.local | Dispatcher123! | Dispatcher | Order approval, shipment creation |
-| driver@dispatcher.local | Driver123! | Driver | Delivery management |
-| client@test.com | Client123! | Client | Product ordering |
-
-## 👥 User Roles
-
-### 🔧 Admin
-**Responsibilities:**
-- User management (create, edit, disable users)
-- Vehicle management (trucks, trailers)
-- System configuration
-- Inventory management
-- Analytics and reporting
-
-**Key Features:**
-- Complete CRUD operations on all entities
-- System-wide analytics dashboard
-- User role assignment
-- Vehicle maintenance tracking
-
-### 📋 Dispatcher
-**Responsibilities:**
-- Review and approve client orders
-- Create shipments from approved orders
-- Assign resources (trucks, drivers, routes)
-- Monitor active deliveries
-- Communicate with drivers and clients
-
-**Key Features:**
-- Order approval workflow
-- Dispatch board for resource allocation
-- Real-time tracking dashboard
-- Route planning
-- Shipment status updates
-
-### 🚛 Driver
-**Responsibilities:**
-- View assigned deliveries
-- Update delivery status
-- Complete delivery confirmations
-- Upload delivery photos
-- Report issues
-
-**Key Features:**
-- Personal assignment list
-- GPS navigation integration
-- Signature capture
-- Photo upload for proof of delivery
-- Real-time status updates
-
-### 🛒 Client
-**Responsibilities:**
-- Browse product catalog
-- Place orders
-- Track order status
-- View order history
-- Communicate with dispatchers
-
-**Key Features:**
-- Product catalog with search/filter
-- Shopping cart functionality
-- Order tracking with GPS
-- Order history
-- Real-time notifications
-
-## 📊 Development Status
-
-### ✅ Completed Features
-
-**Backend:**
-- [x] Clean Architecture project structure
-- [x] Entity Framework Core setup with PostgreSQL
-- [x] All core entities and relationships
-- [x] JWT authentication with refresh tokens
-- [x] User registration and login endpoints
-- [x] CRUD operations for Products, Categories, Orders
-- [x] Database seeding with test data
-- [x] Soft delete implementation
-- [x] Audit trail (CreatedAt, ModifiedAt)
-- [x] FluentValidation integration
-
-**Frontend:**
-- [x] Angular 21 project setup with standalone components
-- [x] Material Design + Tailwind CSS integration
-- [x] Authentication system (login, logout, token refresh)
-- [x] Protected routes with auth guards
-- [x] API service layer (auth, products, orders)
-- [x] Admin product management (list, add, edit, delete)
-- [x] Order management with status filters
-- [x] Internationalization (English, Bosnian)
-- [x] Responsive layout with sidebar navigation
-- [x] Loading indicators and error handling
-
-### 🚧 In Progress
-
-- [ ] Dispatcher module (order approval, shipment creation)
-- [ ] Driver module (delivery assignments)
-- [ ] Client module (product catalog, ordering)
-- [ ] GPS tracking with Leaflet maps
-- [ ] Real-time chat with SignalR
-- [ ] Vehicle management UI
-- [ ] User management UI
-
-### 📅 Planned Features
-
-- [ ] Mobile app (React Native or Flutter)
-- [ ] Advanced analytics and reporting
-- [ ] Route optimization algorithms
-- [ ] Automated notifications (SMS, email)
-- [ ] Document generation (invoices, delivery notes)
-- [ ] Integration with accounting systems
-- [ ] Multi-tenant support
-- [ ] API rate limiting and caching
-
-## 📸 Screenshots
-
-### Login Page
-Modern authentication interface with email/password validation and remember me functionality.
-
-### Admin Dashboard
-Overview of system statistics, recent orders, vehicle status, and quick actions.
-
-### Order Management
-Searchable, filterable order list with status badges and detailed order views.
-
-### GPS Tracking (Coming Soon)
-Real-time map showing active deliveries with driver locations and estimated arrival times.
-
-## 🤝 Contributing
-
-This is an academic project developed as part of a university coursework. While it's not open for external contributions, feedback and suggestions are welcome!
-
-### Development Team
-- **Eldar Sarajlić** - Full-stack Developer
-- **Haris Šarić** - Frontend/Backend Development
-- **Ali Mustafić** - Frontend/Backend Development
-- **Academic Supervisors** - Adil Joldić, Azra Smajić
-
-### Learning Objectives
-This project demonstrates:
-- Modern software architecture principles
-- Full-stack development skills
-- Real-world problem-solving
-- Team collaboration using Agile methodology
-- Professional development practices
+> **Note:** The data seeder uses rolling relative dates (1–6 days ago) so dashboard queries with 7-day windows always return fresh data. If data looks stale, drop the database and re-run migrations — the `AnyAsync()` guard in the seeder prevents re-seeding over existing data.
 
 ---
 
-## 🙏 Acknowledgments
+## User Roles
 
-- University faculty for project guidance
-- Open-source community for excellent tools and libraries
-- Team members for their dedication and hard work
+### Admin
+System-wide management: users (CRUD + role assignment), trucks, trailers, inventory, and analytics dashboard with key metrics.
+
+### Dispatcher
+The central operational role: reviews and approves client orders, creates shipments with routes, assigns resources (truck, driver, trailer) via the dispatch board, and monitors active deliveries with live tracking.
+
+### Driver
+Receives assigned dispatches, updates delivery status in real time, and communicates with the dispatcher. Interface is designed to be minimal and mobile-friendly.
+
+### Client
+Self-service portal: browses the product catalog, places orders with delivery details, and tracks order status through to delivery.
 
 ---
 
-**Built with ❤️ using .NET and Angular**
+## Frontend Patterns
+
+The project follows strict conventions documented in `FRONTEND-GUIDE.md`:
+
+- **Three-layer styling:** Tailwind for layout utilities, DaisyUI for component shapes (`card`, `badge`, `btn`, `modal`), SCSS for everything else (keyframes, pseudo-elements, hover systems)
+- **Signals-first state:** All local component state uses `signal()` and `computed()`, RxJS is reserved for HTTP calls with `takeUntil(destroyed$)` cleanup
+- **Three-state data loading:** Every data section handles loading (skeleton), error, and empty states using `@if` / `@else if` / `@else`
+- **Angular 17+ control flow:** `@if` / `@for` exclusively — no `*ngIf` / `*ngFor`
+- **Animation separation:** All `@keyframes` and visual polish live in SCSS files, never in templates
+- **Component structure:** TypeScript (signals → computed → cleanup → lifecycle → methods) → HTML (control flow) → SCSS (animations)
+
+---
+
+## Team
+
+| Name | GitHub |
+|---|---|
+| Eldar Sarajlić |
+| Haris Šarić | 
+| Ali Mustafić  |
+| Academic supervisors: Adil Joldić, Azra Smajić |
+
