@@ -53,6 +53,21 @@ public static class DependencyInjection
         // TimeProvider (if used in handlers/services)
         services.AddSingleton<TimeProvider>(TimeProvider.System);
 
+        // Email options + validation
+        services.AddOptions<EmailOptions>()
+            .Bind(configuration.GetSection(EmailOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        // Frontend options + validation
+        services.AddOptions<FrontendOptions>()
+            .Bind(configuration.GetSection(FrontendOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        // Email service
+        services.AddTransient<IEmailService, EmailService>();
+
         return services;
     }
 }

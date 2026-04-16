@@ -1,7 +1,9 @@
-﻿using Dispatcher.Application.Modules.Auth.Commands.Login;
+﻿using Dispatcher.Application.Modules.Auth.Commands.ForgotPassword;
+using Dispatcher.Application.Modules.Auth.Commands.Login;
 using Dispatcher.Application.Modules.Auth.Commands.Logout;
 using Dispatcher.Application.Modules.Auth.Commands.Refresh;
 using Dispatcher.Application.Modules.Auth.Commands.Register;
+using Dispatcher.Application.Modules.Auth.Commands.ResetPassword;
 
 [ApiController]
 [Route("api/auth")]
@@ -34,5 +36,21 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     public async Task Logout([FromBody] LogoutCommand command, CancellationToken ct)
     {
         await mediator.Send(command, ct);
+    }
+
+    [HttpPost("forgot-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommand command, CancellationToken ct)
+    {
+        await mediator.Send(command, ct);
+        return Ok();
+    }
+
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command, CancellationToken ct)
+    {
+        await mediator.Send(command, ct);
+        return Ok();
     }
 }
