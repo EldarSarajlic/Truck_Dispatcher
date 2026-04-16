@@ -47,8 +47,9 @@ export class LoginComponent extends BaseComponent implements OnInit {
       password: this.form.value.password ?? '',
       fingerprint: null,
     };
+    const rememberMe = this.form.value.rememberMe ?? false;
 
-    this.auth.login(payload).subscribe({
+    this.auth.login(payload, rememberMe).subscribe({
       next: () => {
         this.stopLoading();
         const target = this.currentUser.getDefaultRoute();

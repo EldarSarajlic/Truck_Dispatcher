@@ -57,3 +57,21 @@ export interface RefreshTokenCommandDto {
 export interface LogoutCommand {
   refreshToken: string;
 }
+
+/**
+ * Command for POST /Auth/forgot-password
+ * Corresponds to: ForgotPasswordCommand.cs
+ */
+export interface ForgotPasswordCommand {
+  email: string;
+}
+
+/**
+ * Command for POST /Auth/reset-password
+ * Corresponds to: ResetPasswordCommand.cs
+ */
+export interface ResetPasswordCommand {
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}

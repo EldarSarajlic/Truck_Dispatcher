@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, of, tap, catchError, map } from 'rxjs';
+import { Observable, of, tap, catchError, map, finalize } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
 import { AuthApiService } from '../../../api-services/auth/auth-api.service';
@@ -10,6 +10,8 @@ import {
   LogoutCommand,
   RefreshTokenCommand,
   RefreshTokenCommandDto,
+  ForgotPasswordCommand,
+  ResetPasswordCommand,
 } from '../../../api-services/auth/auth-api.model';
 
 import { AuthStorageService } from './auth-storage.service';
@@ -47,10 +49,10 @@ export class AuthFacadeService {
   // PUBLIC API
   // ========================================
 
-  login(payload: LoginCommand): Observable<void> {
+  login(payload: LoginCommand, rememberMe: boolean = false): Observable<void> {
     return this.api.login(payload).pipe(
       tap((response: LoginCommandDto) => {
-        this.storage.saveLogin(response);
+        this.storage.saveLogin(response, rememberMe);
         this.decodeAndSetUser(response.accessToken);
       }),
       map(() => void 0)
@@ -59,14 +61,15 @@ export class AuthFacadeService {
 
   logout(): Observable<void> {
     const refreshToken = this.storage.getRefreshToken();
-    this.clearUserState();
 
     if (!refreshToken) {
+      this.clearUserState();
       return of(void 0);
     }
 
     const payload: LogoutCommand = { refreshToken };
     return this.api.logout(payload).pipe(
+      finalize(() => this.clearUserState()),
       catchError(() => of(void 0))
     );
   }
@@ -78,6 +81,16 @@ export class AuthFacadeService {
         this.decodeAndSetUser(response.accessToken);
       })
     );
+  }
+
+  forgotPassword(email: string): Observable<void> {
+    const payload: ForgotPasswordCommand = { email };
+    return this.api.forgotPassword(payload);
+  }
+
+  resetPassword(token: string, newPassword: string, confirmPassword: string): Observable<void> {
+    const payload: ResetPasswordCommand = { token, newPassword, confirmPassword };
+    return this.api.resetPassword(payload);
   }
 
   redirectToLogin(): void {

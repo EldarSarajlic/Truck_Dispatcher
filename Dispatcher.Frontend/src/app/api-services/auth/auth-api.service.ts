@@ -7,7 +7,9 @@ import {
   LoginCommandDto,
   RefreshTokenCommand,
   RefreshTokenCommandDto,
-  LogoutCommand
+  LogoutCommand,
+  ForgotPasswordCommand,
+  ResetPasswordCommand,
 } from './auth-api.model';
 
 @Injectable({
@@ -39,5 +41,21 @@ export class AuthApiService {
    */
   logout(payload: LogoutCommand): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/logout`, payload);
+  }
+
+  /**
+   * POST /Auth/forgot-password
+   * Sends a password reset email. Always returns 200 regardless of whether the email exists.
+   */
+  forgotPassword(payload: ForgotPasswordCommand): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/forgot-password`, payload);
+  }
+
+  /**
+   * POST /Auth/reset-password
+   * Validates the reset token and sets a new password.
+   */
+  resetPassword(payload: ResetPasswordCommand): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/reset-password`, payload);
   }
 }

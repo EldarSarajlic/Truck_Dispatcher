@@ -8,11 +8,12 @@ export const myAuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const currentUser = inject(CurrentUserService);
   const router = inject(Router);
 
-  const requireAuth = route.data['requireAuth'] === true;
-  const requireAdmin = route.data['requireAdmin'] === true;
-  const requireDispatcher = route.data['requireDispatcher'] === true;
-  const requireDriver = route.data['requireDriver'] === true;
-  const requireClient = route.data['requireClient'] === true;
+  const authData = route.data['auth'] as MyAuthRouteData | undefined;
+  const requireAuth = authData?.requireAuth === true;
+  const requireAdmin = authData?.requireAdmin === true;
+  const requireDispatcher = authData?.requireDispatcher === true;
+  const requireDriver = authData?.requireDriver === true;
+  const requireClient = authData?.requireClient === true;
 
   const isAuth = currentUser.isAuthenticated();
 

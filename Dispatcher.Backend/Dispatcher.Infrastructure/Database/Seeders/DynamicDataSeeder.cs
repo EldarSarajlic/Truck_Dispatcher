@@ -179,7 +179,7 @@ public static class DynamicDataSeeder
                 LastName = "User",
                 DisplayName = "Admin User",
                 NormalizedDisplayName = "ADMIN USER",
-                Email = "admin@dispatcher.local",
+                Email = "yeyoki7544@spotshops.com",
                 PhoneNumber = "+387 61 123 456",
                 DateOfBirth = new DateTime(1980, 1, 1),
                 PasswordHash = hasher.HashPassword(null!, "Admin123!"),
