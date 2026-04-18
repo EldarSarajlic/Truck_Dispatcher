@@ -42,7 +42,8 @@
                 Email = normalizedEmail,
                 PhoneNumber = request.PhoneNumber?.Trim(),
                 DateOfBirth = request.DateOfBirth,
-                Role = request.Role, // Default role for new registrations
+                Role = request.Role,
+                CityId = request.CityId,
                 IsEnabled = true,
                 TwoFactorEnabled = false,
                 AccessFailedCount = 0,

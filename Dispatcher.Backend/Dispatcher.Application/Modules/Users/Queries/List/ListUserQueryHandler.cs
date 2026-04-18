@@ -22,6 +22,11 @@ public sealed class ListUserQueryHandler(IAppDbContext ctx): IRequestHandler<Lis
             query = query.Where(u => u.IsEnabled == request.OnlyEnabled.Value);
         }
 
+        if (!string.IsNullOrEmpty(request.Role) && Enum.TryParse<UserRole>(request.Role, ignoreCase: true, out var role))
+        {
+            query = query.Where(u => u.Role == role);
+        }
+
     var projectedQuery = query
     .OrderBy(u => u.FirstName)
     .ThenBy(u => u.LastName)

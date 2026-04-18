@@ -54,5 +54,10 @@
         /// Users role (assigned by admin during registration)
         /// </summary>
         public UserRole Role { get; init; }
+
+        /// <summary>
+        /// Optional city the user belongs to (FK to City table).
+        /// </summary>
+        public int? CityId { get; init; }
     }
 }

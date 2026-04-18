@@ -1,0 +1,135 @@
+@if (open) {
+  <div class="rum-overlay">
+    <div class="rum-box" (click)="$event.stopPropagation()">
+
+      <!-- ── Header ──────────────────────────────────────────────────────── -->
+      <div class="rum-header">
+        <h2 class="rum-title">
+          <i class="ph-duotone {{ titleIcon }}"></i>
+          {{ title }}
+        </h2>
+      </div>
+
+      <!-- ── Body ────────────────────────────────────────────────────────── -->
+      <div class="rum-body">
+        @if (form) {
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+            @for (row of rows; track row[0].name) {
+              <div [class]="row.length === 2 ? 'rum-row' : ''">
+
+                @for (field of row; track field.name) {
+                  <div class="rum-field">
+
+                    <label class="rum-label">
+                      {{ field.label }}
+                      @if (field.required) {
+                        <span class="rum-required">*</span>
+                      }
+                    </label>
+
+                    @if (field.type === 'select') {
+                      <!-- Custom animated dropdown -->
+                      <div
+                        class="rum-dropdown"
+                        [class.open]="openDropdown === field.name && !field.isLoadingOptions"
+                        (click)="$event.stopPropagation()"
+                      >
+                        <button
+                          type="button"
+                          class="rum-dropdown-trigger"
+                          [class.rum-dropdown-trigger--error]="fieldInvalid(field.name)"
+                          [disabled]="field.isLoadingOptions"
+                          (click)="toggleDropdown(field.name, $event)"
+                        >
+                          @if (field.isLoadingOptions) {
+                            <span class="rum-dropdown-placeholder">
+                              <i class="ph-duotone ph-circle-notch rum-spinner"></i>
+                              Loading...
+                            </span>
+                          } @else {
+                            <span [class.rum-dropdown-placeholder]="!form.get(field.name)?.value">
+                              {{ optionLabel(field) || field.placeholder || 'Select...' }}
+                            </span>
+                          }
+                          <i class="ph-duotone ph-caret-down rum-dropdown-caret"></i>
+                        </button>
+                        <div class="rum-dropdown-list">
+                          @for (opt of field.options; track opt.value) {
+                            <div
+                              class="rum-dropdown-option"
+                              [class.selected]="form.get(field.name)?.value === opt.value"
+                              (click)="selectOption(field.name, opt.value, $event)"
+                            >{{ opt.label }}</div>
+                          }
+                        </div>
+                      </div>
+                    } @else if (field.type === 'date') {
+                      <app-date-picker
+                        [value]="form.get(field.name)?.value ?? ''"
+                        [hasError]="fieldInvalid(field.name)"
+                        [placeholder]="field.placeholder ?? 'Select date...'"
+                        (valueChange)="setDateValue(field.name, $event)"
+                      />
+                    } @else if (field.type === 'tel' && field.phoneFormat) {
+                      <input
+                        type="tel"
+                        class="rum-input"
+                        [class.rum-input--error]="fieldInvalid(field.name)"
+                        [formControlName]="field.name"
+                        [placeholder]="field.placeholder ?? ''"
+                        (keydown)="onTelKeydown(field.phoneFormat, field.phonePrefix ?? '', $event)"
+                        (input)="onTelInput(field.name, field.phoneFormat, field.phonePrefix ?? '', $event)"
+                      />
+                    } @else {
+                      <input
+                        [type]="field.type"
+                        class="rum-input"
+                        [class.rum-input--error]="fieldInvalid(field.name)"
+                        [formControlName]="field.name"
+                        [placeholder]="field.placeholder ?? ''"
+                      />
+                    }
+
+                    @if (fieldInvalid(field.name)) {
+                      <span class="rum-error">{{ field.label }} is invalid.</span>
+                    }
+
+                  </div>
+                }
+
+              </div>
+            }
+
+            @if (submitError) {
+              <div class="rum-api-error">
+                <i class="ph-duotone ph-warning-circle"></i>
+                {{ submitError }}
+              </div>
+            }
+
+          </form>
+        }
+      </div>
+
+      <!-- ── Footer ───────────────────────────────────────────────────────── -->
+      <div class="rum-footer">
+        <button class="rum-btn-cancel" type="button" (click)="close()">Cancel</button>
+        <button
+          class="rum-btn-submit"
+          type="button"
+          [disabled]="isSubmitting"
+          (click)="submit()"
+        >
+          @if (isSubmitting) {
+            <i class="ph-duotone ph-circle-notch rum-spinner"></i>
+            Saving...
+          } @else {
+            {{ submitLabel }}
+          }
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

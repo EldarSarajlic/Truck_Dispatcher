@@ -1,0 +1,111 @@
+<div class="dp-wrap" (click)="$event.stopPropagation()">
+
+  <!-- ── Trigger ──────────────────────────────────────────────────────────── -->
+  <button
+    type="button"
+    class="dp-trigger"
+    [class.dp-trigger--error]="hasError"
+    [class.dp-trigger--open]="open"
+    (click)="toggle($event)"
+  >
+    <span [class.dp-placeholder]="!displayValue">
+      {{ displayValue || placeholder }}
+    </span>
+    <i class="ph-duotone ph-calendar-blank dp-icon" [class.dp-icon--open]="open"></i>
+  </button>
+
+  <!-- ── Panel (fixed-positioned, escapes overflow) ───────────────────────── -->
+  @if (open) {
+    <div class="dp-panel" (click)="$event.stopPropagation()">
+
+      <!-- ── DAY VIEW ──────────────────────────────────────────────────────── -->
+      @if (viewMode === 'day') {
+
+        <div class="dp-header">
+          <button type="button" class="dp-nav-btn" (click)="prevMonth()">
+            <i class="ph-duotone ph-caret-left"></i>
+          </button>
+          <div class="dp-header-labels">
+            <button type="button" class="dp-label-btn" (click)="openMonthView()">{{ monthLabel }}</button>
+            <button type="button" class="dp-label-btn" (click)="openYearView()">{{ yearLabel }}</button>
+          </div>
+          <button type="button" class="dp-nav-btn" (click)="nextMonth()">
+            <i class="ph-duotone ph-caret-right"></i>
+          </button>
+        </div>
+
+        <div class="dp-weekdays">
+          @for (wd of weekdays; track wd) {
+            <span class="dp-weekday">{{ wd }}</span>
+          }
+        </div>
+
+        <div class="dp-grid">
+          @for (day of days; track day.date.getTime()) {
+            <button
+              type="button"
+              class="dp-day"
+              [class.dp-day--other]="!day.isCurrentMonth"
+              [class.dp-day--today]="day.isToday && !day.isSelected"
+              [class.dp-day--selected]="day.isSelected"
+              (click)="selectDay(day, $event)"
+            >{{ day.date.getDate() }}</button>
+          }
+        </div>
+
+      }
+
+      <!-- ── MONTH VIEW ────────────────────────────────────────────────────── -->
+      @if (viewMode === 'month') {
+
+        <div class="dp-header">
+          <div class="dp-header-labels" style="margin: 0 auto;">
+            <button type="button" class="dp-label-btn" (click)="openYearView()">{{ yearLabel }}</button>
+          </div>
+        </div>
+
+        <div class="dp-month-grid">
+          @for (m of monthShort; track $index) {
+            <button
+              type="button"
+              class="dp-month-btn"
+              [class.dp-month-btn--current]="isCurrentMonth($index) && !isSelectedMonth($index)"
+              [class.dp-month-btn--selected]="isSelectedMonth($index)"
+              (click)="selectMonth($index)"
+            >{{ m }}</button>
+          }
+        </div>
+
+      }
+
+      <!-- ── YEAR VIEW ─────────────────────────────────────────────────────── -->
+      @if (viewMode === 'year') {
+
+        <div class="dp-header">
+          <button type="button" class="dp-nav-btn" (click)="prevYearRange()">
+            <i class="ph-duotone ph-caret-left"></i>
+          </button>
+          <span class="dp-range-label">{{ yearRangeLabel }}</span>
+          <button type="button" class="dp-nav-btn" (click)="nextYearRange()">
+            <i class="ph-duotone ph-caret-right"></i>
+          </button>
+        </div>
+
+        <div class="dp-year-grid">
+          @for (yr of yearRange; track yr) {
+            <button
+              type="button"
+              class="dp-year-btn"
+              [class.dp-year-btn--current]="isCurrentYear(yr) && !isSelectedYear(yr)"
+              [class.dp-year-btn--selected]="isSelectedYear(yr)"
+              (click)="selectYear(yr)"
+            >{{ yr }}</button>
+          }
+        </div>
+
+      }
+
+    </div>
+  }
+
+</div>

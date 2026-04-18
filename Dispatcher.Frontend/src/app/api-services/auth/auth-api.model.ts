@@ -1,6 +1,39 @@
 // === COMMANDS (WRITE) ===
 
 /**
+ * Command for POST /Auth/register
+ * Corresponds to: RegisterCommand.cs
+ */
+export interface RegisterCommand {
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  phoneNumber?: string | null;
+  dateOfBirth: string;
+  role: number;
+  cityId?: number | null;
+  fingerprint?: string | null;
+}
+
+/**
+ * Response for POST /Auth/register
+ * Corresponds to: RegisterCommandDto.cs
+ */
+export interface RegisterCommandDto {
+  userId: string;
+  email: string;
+  displayName: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresAtUtc: string;
+}
+
+
+
+/**
  * Command for POST /Auth/login
  * Corresponds to: LoginCommand.cs
  */

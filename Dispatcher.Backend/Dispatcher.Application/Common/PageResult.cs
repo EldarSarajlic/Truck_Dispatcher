@@ -2,8 +2,12 @@
 
 public sealed class PageResult<T>
 {
-    public int Total { get; init; }
-    public IReadOnlyList<T> Items { get; init; }
+    public IReadOnlyList<T> Items { get; init; } = [];
+    public int TotalItems { get; init; }
+    public int TotalPages { get; init; }
+    public int CurrentPage { get; init; }
+    public int PageSize { get; init; }
+    public bool IncludedTotal { get; init; }
 
     /// <summary>
     /// Creates a PageResult from an IQueryable using EF Core asynchronous methods.
@@ -23,6 +27,18 @@ public sealed class PageResult<T>
             .Take(paging.PageSize)
             .ToListAsync(ct);
 
-        return new PageResult<T> { Total = total, Items = items };
+        var totalPages = paging.PageSize > 0 && total > 0
+            ? (int)Math.Ceiling((double)total / paging.PageSize)
+            : 1;
+
+        return new PageResult<T>
+        {
+            Items        = items,
+            TotalItems   = total,
+            TotalPages   = totalPages,
+            CurrentPage  = paging.Page,
+            PageSize     = paging.PageSize,
+            IncludedTotal = includeTotal,
+        };
     }
 }

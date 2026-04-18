@@ -1,182 +1,218 @@
-<div class="p-6 bg-base-200 min-h-screen">
-  <!-- Header Section -->
-  <div class="flex justify-between items-center mb-6">
-    <div class="flex items-center gap-2">
-      <svg class="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
-      </svg>
-      <h1 class="text-2xl font-bold">User Management</h1>
+<div class="page-wrapper flex flex-col gap-6">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="flex items-center gap-3">
+      <div class="page-icon">
+        <i class="ph-duotone ph-users-three"></i>
+      </div>
+      <div>
+        <h1 class="page-title">User Management</h1>
+        <p class="page-subtitle">Manage system accounts and access levels</p>
+      </div>
     </div>
-    
-    <div class="flex gap-3 items-center">
-      <!-- Search Input -->
-      <div class="form-control">
-        <div class="input-group">
-          <input 
-            type="text" 
-            placeholder="Search users..." 
-            class="input input-bordered bg-base-100 w-50"
-            [(ngModel)]="searchTerm"
-            (input)="onSearchInput()"
-            (keyup.enter)="onSearch()"
-          />
+
+    <div class="flex items-center gap-3 flex-wrap">
+      <!-- Search -->
+      <div class="search-field">
+        <i class="ph-duotone ph-magnifying-glass search-icon"></i>
+        <input
+          type="text"
+          placeholder="Search users..."
+          class="search-input"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchInput()"
+          (keyup.enter)="onSearch()"
+        />
+      </div>
+
+      <!-- Role filter -->
+      <div class="custom-select" [class.open]="roleDropdownOpen">
+        <button class="custom-select-trigger" (click)="toggleRoleDropdown($event)">
+          <span>{{ selectedRole() || 'All Roles' }}</span>
+          <i class="ph-bold ph-caret-down custom-select-caret"></i>
+        </button>
+        <div class="custom-select-list" (click)="$event.stopPropagation()">
+          <div class="custom-select-option"
+               [class.selected]="selectedRole() === ''"
+               (click)="clearRole($event)">All Roles</div>
+          @for (role of roles; track role) {
+            <div class="custom-select-option"
+                 [class.selected]="selectedRole() === role"
+                 (click)="selectRole(role, $event)">{{ role }}</div>
+          }
         </div>
       </div>
 
-      <!-- Role Filter -->
-      <select 
-        class="select select-bordered bg-base-100"
-        [(ngModel)]="selectedRole"
-        (change)="onRoleFilter()"
-      >
-        <option value="">All Roles</option>
-        <option value="Admin">Admin</option>
-        <option value="Dispatcher">Dispatcher</option>
-        <option value="Driver">Driver</option>
-        <option value="Client">Client</option>
-      </select>
-
-      <!-- Register New User Button -->
-      <button class="btn btn-primary gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-        </svg>
-        Register New User
+      <!-- Register button -->
+      <button class="btn-primary" (click)="openRegisterModal()">
+        <i class="ph-duotone ph-user-plus"></i>
+        Register User
       </button>
     </div>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="loading" class="flex justify-center items-center py-20">
-    <span class="loading loading-spinner loading-lg text-primary"></span>
-  </div>
-
-  <!-- Error State -->
-  <div *ngIf="error" class="alert alert-error shadow-lg mb-4">
-    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-    <span>{{ error }}</span>
-  </div>
-
-  <!-- Users Table -->
-  <div *ngIf="users && !loading" class="bg-base-100 rounded-lg shadow-xl overflow-hidden">
-    <table class="table w-full">
-      <thead>
-        <tr class="border-b border-base-300">
-          <th class="bg-base-200">NAME</th>
-          <th class="bg-base-200">EMAIL</th>
-          <th class="bg-base-200">ROLE</th>
-          <th class="bg-base-200">STATUS</th>
-          <th class="bg-base-200 text-center">ACTIONS</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of users.items" class="border-b border-base-300 hover:bg-base-200">
-          <!-- Name Column -->
-          <td>
-            <div class="flex items-center gap-3">
-              <div class="avatar placeholder">
-                <div class="bg-primary text-primary-content rounded-full w-10">
-                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                  </svg>
+  <!-- ============================================================
+       LOADING STATE
+       ============================================================ -->
+  @if (isLoading()) {
+    <div class="section-card">
+      <div class="section-card-header">
+        <div class="skeleton h-4 w-28 rounded"></div>
+        <div class="skeleton h-5 w-20 rounded-full ml-auto"></div>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-idx">#</th>
+            <th>USER</th>
+            <th>EMAIL</th>
+            <th>ROLE</th>
+            <th>STATUS</th>
+            <th style="text-align:center;">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (i of [1, 2, 3, 4, 5, 6, 7]; track i) {
+            <tr>
+              <td><div class="skeleton h-3 w-5 rounded mx-auto"></div></td>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="skeleton h-8 w-8 rounded-lg shrink-0"></div>
+                  <div class="flex flex-col gap-1 flex-1">
+                    <div class="skeleton h-3 w-32 rounded"></div>
+                    <div class="skeleton h-2 w-20 rounded"></div>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <div class="font-semibold">{{ user.displayName }}</div>
-                <div class="text-sm opacity-50">{{ user.phoneNumber || 'No phone' }}</div>
-              </div>
-            </div>
-          </td>
+              </td>
+              <td><div class="skeleton h-3 w-44 rounded"></div></td>
+              <td><div class="skeleton h-5 w-20 rounded-full"></div></td>
+              <td><div class="skeleton h-5 w-16 rounded-full"></div></td>
+              <td class="text-center"><div class="skeleton h-7 w-7 rounded-lg mx-auto"></div></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 
-          <!-- Email Column -->
-          <td>{{ user.email }}</td>
-
-          <!-- Role Column -->
-          <td>
-            <span 
-              class="badge badge-sm font-medium"
-              [ngClass]="{
-                'badge-error': user.role === 'Admin',
-                'badge-warning': user.role === 'Dispatcher',
-                'badge-success': user.role === 'Driver',
-                'badge-info': user.role === 'Client'
-              }"
-            >
-              {{ user.role }}
-            </span>
-          </td>
-
-          <!-- Status Column -->
-          <td>
-            <div class="flex items-center gap-2">
-              <svg 
-                class="w-4 h-4"
-                [ngClass]="user.isEnabled ? 'text-success' : 'text-error'"
-                fill="currentColor" 
-                viewBox="0 0 20 20"
-              >
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              <span 
-                class="font-medium"
-                [ngClass]="user.isEnabled ? 'text-success' : 'text-error'"
-              >
-                {{ user.isEnabled ? 'Active' : 'Inactive' }}
-              </span>
-            </div>
-          </td>
-
-          <!-- Actions Column -->
-          <td class="text-center">
-            <button class="btn btn-sm btn-ghost">
-              View
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- Pagination -->
-    <div *ngIf="users.totalPages > 1" class="flex justify-between items-center p-4 bg-base-200 border-t border-base-300">
-      <button 
-        class="btn btn-sm btn-ghost"
-        (click)="onPageChange(users.currentPage - 1)" 
-        [disabled]="users.currentPage === 1"
-      >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-        </svg>
-        Previous
-      </button>
-      
-      <span class="text-sm">
-        Page <span class="font-semibold">{{ users.currentPage }}</span> of 
-        <span class="font-semibold">{{ users.totalPages }}</span> 
-        <span class="opacity-50 mx-2">|</span>
-        <span class="font-semibold">{{ users.totalItems }}</span> total users
-      </span>
-      
-      <button 
-        class="btn btn-sm btn-ghost"
-        (click)="onPageChange(users.currentPage + 1)" 
-        [disabled]="users.currentPage === users.totalPages"
-      >
-        Next
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-        </svg>
+  <!-- ============================================================
+       ERROR STATE
+       ============================================================ -->
+  @else if (hasError()) {
+    <div class="flex flex-col items-center justify-center gap-4 py-20">
+      <i class="ph-duotone ph-warning-circle" style="font-size:48px;color:#f87171;"></i>
+      <p style="color:#7878a0;font-size:0.85rem;">Failed to load users. Please try again.</p>
+      <button class="btn-retry" (click)="onSearch()">
+        <i class="ph-duotone ph-arrow-clockwise"></i>
+        Retry
       </button>
     </div>
-  </div>
+  }
 
-  <!-- Empty State -->
-  <div *ngIf="users && users.items.length === 0 && !loading" class="text-center py-20 bg-base-100 rounded-lg">
-    <svg class="mx-auto h-12 w-12 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-    </svg>
-    <h3 class="mt-2 text-sm font-medium">No users found</h3>
-    <p class="mt-1 text-sm opacity-50">Try adjusting your search or filter criteria.</p>
-  </div>
+  <!-- ============================================================
+       REAL CONTENT
+       ============================================================ -->
+  @else {
+    <div class="section-card">
+      <div class="section-card-header">
+        <h3>
+          <i class="ph-duotone ph-users"></i>
+          System Users
+        </h3>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-idx">#</th>
+            <th>USER</th>
+            <th>EMAIL</th>
+            <th>ROLE</th>
+            <th>STATUS</th>
+            <th style="text-align:center;">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          @for (user of users(); track user.email; let i = $index) {
+            <tr class="user-row">
+              <td class="col-idx-cell">
+                {{ (i + 1).toString().padStart(2, '0') }}
+              </td>
+
+              <!-- User info -->
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="user-avatar">
+                    <i class="ph-duotone ph-user"></i>
+                  </div>
+                  <div>
+                    <div class="user-name">{{ user.displayName }}</div>
+                    <div class="user-phone">{{ user.phoneNumber || 'No phone' }}</div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Email -->
+              <td class="user-email">{{ user.email }}</td>
+
+              <!-- Role badge -->
+              <td>
+                <span class="role-badge {{ roleClass(user.role) }}">{{ user.role }}</span>
+              </td>
+
+              <!-- Status badge -->
+              <td>
+                <span class="status-badge {{ statusClass(user.isEnabled) }}">
+                  {{ user.isEnabled ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+
+              <!-- Actions -->
+              <td style="text-align:center;">
+                <button class="btn-action">
+                  <i class="ph-duotone ph-dots-three"></i>
+                </button>
+              </td>
+            </tr>
+          }
+
+          @if (users().length === 0) {
+            <tr>
+              <td colspan="6" class="empty-row">
+                <i class="ph-duotone ph-users"></i>
+                No users found.
+              </td>
+            </tr>
+          }
+
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <app-paginator-bar
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        [totalItems]="totalItems()"
+        [pageSize]="pageSize()"
+        (pageChange)="onPageChange($event)"
+      ></app-paginator-bar>
+
+    </div>
+  }
+
 </div>
+
+<app-form-modal
+  [open]="registerModalOpen()"
+  [fields]="registerFields()"
+  [groupValidators]="registerGroupValidators"
+  title="Register New User"
+  titleIcon="ph-user-plus"
+  submitLabel="Register User"
+  [isSubmitting]="isRegisterSubmitting()"
+  [submitError]="registerSubmitError()"
+  (closed)="closeRegisterModal()"
+  (submitted)="onFormSubmitted($event)"
+></app-form-modal>

@@ -1,6 +1,7 @@
 ﻿using Dispatcher.Domain.Entities.Chat;
 using Dispatcher.Domain.Entities.Dispatches;
 using Dispatcher.Domain.Entities.Inventory;
+using Dispatcher.Domain.Entities.Location;
 using Dispatcher.Domain.Entities.Media;
 using Dispatcher.Domain.Entities.Orders;
 using Dispatcher.Domain.Entities.Shipments;
@@ -12,6 +13,8 @@ namespace Dispatcher.Application.Abstractions;
 public interface IAppDbContext
 {
     DbSet<UserEntity> Users { get; }
+    DbSet<CountryEntity> Country { get; }
+    DbSet<CityEntity> City { get; }
     DbSet<RefreshTokenEntity> RefreshTokens { get; }
     DbSet<PasswordResetTokenEntity> PasswordResetTokens { get; }
     DbSet<TruckEntity> Trucks { get; }

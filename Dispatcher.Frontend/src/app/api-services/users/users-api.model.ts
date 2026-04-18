@@ -30,6 +30,7 @@ export type ListUsersResponse = PageResult<ListUsersQueryDto>;
  */
 export class ListUsersRequest extends BasePagedQuery {
   search?: string | null;
+  role?: string | null;
 }
 
 

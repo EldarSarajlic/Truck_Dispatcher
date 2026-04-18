@@ -10,6 +10,8 @@ import { LoadingBarComponent } from './components/loading-bar/loading-bar.compon
 import { TableSkeletonComponent } from './components/table-skeleton/table-skeleton.component';
 import { MetricCardComponent } from './components/metric-card/metric-card.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { FormModalComponent } from './components/form-modal/form-modal.component';
+import { DatePickerComponent } from './components/date-picker/date-picker.component';
 import { RouterModule } from '@angular/router';
 
 
@@ -20,7 +22,9 @@ import { RouterModule } from '@angular/router';
     LoadingBarComponent,
     TableSkeletonComponent,
     MetricCardComponent,
-    SidebarComponent
+    SidebarComponent,
+    FormModalComponent,
+    DatePickerComponent,
   ],
   imports: [
     CommonModule,
@@ -44,6 +48,8 @@ import { RouterModule } from '@angular/router';
     MetricCardComponent,
     RouterModule,
     SidebarComponent,
+    FormModalComponent,
+    DatePickerComponent,
     materialModules
   ]
 })

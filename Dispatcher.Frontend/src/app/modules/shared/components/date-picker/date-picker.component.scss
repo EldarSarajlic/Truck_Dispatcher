@@ -1,0 +1,295 @@
+@keyframes dp-panel-in {
+  from { opacity: 0; transform: translateY(-6px) scaleY(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scaleY(1); }
+}
+
+
+// ── Wrapper ───────────────────────────────────────────────────────────────
+.dp-wrap { position: relative; }
+
+
+// ── Trigger ───────────────────────────────────────────────────────────────
+.dp-trigger {
+  width:           100%;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             8px;
+  padding:         9px 12px;
+  background:      #1e1e2d;
+  border:          1px solid #252535;
+  border-radius:   8px;
+  color:           #e8e8f0;
+  font-family:     'Sora', sans-serif;
+  font-size:       0.82rem;
+  font-weight:     400;
+  cursor:          pointer;
+  text-align:      left;
+  transition:      border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
+
+  &:hover { border-color: #3a3a55; }
+
+  &--open {
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow:   0 0 0 3px rgba(99, 102, 241, 0.08);
+    background:   #1b1b29;
+  }
+
+  &--error {
+    border-color: rgba(248, 113, 113, 0.5);
+    &:hover { border-color: rgba(248, 113, 113, 0.7); }
+  }
+}
+
+.dp-placeholder { color: #44445a; }
+
+.dp-icon {
+  font-size:   15px;
+  color:       #7878a0;
+  flex-shrink: 0;
+  transition:  color 200ms ease;
+  &--open { color: #a78bfa; }
+}
+
+
+// ── Panel ─────────────────────────────────────────────────────────────────
+.dp-panel {
+  position:        absolute;
+  top:             calc(100% + 6px);
+  left:            0;
+  width:           260px;
+  background:      #15151f;
+  border:          1px solid #252535;
+  border-radius:   12px;
+  box-shadow:      0 20px 50px rgba(0, 0, 0, 0.6);
+  z-index:         9999;
+  padding:         12px;
+  animation:       dp-panel-in 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: top left;
+}
+
+
+// ── Shared header ─────────────────────────────────────────────────────────
+.dp-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   10px;
+}
+
+.dp-header-labels {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+}
+
+.dp-label-btn {
+  background:    transparent;
+  border:        none;
+  border-radius: 6px;
+  color:         #e8e8f0;
+  font-family:   'Sora', sans-serif;
+  font-size:     0.82rem;
+  font-weight:   600;
+  padding:       4px 7px;
+  cursor:        pointer;
+  transition:    background 150ms ease, color 150ms ease;
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.12);
+    color:      #a78bfa;
+  }
+}
+
+.dp-range-label {
+  font-size:   0.78rem;
+  font-weight: 600;
+  color:       #e8e8f0;
+}
+
+.dp-nav-btn {
+  width:           28px;
+  height:          28px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  background:      transparent;
+  border:          1px solid transparent;
+  border-radius:   6px;
+  color:           #7878a0;
+  font-size:       13px;
+  cursor:          pointer;
+  flex-shrink:     0;
+  transition:      background 150ms ease, border-color 150ms ease, color 150ms ease;
+
+  &:hover {
+    background:   rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.2);
+    color:        #a78bfa;
+  }
+}
+
+
+// ── Day view ──────────────────────────────────────────────────────────────
+.dp-weekdays {
+  display:               grid;
+  grid-template-columns: repeat(7, 30px);
+  justify-content:       center;
+  margin-bottom:         4px;
+}
+
+.dp-weekday {
+  text-align:     center;
+  font-size:      0.6rem;
+  font-weight:    600;
+  color:          #44445a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding:        2px 0;
+}
+
+.dp-grid {
+  display:               grid;
+  grid-template-columns: repeat(7, 30px);
+  gap:                   2px;
+  justify-content:       center;
+}
+
+.dp-day {
+  width:           30px;
+  height:          30px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  background:      transparent;
+  border:          1px solid transparent;
+  border-radius:   6px;
+  color:           #e8e8f0;
+  font-family:     'Sora', sans-serif;
+  font-size:       0.72rem;
+  cursor:          pointer;
+  transition:      background 130ms ease, border-color 130ms ease, color 130ms ease;
+
+  &:hover {
+    background:   rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.2);
+    color:        #c4b5fd;
+  }
+
+  &--other {
+    color: #3a3a55;
+    &:hover { color: #7878a0; }
+  }
+
+  &--today {
+    border-color: rgba(99, 102, 241, 0.4);
+    color:        #a78bfa;
+  }
+
+  &--selected {
+    background:   linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-color: transparent;
+    color:        #fff;
+    font-weight:  600;
+    box-shadow:   0 2px 10px rgba(99, 102, 241, 0.4);
+
+    &:hover {
+      background:   linear-gradient(135deg, #5153d4, #7c4de0);
+      border-color: transparent;
+      color:        #fff;
+    }
+  }
+}
+
+
+// ── Month grid ────────────────────────────────────────────────────────────
+.dp-month-grid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   6px;
+  padding:               4px 0;
+}
+
+.dp-month-btn {
+  padding:       10px 4px;
+  background:    transparent;
+  border:        1px solid transparent;
+  border-radius: 8px;
+  color:         #e8e8f0;
+  font-family:   'Sora', sans-serif;
+  font-size:     0.78rem;
+  cursor:        pointer;
+  text-align:    center;
+  transition:    background 130ms ease, border-color 130ms ease, color 130ms ease;
+
+  &:hover {
+    background:   rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.2);
+    color:        #c4b5fd;
+  }
+
+  &--current {
+    border-color: rgba(99, 102, 241, 0.4);
+    color:        #a78bfa;
+  }
+
+  &--selected {
+    background:   linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-color: transparent;
+    color:        #fff;
+    font-weight:  600;
+    box-shadow:   0 2px 10px rgba(99, 102, 241, 0.35);
+  }
+}
+
+
+// ── Year grid ─────────────────────────────────────────────────────────────
+.dp-year-grid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   6px;
+  padding:               4px 0;
+}
+
+.dp-year-btn {
+  padding:       10px 4px;
+  background:    transparent;
+  border:        1px solid transparent;
+  border-radius: 8px;
+  color:         #e8e8f0;
+  font-family:   'Sora', sans-serif;
+  font-size:     0.78rem;
+  cursor:        pointer;
+  text-align:    center;
+  transition:    background 130ms ease, border-color 130ms ease, color 130ms ease;
+
+  &:hover {
+    background:   rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.2);
+    color:        #c4b5fd;
+  }
+
+  &--current {
+    border-color: rgba(99, 102, 241, 0.4);
+    color:        #a78bfa;
+  }
+
+  &--selected {
+    background:   linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-color: transparent;
+    color:        #fff;
+    font-weight:  600;
+    box-shadow:   0 2px 10px rgba(99, 102, 241, 0.35);
+  }
+}
+
+
+// ── Reduced motion ────────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .dp-panel,
+  .dp-trigger,
+  .dp-day,
+  .dp-month-btn,
+  .dp-year-btn,
+  .dp-nav-btn { animation: none !important; transition: none !important; }
+}

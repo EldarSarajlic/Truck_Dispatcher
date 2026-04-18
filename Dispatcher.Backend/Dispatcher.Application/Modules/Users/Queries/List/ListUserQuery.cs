@@ -4,4 +4,5 @@ public sealed class ListUserQuery : BasePagedQuery<ListUserQueryDto>
 {
     public string? Search { get; init; }
     public bool? OnlyEnabled { get; init; }
+    public string? Role { get; init; }
 }

@@ -10,6 +10,8 @@ import {
   LogoutCommand,
   ForgotPasswordCommand,
   ResetPasswordCommand,
+  RegisterCommand,
+  RegisterCommandDto,
 } from './auth-api.model';
 
 @Injectable({
@@ -41,6 +43,14 @@ export class AuthApiService {
    */
   logout(payload: LogoutCommand): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/logout`, payload);
+  }
+
+  /**
+   * POST /Auth/register (Admin only)
+   * Create a new user account.
+   */
+  register(payload: RegisterCommand): Observable<RegisterCommandDto> {
+    return this.http.post<RegisterCommandDto>(`${this.baseUrl}/register`, payload);
   }
 
   /**
