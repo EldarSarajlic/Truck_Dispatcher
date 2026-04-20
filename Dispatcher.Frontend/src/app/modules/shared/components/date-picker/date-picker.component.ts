@@ -24,7 +24,8 @@ export class DatePickerComponent implements OnChanges {
   @Input() hasError    = false;
   @Input() placeholder = 'Select date...';
 
-  @Output() valueChange = new EventEmitter<string>();
+  @Output() valueChange    = new EventEmitter<string>();
+  @Output() panelToggled   = new EventEmitter<boolean>();
 
   open:     boolean    = false;
   viewMode: DpViewMode = 'day';
@@ -57,8 +58,9 @@ export class DatePickerComponent implements OnChanges {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(e: MouseEvent): void {
-    if (!this.el.nativeElement.contains(e.target)) {
+    if (!this.el.nativeElement.contains(e.target) && this.open) {
       this.open = false;
+      this.panelToggled.emit(false);
     }
   }
 
@@ -69,6 +71,7 @@ export class DatePickerComponent implements OnChanges {
       this.viewMode = 'day';
       this.buildCalendar();
     }
+    this.panelToggled.emit(this.open);
   }
 
   // ── View mode switching ───────────────────────────────────────────────────
@@ -110,6 +113,7 @@ export class DatePickerComponent implements OnChanges {
     const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     this.valueChange.emit(iso);
     this.open = false;
+    this.panelToggled.emit(false);
   }
 
   // ── Template helpers ──────────────────────────────────────────────────────

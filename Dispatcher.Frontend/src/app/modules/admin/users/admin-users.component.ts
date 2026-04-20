@@ -9,7 +9,9 @@ import { AuthApiService } from '../../../api-services/auth/auth-api.service';
 import { LocationsApiService } from '../../../api-services/locations/locations-api.service';
 import { CountryDto } from '../../../api-services/locations/locations-api.model';
 import { FormField } from '../../shared/components/form-modal/form-modal.component';
+import { WizardStep } from '../../shared/components/wizard-form-modal/wizard-form-modal.component';
 import { ToasterService } from '../../../core/services/toaster.service';
+import { CurrentUserService } from '../../../core/services/auth/current-user.service';
 
 // X = one digit; all other chars are literal separators
 const PHONE_FORMAT: Record<string, string> = {
@@ -83,64 +85,81 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   readonly roles = ['Admin', 'Dispatcher', 'Driver', 'Client'];
   roleDropdownOpen = false;
 
-  // ── 3. Register form definition (signal so options can update dynamically) ─
-  readonly registerFields = signal<FormField[]>([
+  // ── 3. Wizard steps for register form ────────────────────────────────────
+  readonly registerSteps = signal<WizardStep[]>([
     {
-      name: 'firstName', label: 'First Name', type: 'text',
-      placeholder: 'Enter first name', required: true,
-      validators: [Validators.maxLength(100)], halfWidth: true,
-    },
-    {
-      name: 'lastName', label: 'Last Name', type: 'text',
-      placeholder: 'Enter last name', required: true,
-      validators: [Validators.maxLength(100)], halfWidth: true,
-    },
-    {
-      name: 'email', label: 'Email', type: 'email',
-      placeholder: 'user@example.com', required: true,
-      validators: [Validators.email],
-    },
-    {
-      name: 'country', label: 'Country', type: 'select',
-      placeholder: 'Select country...', required: true,
-      options: [],
-      onValueChange: (value, form) => this.onCountryChange(Number(value), form),
-    },
-    {
-      name: 'phoneNumber', label: 'Phone Number', type: 'tel',
-      placeholder: 'Select a country first',
-    },
-    {
-      name: 'city', label: 'City', type: 'select',
-      placeholder: 'Select city...', required: true,
-      options: [],
-    },
-    {
-      name: 'role', label: 'Role', type: 'select',
-      placeholder: 'Select role...', required: true,
-      options: [
-        { label: 'Admin',      value: 3 },
-        { label: 'Dispatcher', value: 2 },
-        { label: 'Driver',     value: 1 },
-        { label: 'Client',     value: 0 },
+      title: 'Personal',
+      icon:  'ph-user',
+      fields: [
+        {
+          name: 'firstName', label: 'First Name', type: 'text',
+          placeholder: 'Enter first name', required: true,
+          validators: [Validators.maxLength(100)], halfWidth: true,
+        },
+        {
+          name: 'lastName', label: 'Last Name', type: 'text',
+          placeholder: 'Enter last name', required: true,
+          validators: [Validators.maxLength(100)], halfWidth: true,
+        },
+        {
+          name: 'dateOfBirth', label: 'Date of Birth', type: 'date',
+          required: true,
+        },
       ],
     },
     {
-      name: 'dateOfBirth', label: 'Date of Birth', type: 'date',
-      required: true,
+      title: 'Contact',
+      icon:  'ph-address-book',
+      fields: [
+        {
+          name: 'email', label: 'Email', type: 'email',
+          placeholder: 'user@example.com', required: true,
+          validators: [Validators.email],
+        },
+        {
+          name: 'country', label: 'Country', type: 'select',
+          placeholder: 'Select country...', required: true,
+          options: [],
+          onValueChange: (value, form) => this.onCountryChange(Number(value), form),
+        },
+        {
+          name: 'phoneNumber', label: 'Phone Number', type: 'tel',
+          placeholder: 'Select a country first',
+        },
+        {
+          name: 'city', label: 'City', type: 'select',
+          placeholder: 'Select city...', required: true,
+          options: [], disabled: true,
+        },
+      ],
     },
     {
-      name: 'password', label: 'Password', type: 'password',
-      placeholder: 'Min. 6 characters', required: true,
-      validators: [Validators.minLength(6)],
-    },
-    {
-      name: 'confirmPassword', label: 'Confirm Password', type: 'password',
-      placeholder: 'Repeat password', required: true,
+      title:  'Account',
+      icon:   'ph-lock-key',
+      fields: [
+        {
+          name: 'role', label: 'Role', type: 'select',
+          placeholder: 'Select role...', required: true,
+          options: [
+            { label: 'Admin',      value: 3 },
+            { label: 'Dispatcher', value: 2 },
+            { label: 'Driver',     value: 1 },
+            { label: 'Client',     value: 0 },
+          ],
+        },
+        {
+          name: 'password', label: 'Password', type: 'password',
+          placeholder: 'Min. 6 characters', required: true,
+          validators: [Validators.minLength(6)],
+        },
+        {
+          name: 'confirmPassword', label: 'Confirm Password', type: 'password',
+          placeholder: 'Repeat password', required: true,
+        },
+      ],
+      groupValidators: [passwordMatchValidator],
     },
   ]);
-
-  readonly registerGroupValidators: ValidatorFn[] = [passwordMatchValidator];
 
   // ── 4. Private cleanup handles ────────────────────────────────────────────
   private readonly destroyed$    = new Subject<void>();
@@ -151,6 +170,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   private readonly authService      = inject(AuthApiService);
   private readonly locationsService = inject(LocationsApiService);
   private readonly toast            = inject(ToasterService);
+  private readonly currentUserSvc   = inject(CurrentUserService);
 
   // ── 6. Cached country list ────────────────────────────────────────────────
   private countries: CountryDto[] = [];
@@ -189,7 +209,8 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
         next: res => {
-          this.users.set(res.items);
+          const currentUserId = this.currentUserSvc.snapshot?.userId;
+          this.users.set(res.items.filter(u => u.id !== currentUserId));
           this.totalItems.set(res.totalItems);
           this.totalPages.set(res.totalPages);
           this.currentPage.set(res.currentPage);
@@ -293,7 +314,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
 
     // Reset city and show loading
     form.get('city')?.setValue('');
-    this.patchField('city', { isLoadingOptions: true, options: [] });
+    this.patchField('city', { disabled: false, isLoadingOptions: true, options: [] });
 
     this.locationsService.getCitiesByCountry(countryId)
       .pipe(takeUntil(this.destroyed$))
@@ -335,8 +356,11 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   }
 
   private patchField(name: string, updates: Partial<FormField>): void {
-    this.registerFields.update(fields =>
-      fields.map(f => f.name === name ? { ...f, ...updates } : f)
+    this.registerSteps.update(steps =>
+      steps.map(step => ({
+        ...step,
+        fields: step.fields.map(f => f.name === name ? { ...f, ...updates } : f),
+      }))
     );
   }
 }

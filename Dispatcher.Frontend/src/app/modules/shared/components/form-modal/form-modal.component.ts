@@ -26,6 +26,7 @@ export interface FormField {
   phonePrefix?: string;               // digit-only country code e.g. '387' — kept fixed/undeletable
   // Dynamic select support
   isLoadingOptions?: boolean;          // show spinner in dropdown while fetching options
+  disabled?:         boolean;          // disable the field entirely
   onValueChange?:    (value: string | number, form: FormGroup) => void;
 }
 

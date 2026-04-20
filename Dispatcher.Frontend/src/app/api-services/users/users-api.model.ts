@@ -6,6 +6,7 @@ import { PageResult } from "../../core/models/paging/page-result";
  * Corresponds to: ListUserQueryDto.cs
  */
 export type ListUsersQueryDto = {
+  id: number;
   firstName: string;
   lastName: string;
   displayName: string;

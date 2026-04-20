@@ -12,6 +12,7 @@ import { MetricCardComponent } from './components/metric-card/metric-card.compon
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FormModalComponent } from './components/form-modal/form-modal.component';
 import { DatePickerComponent } from './components/date-picker/date-picker.component';
+import { WizardFormModalComponent } from './components/wizard-form-modal/wizard-form-modal.component';
 import { RouterModule } from '@angular/router';
 
 
@@ -25,6 +26,7 @@ import { RouterModule } from '@angular/router';
     SidebarComponent,
     FormModalComponent,
     DatePickerComponent,
+    WizardFormModalComponent,
   ],
   imports: [
     CommonModule,
@@ -50,6 +52,7 @@ import { RouterModule } from '@angular/router';
     SidebarComponent,
     FormModalComponent,
     DatePickerComponent,
+    WizardFormModalComponent,
     materialModules
   ]
 })

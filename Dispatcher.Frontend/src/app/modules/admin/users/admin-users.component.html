@@ -204,10 +204,9 @@
 
 </div>
 
-<app-form-modal
+<app-wizard-form-modal
   [open]="registerModalOpen()"
-  [fields]="registerFields()"
-  [groupValidators]="registerGroupValidators"
+  [steps]="registerSteps()"
   title="Register New User"
   titleIcon="ph-user-plus"
   submitLabel="Register User"
@@ -215,4 +214,4 @@
   [submitError]="registerSubmitError()"
   (closed)="closeRegisterModal()"
   (submitted)="onFormSubmitted($event)"
-></app-form-modal>
+></app-wizard-form-modal>

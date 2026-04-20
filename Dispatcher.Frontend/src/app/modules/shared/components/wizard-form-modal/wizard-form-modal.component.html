@@ -1,0 +1,178 @@
+@if (open) {
+  <div class="rum-overlay">
+    <div class="rum-box" (click)="$event.stopPropagation()">
+
+      <!-- ── Header ──────────────────────────────────────────────────────── -->
+      <div class="rum-header">
+        <h2 class="rum-title">
+          <i class="ph-duotone {{ titleIcon }}"></i>
+          {{ title }}
+        </h2>
+      </div>
+
+      <!-- ── Step indicator ─────────────────────────────────────────────── -->
+      <div class="wiz-stepper">
+        @for (s of steps; track s.title; let i = $index; let last = $last) {
+          <div class="wiz-step"
+               [class.active]="i === currentStep"
+               [class.done]="i < currentStep">
+            <div class="wiz-step-circle">
+              @if (i < currentStep) {
+                <i class="ph-bold ph-check"></i>
+              } @else {
+                {{ i + 1 }}
+              }
+            </div>
+            <span class="wiz-step-label">{{ s.title }}</span>
+          </div>
+          @if (!last) {
+            <div class="wiz-step-connector" [class.done]="i < currentStep"></div>
+          }
+        }
+      </div>
+
+      <!-- ── Body ────────────────────────────────────────────────────────── -->
+      <div class="rum-body" #bodyRef>
+        @if (form) {
+          <form [formGroup]="form" (ngSubmit)="isLastStep ? submit() : next()" novalidate>
+
+            @for (row of rows; track row[0].name) {
+              <div [class]="row.length === 2 ? 'rum-row' : ''">
+
+                @for (field of row; track field.name) {
+                  <div class="rum-field">
+
+                    <label class="rum-label">
+                      {{ field.label }}
+                      @if (field.required) {
+                        <span class="rum-required">*</span>
+                      }
+                    </label>
+
+                    @if (field.type === 'select') {
+                      <div
+                        class="rum-dropdown"
+                        [class.open]="openDropdown === field.name && !field.isLoadingOptions"
+                        (click)="$event.stopPropagation()"
+                      >
+                        <button
+                          type="button"
+                          class="rum-dropdown-trigger"
+                          [class.rum-dropdown-trigger--error]="fieldInvalid(field.name)"
+                          [disabled]="field.isLoadingOptions || field.disabled"
+                          (click)="toggleDropdown(field.name, $event)"
+                        >
+                          @if (field.isLoadingOptions) {
+                            <span class="rum-dropdown-placeholder">
+                              <i class="ph-duotone ph-circle-notch rum-spinner"></i>
+                              Loading...
+                            </span>
+                          } @else {
+                            <span [class.rum-dropdown-placeholder]="!form.get(field.name)?.value && form.get(field.name)?.value !== 0">
+                              {{ optionLabel(field) || field.placeholder || 'Select...' }}
+                            </span>
+                          }
+                          <i class="ph-duotone ph-caret-down rum-dropdown-caret"></i>
+                        </button>
+                        <div class="rum-dropdown-list">
+                          @for (opt of field.options; track opt.value) {
+                            <div
+                              class="rum-dropdown-option"
+                              [class.selected]="form.get(field.name)?.value === opt.value"
+                              (click)="selectOption(field.name, opt.value, $event)"
+                            >{{ opt.label }}</div>
+                          }
+                        </div>
+                      </div>
+
+                    } @else if (field.type === 'date') {
+                      <app-date-picker
+                        [value]="form.get(field.name)?.value ?? ''"
+                        [hasError]="fieldInvalid(field.name)"
+                        [placeholder]="field.placeholder ?? 'Select date...'"
+                        (valueChange)="setDateValue(field.name, $event)"
+                        (panelToggled)="onDatePickerToggled($event)"
+                      />
+
+                    } @else if (field.type === 'tel' && field.phoneFormat) {
+                      <input
+                        type="tel"
+                        class="rum-input"
+                        [class.rum-input--error]="fieldInvalid(field.name)"
+                        [formControlName]="field.name"
+                        [placeholder]="field.placeholder ?? ''"
+                        (keydown)="onTelKeydown(field.phoneFormat, field.phonePrefix ?? '', $event)"
+                        (input)="onTelInput(field.name, field.phoneFormat, field.phonePrefix ?? '', $event)"
+                      />
+
+                    } @else {
+                      <input
+                        [type]="field.type"
+                        class="rum-input"
+                        [class.rum-input--error]="fieldInvalid(field.name)"
+                        [formControlName]="field.name"
+                        [placeholder]="field.placeholder ?? ''"
+                      />
+                    }
+
+                    @if (fieldInvalid(field.name)) {
+                      <span class="rum-error">{{ field.label }} is invalid.</span>
+                    }
+
+                  </div>
+                }
+
+              </div>
+            }
+
+            <div class="dp-spacer" [class.dp-spacer--open]="spacerActive"></div>
+
+            @if (submitError) {
+              <div class="rum-api-error">
+                <i class="ph-duotone ph-warning-circle"></i>
+                {{ submitError }}
+              </div>
+            }
+
+          </form>
+        }
+      </div>
+
+      <!-- ── Footer ───────────────────────────────────────────────────────── -->
+      <div class="rum-footer">
+        <button class="rum-btn-cancel" type="button" (click)="close()">Cancel</button>
+
+        <div class="wiz-footer-nav">
+          @if (!isFirstStep) {
+            <button class="rum-btn-back" type="button" (click)="back()">
+              <i class="ph-duotone ph-arrow-left"></i>
+              Back
+            </button>
+          }
+
+          @if (!isLastStep) {
+            <button class="rum-btn-submit" type="button" (click)="next()">
+              Next
+              <i class="ph-duotone ph-arrow-right"></i>
+            </button>
+          } @else {
+            <button
+              class="rum-btn-submit"
+              type="button"
+              [disabled]="isSubmitting"
+              (click)="submit()"
+            >
+              @if (isSubmitting) {
+                <i class="ph-duotone ph-circle-notch rum-spinner"></i>
+                Saving...
+              } @else {
+                {{ submitLabel }}
+              }
+            </button>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
+}
