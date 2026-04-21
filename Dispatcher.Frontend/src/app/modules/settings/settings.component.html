@@ -1,1 +1,92 @@
-<p>settings works!</p>
+<div class="settings-shell">
+
+  <!-- ── LEFT NAVIGATION ──────────────────────────────────────────── -->
+  <nav class="settings-nav">
+    <div class="nav-header">
+      <span class="nav-title">{{ 'SETTINGS.TITLE' | translate }}</span>
+      <button class="nav-back-btn" (click)="goBack()" [title]="'SETTINGS.BACK' | translate">
+        <i class="ph-duotone ph-x"></i>
+      </button>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Options</div>
+      <button
+        class="nav-item"
+        [class.nav-item--active]="activeSection() === 'language'"
+        (click)="activeSection.set('language')">
+        <i class="ph-duotone ph-globe"></i>
+        {{ 'SETTINGS.NAV.LANGUAGE' | translate }}
+      </button>
+      <button
+        class="nav-item"
+        [class.nav-item--active]="activeSection() === 'appearance'"
+        (click)="activeSection.set('appearance')">
+        <i class="ph-duotone ph-paint-brush"></i>
+        {{ 'SETTINGS.NAV.APPEARANCE' | translate }}
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── RIGHT CONTENT ────────────────────────────────────────────── -->
+  <div class="settings-content">
+
+    <!-- Language section -->
+    @if (activeSection() === 'language') {
+      <div class="settings-section">
+        <h2 class="section-heading">{{ 'SETTINGS.LANGUAGE.HEADING' | translate }}</h2>
+
+        <div class="setting-item">
+          <div class="setting-item-info">
+            <span class="setting-item-title">{{ 'SETTINGS.LANGUAGE.TITLE' | translate }}</span>
+            <span class="setting-item-desc">{{ 'SETTINGS.LANGUAGE.DESC' | translate }}</span>
+          </div>
+          <div class="lang-options">
+            @for (lang of languages; track lang.code) {
+              <button
+                class="lang-opt"
+                [class.lang-opt--active]="lang.code === currentLang()"
+                (click)="switchLanguage(lang.code)">
+                <span class="lang-flag">{{ lang.flag }}</span>
+                <span>{{ lang.name }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Appearance section -->
+    @if (activeSection() === 'appearance') {
+      <div class="settings-section">
+        <h2 class="section-heading">{{ 'SETTINGS.APPEARANCE.HEADING' | translate }}</h2>
+
+        <div class="setting-item">
+          <div class="setting-item-info">
+            <span class="setting-item-title">{{ 'SETTINGS.APPEARANCE.THEME_TITLE' | translate }}</span>
+            <span class="setting-item-desc">{{ 'SETTINGS.APPEARANCE.THEME_DESC' | translate }}</span>
+          </div>
+          <div class="theme-options">
+            <button
+              class="theme-opt"
+              [class.theme-opt--active]="currentTheme() === 'dark'"
+              (click)="switchTheme('dark')">
+              <i class="ph-duotone ph-moon"></i>
+              {{ 'SETTINGS.APPEARANCE.DARK' | translate }}
+            </button>
+            <button
+              class="theme-opt"
+              [class.theme-opt--active]="currentTheme() === 'light'"
+              (click)="switchTheme('light')">
+              <i class="ph-duotone ph-sun"></i>
+              {{ 'SETTINGS.APPEARANCE.LIGHT' | translate }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+    }
+
+  </div>
+
+</div>

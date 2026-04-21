@@ -1,14 +1,14 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Design tokens — mirror the mockup's CSS variables
+// Design tokens — map to global CSS custom properties for theme support
 // ─────────────────────────────────────────────────────────────────────────────
-$bg-base:       #0b0b12;
-$bg-secondary:  #111119;
-$bg-card:       #15151f;
-$bg-card-hover: #1b1b29;
-$bg-input:      #1e1e2d;
+$bg-base:       var(--c-bg-base);
+$bg-secondary:  var(--c-bg-elevated);
+$bg-card:       var(--c-bg-surface);
+$bg-card-hover: var(--c-bg-input-focus);
+$bg-input:      var(--c-bg-input);
 
-$border:        #252535;
-$border-hover:  #3a3a55;
+$border:        var(--c-border);
+$border-hover:  var(--c-border-hover);
 
 $accent:        #6366f1;
 $accent-2:      #8b5cf6;
@@ -21,9 +21,9 @@ $amber:  #fbbf24;
 $red:    #f87171;
 $violet: #c084fc;
 
-$text-primary:   #e8e8f0;
-$text-secondary: #7878a0;
-$text-muted:     #44445a;
+$text-primary:   var(--c-text);
+$text-secondary: var(--c-text-sec);
+$text-muted:     var(--c-text-mute);
 
 $radius:    12px;
 $radius-lg: 16px;
@@ -329,7 +329,7 @@ $transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   justify-content: space-between;
   align-items: center;
   padding: 6px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid $border;
 
   &:last-child { border-bottom: none; }
 }
@@ -558,7 +558,7 @@ tbody tr:hover .row-idx { color: $accent; }
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #1b1b29 25%, #2a2a3d 50%, #1b1b29 75%);
+  background: linear-gradient(90deg, var(--c-skel-a) 25%, var(--c-skel-b) 50%, var(--c-skel-a) 75%);
   background-size: 1200px 100%;
   animation: shimmer 1.6s infinite linear;
   border-radius: 6px;

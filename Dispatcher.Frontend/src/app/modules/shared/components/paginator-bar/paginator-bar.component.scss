@@ -4,17 +4,17 @@
   align-items:    center;
   gap:            14px;
   padding:        16px 20px;
-  border-top:     1px solid #3a3a55;
-  background:     #1e1e2d;
+  border-top:     1px solid var(--c-border-hover);
+  background:     var(--c-bg-input);
 }
 
 .paginator-info {
   font-size:      0.72rem;
-  color:          #9898b8;
+  color:          var(--c-text-sec);
   letter-spacing: 0.02em;
   text-align:     center;
 
-  strong { color: #e8e8f0; font-weight: 700; }
+  strong { color: var(--c-text); font-weight: 700; }
 }
 
 .paginator-controls {
@@ -26,7 +26,7 @@
 .pg-sep {
   width:         1px;
   height:        24px;
-  background:    #3a3a55;
+  background:    var(--c-border-hover);
   margin:        0 2px;
   flex-shrink:   0;
   border-radius: 1px;
@@ -37,9 +37,9 @@
   height:          38px;
   padding:         0 11px;
   border-radius:   10px;
-  border:          1px solid #3a3a55;
-  background:      #15151f;
-  color:           #c8c8e0;
+  border:          1px solid var(--c-border-hover);
+  background:      var(--c-bg-surface);
+  color:           var(--c-text);
   font-family:     'Sora', sans-serif;
   font-size:       0.76rem;
   font-weight:     600;
@@ -80,7 +80,7 @@
 .pg-nav {
   padding:        0 16px;
   border-radius:  20px;
-  background:     #111119;
+  background:     var(--c-bg-elevated);
   font-size:      0.74rem;
   letter-spacing: 0.01em;
 
@@ -101,5 +101,5 @@
   letter-spacing:  0.1em;
   pointer-events:  none;
   user-select:     none;
-  color:           #7878a0;
+  color:           var(--c-text-sec);
 }

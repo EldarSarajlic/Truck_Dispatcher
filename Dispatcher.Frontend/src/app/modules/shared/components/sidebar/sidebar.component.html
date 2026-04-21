@@ -1,21 +1,5 @@
 <aside class="sidebar">
 
-  <!-- ── LANGUAGE SWITCHER ─────────────────────────────── -->
-  @if (languages.length > 0) {
-    <div class="lang-switcher">
-      @for (lang of languages; track lang.code) {
-        <button
-          class="lang-btn"
-          [class.lang-btn--active]="lang.code === currentLang"
-          (click)="languageChange.emit(lang.code)"
-          [title]="lang.name">
-          <span>{{ lang.flag }}</span>
-          <span>{{ lang.name }}</span>
-        </button>
-      }
-    </div>
-  }
-
   <!-- ── LOGO ────────────────────────────────────────── -->
   <div class="sidebar-logo">
     <img src="app-logo.png" alt="Logo" class="logo-icon" />

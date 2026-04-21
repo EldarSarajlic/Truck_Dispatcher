@@ -22,7 +22,7 @@ body {
 }
 
 body {
-  color-scheme: light;
+  background: var(--c-bg-body);
 }
 
 html {
@@ -33,11 +33,71 @@ html {
    THEME SWITCHING
    =========================== */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
+
+  /* ── Background layers ── */
+  --c-bg-base:        #0b0b12;
+  --c-bg-body:        #0f0f1a;
+  --c-bg-sidebar:     #12121e;
+  --c-bg-surface:     #15151f;
+  --c-bg-elevated:    #111119;
+  --c-bg-input:       #1e1e2d;
+  --c-bg-input-focus: #1b1b29;
+  --c-bg-hover:       #1a1a2e;
+
+  /* ── Borders ── */
+  --c-border:         #252535;
+  --c-border-sub:     #1e1e2e;
+  --c-border-hover:   #3a3a55;
+  --c-border-input:   #2e2e42;
+  --c-border-step:    #2e2e45;
+
+  /* ── Text ── */
+  --c-text:           #e8e8f0;
+  --c-text-sec:       #7878a0;
+  --c-text-mute:      #44445a;
+
+  /* ── Skeleton ── */
+  --c-skel-a:         #1b1b29;
+  --c-skel-b:         #2a2a3d;
+
+  /* ── Misc ── */
+  --c-scroll-track:   #0b0b12;
+  --c-modal-overlay:  rgba(5, 5, 10, 0.72);
 }
 
 html[data-theme="light"] {
   color-scheme: light;
+
+  /* ── Background layers ── */
+  --c-bg-base:        #eef2f7;
+  --c-bg-body:        #f1f5f9;
+  --c-bg-sidebar:     #f8fafc;
+  --c-bg-surface:     #ffffff;
+  --c-bg-elevated:    #f8fafc;
+  --c-bg-input:       #f8fafc;
+  --c-bg-input-focus: #f0f4f8;
+  --c-bg-hover:       #f1f5f9;
+
+  /* ── Borders ── */
+  --c-border:         #e2e8f0;
+  --c-border-sub:     #e8ecf2;
+  --c-border-hover:   #94a3b8;
+  --c-border-input:   #cbd5e1;
+  --c-border-step:    #cbd5e1;
+
+  /* ── Text ── */
+  --c-text:           #1e293b;
+  --c-text-sec:       #64748b;
+  --c-text-mute:      #94a3b8;
+
+  /* ── Skeleton ── */
+  --c-skel-a:         #e2e8f0;
+  --c-skel-b:         #f1f5f9;
+
+  /* ── Misc ── */
+  --c-scroll-track:   #e2e8f0;
+  --c-modal-overlay:  rgba(15, 23, 42, 0.60);
 }
 
 html[data-theme="dark"] {
@@ -116,7 +176,7 @@ html[data-theme="dark"] {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0b0b12;
+  background: var(--c-scroll-track);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -129,13 +189,13 @@ html[data-theme="dark"] {
 }
 
 ::-webkit-scrollbar-corner {
-  background: #0b0b12;
+  background: var(--c-scroll-track);
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #6366f1 #0b0b12;
+  scrollbar-color: #6366f1 var(--c-scroll-track);
 }
 
 /* ===========================

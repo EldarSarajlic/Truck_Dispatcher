@@ -1,8 +1,8 @@
 // ── Layout shell ──────────────────────────────────────────────────
 .sidebar {
   width: 240px;
-  background: var(--bg-secondary, #12121e);
-  border-right: 1px solid var(--border, #1e1e2e);
+  background: var(--c-bg-sidebar);
+  border-right: 1px solid var(--c-border-sub);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -23,7 +23,7 @@
 // ── Logo ──────────────────────────────────────────────────────────
 .sidebar-logo {
   padding: 20px 20px 16px;
-  border-bottom: 1px solid #1e1e2e;
+  border-bottom: 1px solid var(--c-border-sub);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -45,7 +45,7 @@
   font-weight: 700;
   letter-spacing: -0.3px;
   // Gradient text — requires -webkit- properties, can't be done in Tailwind
-  background: linear-gradient(135deg, #e8e8f0, #a5b4fc);
+  background: linear-gradient(135deg, var(--c-text), #a5b4fc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 1.2;
@@ -54,8 +54,8 @@
 .logo-sub {
   font-size: 0.62rem;
   font-weight: 400;
-  color: #44445a;
-  -webkit-text-fill-color: #44445a;
+  color: var(--c-text-mute);
+  -webkit-text-fill-color: var(--c-text-mute);
   margin-top: 1px;
 }
 
@@ -77,7 +77,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #44445a;
+  color: var(--c-text-mute);
   padding: 0 8px;
   margin-bottom: 6px;
 }
@@ -89,7 +89,7 @@
   padding: 9px 10px;
   border-radius: 8px;
   cursor: pointer;
-  color: #7878a0;
+  color: var(--c-text-sec);
   font-size: 0.82rem;
   font-weight: 500;
   transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
@@ -101,13 +101,13 @@
   i { font-size: 18px; flex-shrink: 0; }
 
   &:hover {
-    color: #e8e8f0;
-    background: #1a1a2e;
-    border-color: #1e1e2e;
+    color: var(--c-text);
+    background: var(--c-bg-hover);
+    border-color: var(--c-border-sub);
   }
 
   &.active {
-    color: #e8e8f0;
+    color: var(--c-text);
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
     border-color: rgba(99, 102, 241, 0.25);
 
@@ -128,7 +128,7 @@
 // ── Bottom user card ───────────────────────────────────────────────
 .sidebar-bottom {
   padding: 12px 16px;
-  border-top: 1px solid #1e1e2e;
+  border-top: 1px solid var(--c-border-sub);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -146,7 +146,7 @@
   overflow: hidden;     // prevents long email breaking layout
   transition: background 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 
-  &:hover { background: #1a1a2e; }
+  &:hover { background: var(--c-bg-hover); }
 }
 
 .user-avatar-sm {
@@ -168,7 +168,7 @@
 .user-name-sm {
   font-size: 0.76rem;
   font-weight: 600;
-  color: #e8e8f0;
+  color: var(--c-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;   // long emails get truncated cleanly
@@ -176,7 +176,7 @@
 
 .user-role-sm {
   font-size: 0.65rem;
-  color: #44445a;
+  color: var(--c-text-mute);
 }
 
 // ── Action buttons ─────────────────────────────────────────────────
@@ -195,7 +195,7 @@
   border-radius: 8px;
   border: none;
   background: transparent;
-  color: #7878a0;
+  color: var(--c-text-sec);
   cursor: pointer;
   transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
 
@@ -212,44 +212,6 @@
     color: #f87171;
     background: rgba(248, 113, 113, 0.1);
     box-shadow: 0 0 10px rgba(248, 113, 113, 0.4), 0 0 20px rgba(248, 113, 113, 0.15);
-  }
-}
-
-// ── Language switcher ──────────────────────────────────────────────
-.lang-switcher {
-  display: flex;
-  padding: 8px 10px;
-  gap: 6px;
-  border-bottom: 1px solid #1e1e2e;
-  flex-shrink: 0;
-}
-
-.lang-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 6px 8px;
-  border-radius: 7px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: #7878a0;
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s ease;
-
-  &:hover {
-    color: #e8e8f0;
-    background: #1a1a2e;
-    border-color: #1e1e2e;
-  }
-
-  &--active {
-    color: #a5b4fc;
-    background: rgba(99, 102, 241, 0.12);
-    border-color: rgba(99, 102, 241, 0.25);
   }
 }
 

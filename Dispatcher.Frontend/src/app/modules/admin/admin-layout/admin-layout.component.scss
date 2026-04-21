@@ -17,11 +17,11 @@
 }
 
 .drawer-content {
-  background: #0b0b12;
+  background: var(--c-bg-base);
 }
 
 main {
-  background: #0b0b12;
+  background: var(--c-bg-base);
   min-height: 100%;
 }
 

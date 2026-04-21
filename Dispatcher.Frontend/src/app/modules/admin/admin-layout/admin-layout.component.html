@@ -19,12 +19,7 @@
   <!-- SIDEBAR -->
   <div class="drawer-side h-full">
     <label for="admin-drawer" class="drawer-overlay"></label>
-    <app-sidebar
-      [navItems]="adminNavItems"
-      [languages]="languages"
-      [currentLang]="currentLang"
-      (languageChange)="switchLanguage($event)">
-    </app-sidebar>
+    <app-sidebar [navItems]="adminNavItems"></app-sidebar>
   </div>
 
 </div>

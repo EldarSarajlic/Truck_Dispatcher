@@ -1,5 +1,6 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,11 @@ export class AppComponent implements OnInit {
   protected readonly title = signal('DispatcherApp');
   currentLang: string = 'bs';
 
+  private document = inject(DOCUMENT);
+
   constructor(private translate: TranslateService) {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    this.document.documentElement.setAttribute('data-theme', savedTheme);
     console.log('AppComponent constructor - initializing TranslateService');
 
     // Inicijalizacija translate servisa

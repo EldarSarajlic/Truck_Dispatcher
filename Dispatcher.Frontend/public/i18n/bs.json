@@ -430,5 +430,25 @@
     "CONFLICT": "Ova akcija je u konfliktu sa postojećim podacima.",
     "VALIDATION": "Provjerite formu za greške.",
     "UNKNOWN": "Nepoznata greška."
+  },
+  "SETTINGS": {
+    "TITLE": "Postavke",
+    "BACK": "Nazad",
+    "NAV": {
+      "LANGUAGE": "Jezik",
+      "APPEARANCE": "Izgled"
+    },
+    "LANGUAGE": {
+      "HEADING": "Jezik",
+      "TITLE": "Jezik interfejsa",
+      "DESC": "Odaberite jezik koji se koristi u cijeloj aplikaciji"
+    },
+    "APPEARANCE": {
+      "HEADING": "Izgled",
+      "THEME_TITLE": "Tema interfejsa",
+      "THEME_DESC": "Odaberite između tamnog i svijetlog načina rada",
+      "DARK": "Tamna",
+      "LIGHT": "Svijetla"
+    }
   }
 }

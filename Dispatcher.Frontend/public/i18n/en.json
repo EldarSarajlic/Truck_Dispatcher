@@ -431,5 +431,25 @@
     "CONFLICT": "This action conflicts with existing data.",
     "VALIDATION": "Please check the form for errors.",
     "UNKNOWN": "Unknown error occurred."
+  },
+  "SETTINGS": {
+    "TITLE": "Settings",
+    "BACK": "Back",
+    "NAV": {
+      "LANGUAGE": "Language",
+      "APPEARANCE": "Appearance"
+    },
+    "LANGUAGE": {
+      "HEADING": "Language",
+      "TITLE": "Display Language",
+      "DESC": "Choose the language used throughout the interface"
+    },
+    "APPEARANCE": {
+      "HEADING": "Appearance",
+      "THEME_TITLE": "Interface Theme",
+      "THEME_DESC": "Choose between dark and light mode",
+      "DARK": "Dark",
+      "LIGHT": "Light"
+    }
   }
 }

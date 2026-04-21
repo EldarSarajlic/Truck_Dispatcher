@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, computed, inject } from '@angular/core';
+import { Component, Input, computed, inject } from '@angular/core';
 import { AuthFacadeService } from '../../../../core/services/auth/auth-facade.service';
 import { UserRole } from '../../../../core/services/auth/current-user.dto';
 import { Router } from '@angular/router';
@@ -12,16 +12,13 @@ export interface NavItem {
 
 @Component({
   selector: 'app-sidebar',
-  standalone: false,         
+  standalone: false,
   templateUrl: './sidebar.component.html',
   styleUrl:    './sidebar.component.scss',
 })
 export class SidebarComponent {
   private router = inject(Router)
   @Input() navItems: NavItem[] = [];
-  @Input() languages: { code: string; name: string; flag: string }[] = [];
-  @Input() currentLang: string = '';
-  @Output() languageChange = new EventEmitter<string>();
 
   auth = inject(AuthFacadeService);
 
