@@ -18,9 +18,14 @@ public sealed class RequestResponseLoggingMiddleware(
         var stopwatch = Stopwatch.StartNew();
         var request = context.Request;
 
-        // Read request body (only for POST/PUT)
+        // Read request body (only for POST/PUT with text-based content types)
         string? requestBody = null;
-        if (request.Method is "POST" or "PUT")
+        var contentType = request.ContentType ?? string.Empty;
+        var isTextBody = request.Method is "POST" or "PUT"
+            && !contentType.StartsWith("multipart/")
+            && !contentType.StartsWith("application/octet-stream");
+
+        if (isTextBody)
         {
             request.EnableBuffering();
             using var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true);

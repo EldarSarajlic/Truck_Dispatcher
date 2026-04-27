@@ -68,7 +68,7 @@
                               Loading...
                             </span>
                           } @else {
-                            <span [class.rum-dropdown-placeholder]="!form.get(field.name)?.value && form.get(field.name)?.value !== 0">
+                            <span [class.rum-dropdown-placeholder]="!optionLabel(field)">
                               {{ optionLabel(field) || field.placeholder || 'Select...' }}
                             </span>
                           }

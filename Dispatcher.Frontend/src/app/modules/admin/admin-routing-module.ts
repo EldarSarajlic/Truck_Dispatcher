@@ -8,6 +8,7 @@ import { DashboardOverviewComponent } from './dashboard/overview/dashboard-overv
 import { OrderStatsComponent } from './dashboard/order-stats/order-stats.component';
 import { TrucksComponent } from './vehicles/trucks/trucks.component';
 import { TrailersComponent } from './vehicles/trailers/trailers.component';
+import { AdminInventoryComponent } from './inventory/admin-inventory.component';
 const routes: Routes = [
   {
     path: '',
@@ -38,6 +39,10 @@ const routes: Routes = [
       {
         path: 'users',
         component: AdminUsersComponent
+      },
+      {
+        path: 'inventory',
+        component: AdminInventoryComponent
       },
       // default admin route → /admin/dashboard
       {

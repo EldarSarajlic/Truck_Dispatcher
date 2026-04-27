@@ -13,93 +13,149 @@
       <!-- ── Body ────────────────────────────────────────────────────────── -->
       <div class="rum-body">
         @if (form) {
-          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <form [formGroup]="form" novalidate>
 
-            @for (row of rows; track row[0].name) {
-              <div [class]="row.length === 2 ? 'rum-row' : ''">
+            <div class="rum-panel-layout" [class.rum-panel-layout--split]="showPhotoPanel">
 
-                @for (field of row; track field.name) {
-                  <div class="rum-field">
+              <!-- ── Photo panel (left) ──────────────────────────────────── -->
+              @if (showPhotoPanel) {
+                <div class="rum-photo-panel">
+                  <div class="rum-photo-panel-label">Profile Photo</div>
 
-                    <label class="rum-label">
-                      {{ field.label }}
-                      @if (field.required) {
-                        <span class="rum-required">*</span>
-                      }
-                    </label>
-
-                    @if (field.type === 'select') {
-                      <!-- Custom animated dropdown -->
-                      <div
-                        class="rum-dropdown"
-                        [class.open]="openDropdown === field.name && !field.isLoadingOptions"
-                        (click)="$event.stopPropagation()"
+                  <div
+                    class="rum-photo-drop"
+                    [class.rum-photo-drop--filled]="previewUrl"
+                    (click)="photoInput.click()"
+                  >
+                    @if (previewUrl) {
+                      <img
+                        class="rum-photo-preview"
+                        [src]="previewUrl"
+                        alt="Profile photo preview"
+                      />
+                      <button
+                        class="rum-photo-remove"
+                        type="button"
+                        title="Remove photo"
+                        (click)="$event.stopPropagation(); clearPhoto()"
                       >
-                        <button
-                          type="button"
-                          class="rum-dropdown-trigger"
-                          [class.rum-dropdown-trigger--error]="fieldInvalid(field.name)"
-                          [disabled]="field.isLoadingOptions"
-                          (click)="toggleDropdown(field.name, $event)"
-                        >
-                          @if (field.isLoadingOptions) {
-                            <span class="rum-dropdown-placeholder">
-                              <i class="ph-duotone ph-circle-notch rum-spinner"></i>
-                              Loading...
-                            </span>
-                          } @else {
-                            <span [class.rum-dropdown-placeholder]="!form.get(field.name)?.value">
-                              {{ optionLabel(field) || field.placeholder || 'Select...' }}
-                            </span>
-                          }
-                          <i class="ph-duotone ph-caret-down rum-dropdown-caret"></i>
-                        </button>
-                        <div class="rum-dropdown-list">
-                          @for (opt of field.options; track opt.value) {
-                            <div
-                              class="rum-dropdown-option"
-                              [class.selected]="form.get(field.name)?.value === opt.value"
-                              (click)="selectOption(field.name, opt.value, $event)"
-                            >{{ opt.label }}</div>
-                          }
-                        </div>
-                      </div>
-                    } @else if (field.type === 'date') {
-                      <app-date-picker
-                        [value]="form.get(field.name)?.value ?? ''"
-                        [hasError]="fieldInvalid(field.name)"
-                        [placeholder]="field.placeholder ?? 'Select date...'"
-                        (valueChange)="setDateValue(field.name, $event)"
-                      />
-                    } @else if (field.type === 'tel' && field.phoneFormat) {
-                      <input
-                        type="tel"
-                        class="rum-input"
-                        [class.rum-input--error]="fieldInvalid(field.name)"
-                        [formControlName]="field.name"
-                        [placeholder]="field.placeholder ?? ''"
-                        (keydown)="onTelKeydown(field.phoneFormat, field.phonePrefix ?? '', $event)"
-                        (input)="onTelInput(field.name, field.phoneFormat, field.phonePrefix ?? '', $event)"
-                      />
+                        <i class="ph-bold ph-x"></i>
+                      </button>
                     } @else {
-                      <input
-                        [type]="field.type"
-                        class="rum-input"
-                        [class.rum-input--error]="fieldInvalid(field.name)"
-                        [formControlName]="field.name"
-                        [placeholder]="field.placeholder ?? ''"
-                      />
+                      <i class="ph-duotone ph-camera rum-photo-icon"></i>
+                      <p class="rum-photo-text">Click to <span class="rum-photo-browse">upload</span></p>
+                      <p class="rum-photo-hint">PNG, JPG, WEBP · 10 MB</p>
                     }
 
-                    @if (fieldInvalid(field.name)) {
-                      <span class="rum-error">{{ field.label }} is invalid.</span>
-                    }
-
+                    <input
+                      #photoInput
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      style="display:none"
+                      (change)="onFileSelected($event)"
+                    />
                   </div>
-                }
+                </div>
+              }
 
+              <!-- ── Fields panel (right) ────────────────────────────────── -->
+              <div class="rum-fields-panel">
+                @for (row of rows; track row[0].name; let first = $first) {
+
+                  @if (row[0].sectionTitle) {
+                    <div class="rum-section-divider" [class.rum-section-divider--first]="first">
+                      <span class="rum-section-label">{{ row[0].sectionTitle }}</span>
+                    </div>
+                  }
+
+                  <div [class]="row.length === 2 ? 'rum-row' : ''">
+                    @for (field of row; track field.name) {
+                      <div class="rum-field">
+
+                        <label class="rum-label">
+                          {{ field.label }}
+                          @if (field.required) {
+                            <span class="rum-required">*</span>
+                          }
+                        </label>
+
+                        @if (field.type === 'select') {
+                          <div
+                            class="rum-dropdown"
+                            [class.open]="openDropdown === field.name && !field.isLoadingOptions"
+                            (click)="$event.stopPropagation()"
+                          >
+                            <button
+                              type="button"
+                              class="rum-dropdown-trigger"
+                              [class.rum-dropdown-trigger--error]="fieldInvalid(field.name)"
+                              [disabled]="field.isLoadingOptions || field.disabled"
+                              (click)="toggleDropdown(field.name, $event)"
+                            >
+                              @if (field.isLoadingOptions) {
+                                <span class="rum-dropdown-placeholder">
+                                  <i class="ph-duotone ph-circle-notch rum-spinner"></i>
+                                  Loading...
+                                </span>
+                              } @else {
+                                <span [class.rum-dropdown-placeholder]="!optionLabel(field)">
+                                  {{ optionLabel(field) || field.placeholder || 'Select...' }}
+                                </span>
+                              }
+                              <i class="ph-duotone ph-caret-down rum-dropdown-caret"></i>
+                            </button>
+                            <div class="rum-dropdown-list">
+                              @for (opt of field.options; track opt.value) {
+                                <div
+                                  class="rum-dropdown-option"
+                                  [class.selected]="form.get(field.name)?.value === opt.value"
+                                  (click)="selectOption(field.name, opt.value, $event)"
+                                >{{ opt.label }}</div>
+                              }
+                            </div>
+                          </div>
+
+                        } @else if (field.type === 'date') {
+                          <app-date-picker
+                            [value]="form.get(field.name)?.value ?? ''"
+                            [hasError]="fieldInvalid(field.name)"
+                            [placeholder]="field.placeholder ?? 'Select date...'"
+                            (valueChange)="setDateValue(field.name, $event)"
+                          />
+
+                        } @else if (field.type === 'tel' && field.phoneFormat) {
+                          <input
+                            type="tel"
+                            class="rum-input"
+                            [class.rum-input--error]="fieldInvalid(field.name)"
+                            [formControlName]="field.name"
+                            [placeholder]="field.placeholder ?? ''"
+                            (keydown)="onTelKeydown(field.phoneFormat, field.phonePrefix ?? '', $event)"
+                            (input)="onTelInput(field.name, field.phoneFormat, field.phonePrefix ?? '', $event)"
+                          />
+
+                        } @else {
+                          <input
+                            [type]="field.type"
+                            class="rum-input"
+                            [class.rum-input--error]="fieldInvalid(field.name)"
+                            [formControlName]="field.name"
+                            [placeholder]="field.placeholder ?? ''"
+                          />
+                        }
+
+                        @if (fieldInvalid(field.name)) {
+                          <span class="rum-error">{{ field.label }} is invalid.</span>
+                        }
+
+                      </div>
+                    }
+                  </div>
+
+                }
               </div>
-            }
+
+            </div>
 
             @if (submitError) {
               <div class="rum-api-error">

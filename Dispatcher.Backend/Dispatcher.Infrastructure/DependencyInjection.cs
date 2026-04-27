@@ -1,6 +1,7 @@
 ﻿using Dispatcher.Application.Abstractions;
 using Dispatcher.Infrastructure.Common;
 using Dispatcher.Infrastructure.Database;
+using Dispatcher.Infrastructure.Services;
 using Dispatcher.Shared.Constants;
 using Dispatcher.Shared.Options;
 using Microsoft.Extensions.Configuration;
@@ -67,6 +68,15 @@ public static class DependencyInjection
 
         // Email service
         services.AddTransient<IEmailService, EmailService>();
+
+        // Cloudinary options + validation
+        services.AddOptions<CloudinaryOptions>()
+            .Bind(configuration.GetSection(CloudinaryOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        // Photo service
+        services.AddScoped<IPhotoService, CloudinaryPhotoService>();
 
         return services;
     }

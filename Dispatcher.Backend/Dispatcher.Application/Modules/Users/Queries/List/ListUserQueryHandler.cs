@@ -27,7 +27,12 @@ public sealed class ListUserQueryHandler(IAppDbContext ctx): IRequestHandler<Lis
             query = query.Where(u => u.Role == role);
         }
 
-    var projectedQuery = query
+        if (request.ExcludeUserId is not null)
+        {
+            query = query.Where(u => u.Id != request.ExcludeUserId.Value);
+        }
+
+        var projectedQuery = query
     .OrderBy(u => u.FirstName)
     .ThenBy(u => u.LastName)
     .Select(u => new ListUserQueryDto
@@ -43,6 +48,7 @@ public sealed class ListUserQueryHandler(IAppDbContext ctx): IRequestHandler<Lis
         IsEnabled = u.IsEnabled,
         CityId = u.CityId,
         CityName = u.City != null ? u.City.Name : null,
+        CountryId = u.City != null ? u.City.CountryId : null,
         ProfilePhotoUrl = u.ProfilePhotoUrl
     });
         return await PageResult<ListUserQueryDto>.FromQueryableAsync(projectedQuery, request.Paging, cancellationToken);

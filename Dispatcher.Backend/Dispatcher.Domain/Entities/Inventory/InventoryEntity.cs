@@ -1,5 +1,6 @@
 ﻿using Dispatcher.Domain.Common;
 using Dispatcher.Domain.Entities.Identity;
+using Dispatcher.Domain.Entities.Media;
 using Dispatcher.Domain.Entities.Orders;
 
 namespace Dispatcher.Domain.Entities.Inventory
@@ -53,6 +54,12 @@ namespace Dispatcher.Domain.Entities.Inventory
         /// Is this item currently available for ordering
         /// </summary>
         public bool IsActive { get; set; }
+
+        /// <summary>
+        /// Optional FK to the photo representing this item
+        /// </summary>
+        public int? PhotoId { get; set; }
+        public PhotoEntity? Photo { get; set; }
 
         // Navigation
         public IReadOnlyCollection<OrderItemEntity> OrderItems { get; private set; }

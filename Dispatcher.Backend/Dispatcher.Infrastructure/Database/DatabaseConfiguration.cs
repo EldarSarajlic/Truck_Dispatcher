@@ -1,7 +1,6 @@
 ﻿using Dispatcher.Domain.Common;
 using Dispatcher.Infrastructure.Database.Seeders;
 using System.Linq.Expressions;
-using System.Runtime.Intrinsics.X86;
 
 namespace Dispatcher.Infrastructure.Database;
 
@@ -72,16 +71,22 @@ public partial class DatabaseContext
     }
 
     public override int SaveChanges()
+        => SaveChanges(acceptAllChangesOnSuccess: true);
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         ApplyAuditAndSoftDelete();
-
-        return base.SaveChanges();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        => SaveChangesAsync(acceptAllChangesOnSuccess: true, cancellationToken);
+
+    public override async Task<int> SaveChangesAsync(
+        bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default)
     {
         ApplyAuditAndSoftDelete();
-
-        return base.SaveChangesAsync(cancellationToken);
+        return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 }

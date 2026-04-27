@@ -43,6 +43,11 @@ namespace Dispatcher.Infrastructure.Database.Configurations.Inventory
                 .HasDefaultValue(true);
 
             // Relationships
+            builder.HasOne(x => x.Photo)
+                .WithMany()
+                .HasForeignKey(x => x.PhotoId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             builder.HasMany(x => x.OrderItems)
                 .WithOne(x => x.Inventory)
                 .HasForeignKey(x => x.InventoryId)

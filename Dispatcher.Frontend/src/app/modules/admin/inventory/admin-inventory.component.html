@@ -1,0 +1,463 @@
+<div class="page-wrapper flex flex-col gap-6">
+
+  <!-- ── Page header ───────────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="flex items-center gap-3">
+      <div class="page-icon">
+        <i class="ph-duotone ph-package"></i>
+      </div>
+      <div>
+        <h1 class="page-title">Inventory Management</h1>
+        <p class="page-subtitle">Manage warehouse items and stock levels</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3 flex-wrap">
+      <!-- Search -->
+      <div class="search-field">
+        <i class="ph-duotone ph-magnifying-glass search-icon"></i>
+        <input
+          type="text"
+          placeholder="Search items..."
+          class="search-input"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchInput()"
+          (keyup.enter)="onSearch()"
+        />
+      </div>
+
+      <!-- Category filter -->
+      <div class="custom-select" [class.open]="categoryDropdownOpen">
+        <button class="custom-select-trigger" (click)="toggleCategoryDropdown($event)">
+          <span>{{ selectedCategory() || 'All Categories' }}</span>
+          <i class="ph-bold ph-caret-down custom-select-caret"></i>
+        </button>
+        <div class="custom-select-list" (click)="$event.stopPropagation()">
+          <div class="custom-select-option"
+               [class.selected]="selectedCategory() === ''"
+               (click)="clearCategory($event)">All Categories</div>
+          @for (cat of categories; track cat) {
+            <div class="custom-select-option"
+                 [class.selected]="selectedCategory() === cat"
+                 (click)="selectCategory(cat, $event)">{{ cat }}</div>
+          }
+        </div>
+      </div>
+
+      <!-- Add Item -->
+      <button class="btn-primary" (click)="openAddItemModal()">
+        <i class="ph-duotone ph-plus"></i>
+        Add Item
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Metric cards ───────────────────────────────────────────────────────── -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    @if (isLoading()) {
+      @for (i of [1,2,3,4]; track i) {
+        <app-metric-card [loading]="true" />
+      }
+    } @else {
+      @for (card of metricCards(); track card.label; let i = $index) {
+        <app-metric-card
+          [label]="card.label"
+          [value]="card.value"
+          [variant]="card.variant"
+          [icon]="card.icon"
+          [pill]="card.pill"
+          [index]="i"
+        />
+      }
+    }
+  </div>
+
+  <!-- ── Loading skeleton ──────────────────────────────────────────────────── -->
+  @if (isLoading()) {
+    <div class="section-card">
+      <div class="section-card-header">
+        <div class="skeleton h-4 w-40 rounded"></div>
+        <div class="skeleton h-5 w-16 rounded-full ml-auto"></div>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-idx">#</th>
+            <th>ITEM</th>
+            <th>CATEGORY</th>
+            <th>PRICE</th>
+            <th>UNIT / STATUS</th>
+            <th style="text-align:center;">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (i of skeletonRows; track i) {
+            <tr>
+              <td><div class="skeleton h-3 w-5 rounded mx-auto"></div></td>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="skeleton h-9 w-9 rounded-lg shrink-0"></div>
+                  <div class="flex flex-col gap-1">
+                    <div class="skeleton h-3 w-40 rounded"></div>
+                    <div class="skeleton h-2 w-20 rounded"></div>
+                  </div>
+                </div>
+              </td>
+              <td><div class="skeleton h-5 w-20 rounded-full"></div></td>
+              <td><div class="skeleton h-3 w-14 rounded"></div></td>
+              <td><div class="skeleton h-3 w-32 rounded"></div></td>
+              <td>
+                <div class="flex justify-center gap-2">
+                  <div class="skeleton h-7 w-7 rounded-lg"></div>
+                  <div class="skeleton h-7 w-7 rounded-lg"></div>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- ── Error ──────────────────────────────────────────────────────────────── -->
+  @else if (hasError()) {
+    <div class="flex flex-col items-center justify-center gap-4 py-20">
+      <i class="ph-duotone ph-warning-circle" style="font-size:48px; color:#f87171;"></i>
+      <p style="color:#7878a0; font-size:0.85rem;">Failed to load inventory. Please try again.</p>
+      <button class="btn-retry" (click)="reload()">
+        <i class="ph-duotone ph-arrow-clockwise"></i>
+        Retry
+      </button>
+    </div>
+  }
+
+  <!-- ── Inventory table ────────────────────────────────────────────────────── -->
+  @else {
+    <div class="section-card">
+      <div class="section-card-header">
+        <h3>
+          <i class="ph-duotone ph-package"></i>
+          Warehouse Items
+        </h3>
+        <span class="item-count">{{ totalItems() }} items</span>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-idx">#</th>
+            <th>ITEM</th>
+            <th>CATEGORY</th>
+            <th>PRICE</th>
+            <th>UNIT / STATUS</th>
+            <th style="text-align:center;">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          @for (item of filteredItems(); track item.id; let i = $index) {
+            <tr class="item-row">
+
+              <!-- Row index -->
+              <td class="col-idx-cell">{{ (i + 1).toString().padStart(2, '0') }}</td>
+
+              <!-- Item -->
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="item-icon">
+                    @if (item.thumbnailUrl) {
+                      <img [src]="item.thumbnailUrl" [alt]="item.name" class="item-photo" />
+                    } @else {
+                      <i class="ph-duotone ph-cube"></i>
+                    }
+                  </div>
+                  <div>
+                    <button class="item-name-link" (click)="openDetails(item)">{{ item.name }}</button>
+                    <div class="item-sku">{{ item.sku }}</div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Category -->
+              <td>
+                <span class="cat-badge {{ categoryClass(item.category) }}">{{ item.category }}</span>
+              </td>
+
+              <!-- Price -->
+              <td class="price-cell">€{{ item.unitPrice.toLocaleString() }}</td>
+
+              <!-- Unit / Status -->
+              <td>
+                <div class="flex items-center gap-2">
+                  <span class="unit-badge">{{ item.unitOfMeasure }}</span>
+                  <span class="status-badge {{ item.isActive ? 'status--active' : 'status--inactive' }}">
+                    {{ item.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Actions -->
+              <td>
+                <div class="flex justify-center gap-2">
+                  <button class="btn-icon btn-icon--cart" (click)="addToCart(item)" title="Add to cart">
+                    <i class="ph-duotone ph-shopping-cart-simple"></i>
+                  </button>
+                  <button class="btn-icon btn-icon--info" (click)="openDetails(item)" title="View details">
+                    <i class="ph-duotone ph-info"></i>
+                  </button>
+                </div>
+              </td>
+
+            </tr>
+          }
+
+          @if (filteredItems().length === 0) {
+            <tr>
+              <td colspan="6" class="empty-row">
+                <i class="ph-duotone ph-package"></i>
+                No items found.
+              </td>
+            </tr>
+          }
+
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
+
+
+<!-- ── Cart Panel ─────────────────────────────────────────────────────────── -->
+<div class="cart-panel" [class.cart-panel--open]="cartOpen()">
+
+  <div class="cart-header">
+    <h3>
+      <i class="ph-duotone ph-shopping-cart"></i>
+      Cart
+      @if (cartCount() > 0) {
+        <span class="cart-header-badge">{{ cartCount() }}</span>
+      }
+    </h3>
+    <button class="close-panel-btn" (click)="toggleCart()">
+      <i class="ph-bold ph-x"></i>
+    </button>
+  </div>
+
+  <div class="cart-body">
+    @if (cartItems().length === 0) {
+      <div class="cart-empty">
+        <i class="ph-duotone ph-shopping-cart-simple"></i>
+        <p>Your cart is empty</p>
+      </div>
+    } @else {
+      @for (cartItem of cartItems(); track cartItem.item.id) {
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <div class="cart-item-name">{{ cartItem.item.name }}</div>
+            <div class="cart-item-sku">{{ cartItem.item.sku }}</div>
+            <div class="cart-item-price">€{{ (cartItem.item.unitPrice * cartItem.quantity).toLocaleString() }}</div>
+          </div>
+          <div class="cart-item-controls">
+            <button class="qty-btn" (click)="updateCartQty(cartItem.item.id, cartItem.quantity - 1)">
+              <i class="ph-bold ph-minus"></i>
+            </button>
+            <span class="qty-value">{{ cartItem.quantity }}</span>
+            <button class="qty-btn" (click)="updateCartQty(cartItem.item.id, cartItem.quantity + 1)">
+              <i class="ph-bold ph-plus"></i>
+            </button>
+            <button class="cart-remove-btn" (click)="removeFromCart(cartItem.item.id)">
+              <i class="ph-bold ph-trash"></i>
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  @if (cartItems().length > 0) {
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span class="cart-total-label">Total</span>
+        <span class="cart-total-value">€{{ cartTotal().toLocaleString() }}</span>
+      </div>
+      <button class="btn-clear-cart" (click)="clearCart()">
+        <i class="ph-duotone ph-trash"></i>
+        Clear Cart
+      </button>
+    </div>
+  }
+
+</div>
+
+<!-- Cart overlay -->
+@if (cartOpen()) {
+  <div class="cart-overlay" (click)="toggleCart()"></div>
+}
+
+
+<!-- ── Add Item Modal ─────────────────────────────────────────────────────── -->
+@if (addItemModalOpen()) {
+  <div class="modal-overlay" (click)="closeAddItemModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2><i class="ph-duotone ph-package"></i> Add Inventory Item</h2>
+        <button class="modal-close-btn" (click)="closeAddItemModal()">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">SKU <span class="required">*</span></label>
+            <input type="text" class="form-input" [(ngModel)]="addForm.sku" placeholder="ELEC-001">
+            @if (addFormErrors['sku']) {
+              <span class="form-error">{{ addFormErrors['sku'] }}</span>
+            }
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category <span class="required">*</span></label>
+            <select class="form-input" [(ngModel)]="addForm.category">
+              <option value="">Select category...</option>
+              @for (cat of categories; track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+            @if (addFormErrors['category']) {
+              <span class="form-error">{{ addFormErrors['category'] }}</span>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Item Name <span class="required">*</span></label>
+          <input type="text" class="form-input" [(ngModel)]="addForm.name" placeholder="Enter item name">
+          @if (addFormErrors['name']) {
+            <span class="form-error">{{ addFormErrors['name'] }}</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-input form-textarea" [(ngModel)]="addForm.description" placeholder="Item description..."></textarea>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Unit Price (€) <span class="required">*</span></label>
+            <input type="number" class="form-input" [(ngModel)]="addForm.unitPrice" placeholder="0.00" step="0.01" min="0">
+            @if (addFormErrors['price']) {
+              <span class="form-error">{{ addFormErrors['price'] }}</span>
+            }
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unit of Measure <span class="required">*</span></label>
+            <select class="form-input" [(ngModel)]="addForm.unitOfMeasure">
+              <option value="pcs">pcs</option>
+              <option value="kg">kg</option>
+              <option value="liters">liters</option>
+              <option value="m">m</option>
+              <option value="m²">m²</option>
+              <option value="m³">m³</option>
+            </select>
+            @if (addFormErrors['uom']) {
+              <span class="form-error">{{ addFormErrors['uom'] }}</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeAddItemModal()">Cancel</button>
+        <button class="btn-primary" (click)="submitAddItem()">
+          <i class="ph-duotone ph-plus"></i>
+          Add Item
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+
+<!-- ── Details Modal ──────────────────────────────────────────────────────── -->
+@if (detailsModalOpen()) {
+  <div class="modal-overlay" (click)="closeDetails()">
+    <div class="modal modal--wide" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2><i class="ph-duotone ph-info"></i> Item Details</h2>
+        <button class="modal-close-btn" (click)="closeDetails()">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        @if (selectedItem(); as item) {
+          <div class="detail-grid">
+            <div class="detail-field">
+              <div class="detail-label">Item Name</div>
+              <div class="detail-value">{{ item.name }}</div>
+            </div>
+            <div class="detail-field">
+              <div class="detail-label">SKU</div>
+              <div class="detail-value detail-value--mono">{{ item.sku }}</div>
+            </div>
+            <div class="detail-field">
+              <div class="detail-label">Category</div>
+              <div class="detail-value">
+                <span class="cat-badge {{ categoryClass(item.category) }}">{{ item.category }}</span>
+              </div>
+            </div>
+            <div class="detail-field">
+              <div class="detail-label">Unit Price</div>
+              <div class="detail-value detail-value--price">€{{ item.unitPrice.toLocaleString() }}</div>
+            </div>
+            <div class="detail-field">
+              <div class="detail-label">Unit of Measure</div>
+              <div class="detail-value detail-value--mono">{{ item.unitOfMeasure }}</div>
+            </div>
+            <div class="detail-field">
+              <div class="detail-label">Status</div>
+              <div class="detail-value">
+                <span class="status-badge {{ item.isActive ? 'status--active' : 'status--inactive' }}">
+                  {{ item.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+            @if (item.unitWeight) {
+              <div class="detail-field">
+                <div class="detail-label">Unit Weight</div>
+                <div class="detail-value detail-value--mono">{{ item.unitWeight }} kg</div>
+              </div>
+            }
+            @if (item.unitVolume) {
+              <div class="detail-field">
+                <div class="detail-label">Unit Volume</div>
+                <div class="detail-value detail-value--mono">{{ item.unitVolume }} m³</div>
+              </div>
+            }
+          </div>
+
+          <div class="detail-desc-group">
+            <div class="detail-label">Description</div>
+            <p class="detail-desc">{{ item.description || 'No description available.' }}</p>
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeDetails()">Close</button>
+        @if (selectedItem(); as item) {
+          <button class="btn-primary" (click)="addToCartFromDetails(item)">
+            <i class="ph-duotone ph-shopping-cart-simple"></i>
+            Add to Cart
+          </button>
+        }
+      </div>
+
+    </div>
+  </div>
+}

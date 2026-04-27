@@ -17,6 +17,7 @@ export type ListUsersQueryDto = {
   isEnabled: boolean;
   cityId?: number | null;
   cityName?: string | null;
+  countryId?: number | null;
   profilePhotoUrl?: string | null;
 };
 
@@ -32,6 +33,23 @@ export type ListUsersResponse = PageResult<ListUsersQueryDto>;
 export class ListUsersRequest extends BasePagedQuery {
   search?: string | null;
   role?: string | null;
+  excludeUserId?: number | null;
 }
+
+/**
+ * Request body for PUT /Users/{id}
+ * Corresponds to: UpdateUserCommand.cs
+ */
+export type UpdateUserRequest = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string | null;
+  dateOfBirth?: string | null;
+  role: number;
+  isEnabled: boolean;
+  cityId?: number | null;
+};
 
 

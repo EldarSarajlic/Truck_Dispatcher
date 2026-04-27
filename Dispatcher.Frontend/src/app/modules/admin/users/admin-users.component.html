@@ -145,7 +145,11 @@
               <td>
                 <div class="flex items-center gap-3">
                   <div class="user-avatar">
-                    <i class="ph-duotone ph-user"></i>
+                    @if (user.profilePhotoUrl) {
+                      <img [src]="user.profilePhotoUrl" [alt]="user.displayName" class="user-avatar-img" />
+                    } @else {
+                      <i class="ph-duotone ph-user"></i>
+                    }
                   </div>
                   <div>
                     <div class="user-name">{{ user.displayName }}</div>
@@ -171,7 +175,7 @@
 
               <!-- Actions -->
               <td style="text-align:center;">
-                <button class="btn-action">
+                <button class="btn-action" (click)="openEditModal(user)">
                   <i class="ph-duotone ph-dots-three"></i>
                 </button>
               </td>
@@ -213,5 +217,20 @@
   [isSubmitting]="isRegisterSubmitting()"
   [submitError]="registerSubmitError()"
   (closed)="closeRegisterModal()"
-  (submitted)="onFormSubmitted($event)"
+  (submitted)="onRegisterSubmitted($event)"
 ></app-wizard-form-modal>
+
+<app-form-modal
+  [open]="editModalOpen()"
+  [fields]="editFields()"
+  title="Edit User"
+  titleIcon="ph-user-gear"
+  submitLabel="Save Changes"
+  [isSubmitting]="isEditSubmitting()"
+  [submitError]="editSubmitError()"
+  [showPhotoPanel]="true"
+  [photoUrl]="selectedUser?.profilePhotoUrl ?? null"
+  (closed)="closeEditModal()"
+  (submitted)="onEditSubmitted($event)"
+  (photoChanged)="onEditPhotoChanged($event)">
+</app-form-modal>

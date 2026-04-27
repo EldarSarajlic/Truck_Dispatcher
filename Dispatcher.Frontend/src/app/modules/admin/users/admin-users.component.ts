@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, HostListener, inject, signal } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { takeUntil, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 import { ListUsersRequest, ListUsersQueryDto } from '../../../api-services/users/users-api.model';
 import { UsersApiService } from '../../../api-services/users/users-api.service';
@@ -47,6 +47,10 @@ const PHONE_FORMAT: Record<string, string> = {
   US: '+X XXX XXX XXXX',         XK: '+XXX XX XXX XXX',
 };
 
+const ROLE_VALUE_MAP: Record<string, number> = {
+  Admin: 3, Dispatcher: 2, Driver: 1, Client: 0,
+};
+
 function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
   const pw  = group.get('password')?.value;
   const cpw = group.get('confirmPassword')?.value;
@@ -64,7 +68,6 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
   styleUrl: './admin-users.component.scss',
 })
 export class AdminUsersComponent implements OnInit, OnDestroy {
-
   // ── 1. Signals (state) ────────────────────────────────────────────────────
   readonly users        = signal<ListUsersQueryDto[]>([]);
   readonly isLoading    = signal(true);
@@ -75,12 +78,19 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   readonly pageSize     = signal(5);
   readonly selectedRole = signal('');
 
-  readonly registerModalOpen      = signal(false);
-  readonly isRegisterSubmitting   = signal(false);
-  readonly registerSubmitError    = signal<string | null>(null);
+  readonly registerModalOpen    = signal(false);
+  readonly editModalOpen        = signal(false);
+  readonly isEditSubmitting     = signal(false);
+  readonly isRegisterSubmitting = signal(false);
+  readonly registerSubmitError  = signal<string | null>(null);
+  readonly editSubmitError      = signal<string | null>(null);
+
+  readonly editFields = signal<FormField[]>([]);
 
   // ── 2. Local mutable state ────────────────────────────────────────────────
   searchTerm = '';
+  selectedUser: ListUsersQueryDto | null = null;
+  editPhotoFile: File | null = null;
 
   readonly roles = ['Admin', 'Dispatcher', 'Driver', 'Client'];
   roleDropdownOpen = false;
@@ -177,7 +187,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
 
   constructor() {
     this.searchSubject.pipe(
-      debounceTime(300),
+      debounceTime(700),
       distinctUntilChanged(),
       takeUntil(this.destroyed$),
     ).subscribe(term => this.loadUsers(1, term));
@@ -205,12 +215,14 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     if (search !== undefined) request.search = search;
     request.role = this.selectedRole() || null;
 
+    const currentUserId = this.currentUserSvc.snapshot?.userId;
+    request.excludeUserId = currentUserId ?? null;
+
     this.userService.getUsers(request)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
         next: res => {
-          const currentUserId = this.currentUserSvc.snapshot?.userId;
-          this.users.set(res.items.filter(u => u.id !== currentUserId));
+          this.users.set(res.items);
           this.totalItems.set(res.totalItems);
           this.totalPages.set(res.totalPages);
           this.currentPage.set(res.currentPage);
@@ -230,14 +242,14 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       .subscribe({
         next: countries => {
           this.countries = countries;
-          this.patchField('country', {
-            options: countries.map(c => ({ label: c.name, value: c.id })),
-          });
+          const opts = countries.map(c => ({ label: c.name, value: c.id }));
+          this.patchRegisterField('country', { options: opts });
+          this.patchEditField('country', { options: opts, isLoadingOptions: false });
         },
       });
   }
 
-  // ── 9. Public template methods ────────────────────────────────────────────
+  // ── 9. Public template methods ─────────────────────────────────────────────
   @HostListener('document:click')
   closeDropdowns(): void { this.roleDropdownOpen = false; }
 
@@ -268,7 +280,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   openRegisterModal(): void  { this.registerModalOpen.set(true); }
   closeRegisterModal(): void { this.registerModalOpen.set(false); }
 
-  onFormSubmitted(values: Record<string, any>): void {
+  onRegisterSubmitted(values: Record<string, any>): void {
     this.isRegisterSubmitting.set(true);
     this.registerSubmitError.set(null);
 
@@ -283,55 +295,239 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       dateOfBirth:     values['dateOfBirth'],
       role:            Number(values['role']),
       cityId:          values['city'] ? Number(values['city']) : null,
-    }).pipe(takeUntil(this.destroyed$))
-      .subscribe({
-        next: () => {
-          this.isRegisterSubmitting.set(false);
-          this.registerModalOpen.set(false);
-          this.loadUsers(1, this.searchTerm);
-          this.toast.success('User registered successfully.');
-        },
-        error: (err) => {
-          this.isRegisterSubmitting.set(false);
-          const message = err?.error?.message ?? err?.error?.title ?? 'Registration failed. Please try again.';
-          this.registerSubmitError.set(message);
-          this.toast.error(message);
-        },
-      });
+    }).pipe(
+      takeUntil(this.destroyed$),
+    ).subscribe({
+      next: () => {
+        this.isRegisterSubmitting.set(false);
+        this.registerModalOpen.set(false);
+        this.loadUsers(1, this.searchTerm);
+        this.toast.success('User registered successfully.');
+      },
+      error: (err) => {
+        this.isRegisterSubmitting.set(false);
+        const message = err?.error?.message ?? err?.error?.title ?? 'Registration failed. Please try again.';
+        this.registerSubmitError.set(message);
+        this.toast.error(message);
+      },
+    });
   }
 
-  // ── 11. Country change handler ────────────────────────────────────────────
+  // ── 11. Country change handler (register) ─────────────────────────────────
   private onCountryChange(countryId: number, form: any): void {
     const country = this.countries.find(c => c.id === countryId);
     if (country) {
       const fmt = PHONE_FORMAT[country.countryCode];
-      // Pre-fill phone code digits so formatter can seat them correctly
       const seed = country.phoneCode.replace(/\D/g, '');
       const preFormatted = fmt ? this.applyMask(seed, fmt) : country.phoneCode + ' ';
       form.get('phoneNumber')?.setValue(preFormatted);
-      this.patchField('phoneNumber', { phoneFormat: fmt, phonePrefix: seed });
+      this.patchRegisterField('phoneNumber', { phoneFormat: fmt, phonePrefix: seed });
     }
 
-    // Reset city and show loading
     form.get('city')?.setValue('');
-    this.patchField('city', { disabled: false, isLoadingOptions: true, options: [] });
+    this.patchRegisterField('city', { disabled: false, isLoadingOptions: true, options: [] });
 
     this.locationsService.getCitiesByCountry(countryId)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
         next: cities => {
-          this.patchField('city', {
+          this.patchRegisterField('city', {
             isLoadingOptions: false,
             options: cities.map(c => ({ label: c.name, value: c.id })),
           });
         },
         error: () => {
-          this.patchField('city', { isLoadingOptions: false, options: [] });
+          this.patchRegisterField('city', { isLoadingOptions: false, options: [] });
         },
       });
   }
 
-  // ── 12. Class helpers ─────────────────────────────────────────────────────
+  // ── 12. Edit modal ─────────────────────────────────────────────────────────
+  openEditModal(user: ListUsersQueryDto): void {
+    this.selectedUser = user;
+
+    const dob = user.dateOfBirth
+      ? new Date(user.dateOfBirth).toISOString().split('T')[0]
+      : '';
+
+    this.editFields.set([
+      // Personal section
+      {
+        name: 'firstName', label: 'First Name', type: 'text',
+        placeholder: 'Enter first name', required: true,
+        validators: [Validators.maxLength(100)], halfWidth: true,
+        value: user.firstName, sectionTitle: 'Personal',
+      },
+      {
+        name: 'lastName', label: 'Last Name', type: 'text',
+        placeholder: 'Enter last name', required: true,
+        validators: [Validators.maxLength(100)], halfWidth: true,
+        value: user.lastName,
+      },
+      {
+        name: 'dateOfBirth', label: 'Date of Birth', type: 'date',
+        value: dob, halfWidth: true,
+      },
+      {
+        name: 'email', label: 'Email', type: 'email',
+        placeholder: 'user@example.com', required: true,
+        validators: [Validators.email], halfWidth: true,
+        value: user.email,
+      },
+
+      // Contact section
+      {
+        name: 'country', label: 'Country', type: 'select',
+        placeholder: 'Select country...', halfWidth: true,
+        sectionTitle: 'Contact',
+        options: this.countries.map(c => ({ label: c.name, value: c.id })),
+        isLoadingOptions: !this.countries.length,
+        value: user.countryId ?? '',
+        onValueChange: (value, form) => this.onEditCountryChange(Number(value), form),
+      },
+      {
+        name: 'city', label: 'City', type: 'select',
+        placeholder: user.cityName ?? 'Select country first',
+        halfWidth: true,
+        options: user.cityId && user.cityName
+          ? [{ label: user.cityName, value: user.cityId }]
+          : [],
+        value: user.cityId ?? '',
+        disabled: !user.countryId,
+        isLoadingOptions: !!user.countryId,
+      },
+      {
+        name: 'phoneNumber', label: 'Phone Number', type: 'text',
+        placeholder: 'e.g. +387 61 123 456',
+        validators: [Validators.maxLength(20)],
+        value: user.phoneNumber ?? '',
+      },
+
+      // Account section
+      {
+        name: 'role', label: 'Role', type: 'select',
+        placeholder: 'Select role...', required: true,
+        options: [
+          { label: 'Admin',      value: 3 },
+          { label: 'Dispatcher', value: 2 },
+          { label: 'Driver',     value: 1 },
+          { label: 'Client',     value: 0 },
+        ],
+        value: ROLE_VALUE_MAP[user.role] ?? 0,
+        halfWidth: true, sectionTitle: 'Account',
+      },
+      {
+        name: 'isEnabled', label: 'Status', type: 'select',
+        placeholder: 'Select status...', required: true,
+        options: [
+          { label: 'Active',   value: 1 },
+          { label: 'Inactive', value: 0 },
+        ],
+        value: user.isEnabled ? 1 : 0,
+        halfWidth: true,
+      },
+    ]);
+
+    if (user.countryId) {
+      this.locationsService.getCitiesByCountry(user.countryId)
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe({
+          next: cities => {
+            this.patchEditField('city', {
+              isLoadingOptions: false,
+              disabled: false,
+              options: cities.map(c => ({ label: c.name, value: c.id })),
+            });
+          },
+          error: () => this.patchEditField('city', { isLoadingOptions: false }),
+        });
+    }
+
+    this.editModalOpen.set(true);
+  }
+
+  closeEditModal(): void {
+    this.editModalOpen.set(false);
+    this.selectedUser  = null;
+    this.editPhotoFile = null;
+  }
+
+  onEditPhotoChanged(file: File): void {
+    this.editPhotoFile = file;
+  }
+
+  onEditSubmitted(values: Record<string, any>): void {
+    if (!this.selectedUser) return;
+
+    this.isEditSubmitting.set(true);
+    this.editSubmitError.set(null);
+
+    const userId    = this.selectedUser.id;
+    const photoFile = this.editPhotoFile;
+
+    this.userService.updateUser(userId, {
+      id:          userId,
+      firstName:   values['firstName'].trim(),
+      lastName:    values['lastName'].trim(),
+      email:       values['email'].trim(),
+      phoneNumber: values['phoneNumber']?.trim() || null,
+      dateOfBirth: values['dateOfBirth'] || null,
+      role:        Number(values['role']),
+      isEnabled:   values['isEnabled'] === 1 || values['isEnabled'] === true,
+      cityId:      values['city'] ? Number(values['city']) : null,
+    }).pipe(
+      switchMap(() =>
+        photoFile
+          ? this.userService.uploadUserPhoto(userId, photoFile)
+          : of(null)
+      ),
+      takeUntil(this.destroyed$),
+    ).subscribe({
+      next: () => {
+        this.isEditSubmitting.set(false);
+        this.editModalOpen.set(false);
+        this.selectedUser  = null;
+        this.editPhotoFile = null;
+        this.loadUsers(this.currentPage(), this.searchTerm);
+        this.toast.success('User updated successfully.');
+      },
+      error: (err) => {
+        this.isEditSubmitting.set(false);
+        const message = err?.error?.message ?? err?.error?.title ?? 'Update failed. Please try again.';
+        this.editSubmitError.set(message);
+        this.toast.error(message);
+      },
+    });
+  }
+
+  // ── 13. Edit country change handler ────────────────────────────────────────
+  private onEditCountryChange(countryId: number, form: any): void {
+    const currentCityId = this.selectedUser?.cityId ?? null;
+    form.get('city')?.setValue('');
+    this.patchEditField('city', { disabled: false, isLoadingOptions: true, options: [] });
+
+    this.locationsService.getCitiesByCountry(countryId)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: cities => {
+          const options = cities.map(c => ({ label: c.name, value: c.id }));
+          this.patchEditField('city', { isLoadingOptions: false, options });
+          // Re-select current city if it belongs to the chosen country
+          if (currentCityId && cities.some(c => c.id === currentCityId)) {
+            form.get('city')?.setValue(currentCityId);
+          }
+        },
+        error: () => this.patchEditField('city', { isLoadingOptions: false, options: [] }),
+      });
+  }
+
+  private patchEditField(name: string, updates: Partial<FormField>): void {
+    this.editFields.update(fields =>
+      fields.map(f => f.name === name ? { ...f, ...updates } : f)
+    );
+  }
+
+  // ── 14. Class helpers ──────────────────────────────────────────────────────
   roleClass(role: string): string {
     return ({
       'Admin':      'role--admin',
@@ -355,7 +551,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  private patchField(name: string, updates: Partial<FormField>): void {
+  private patchRegisterField(name: string, updates: Partial<FormField>): void {
     this.registerSteps.update(steps =>
       steps.map(step => ({
         ...step,

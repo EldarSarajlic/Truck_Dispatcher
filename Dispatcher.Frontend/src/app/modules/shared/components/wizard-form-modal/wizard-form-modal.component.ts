@@ -7,9 +7,9 @@ import { Subject } from 'rxjs';
 import { FormField } from '../form-modal/form-modal.component';
 
 export interface WizardStep {
-  title: string;
-  icon?:           string;
-  fields:          FormField[];
+  title:            string;
+  icon?:            string;
+  fields:           FormField[];
   groupValidators?: ValidatorFn[];
 }
 
@@ -37,16 +37,16 @@ export class WizardFormModalComponent implements OnChanges, OnDestroy {
   @ViewChild('bodyRef') bodyRef?: ElementRef<HTMLDivElement>;
 
   // ── State ─────────────────────────────────────────────────────────────────
-  form!:           FormGroup;
-  currentStep    = 0;
-  openDropdown:  string | null = null;
-  rows:            FormField[][] = [];
+  form!:          FormGroup;
+  currentStep   = 0;
+  openDropdown: string | null = null;
+  rows:           FormField[][] = [];
   datePickerOpen = false;
   spacerActive   = false;
 
-  private lastStepsKey         = '';
-  private readonly destroyed$  = new Subject<void>();
-  private readonly fb          = inject(FormBuilder);
+  private lastStepsKey        = '';
+  private readonly destroyed$ = new Subject<void>();
+  private readonly fb         = inject(FormBuilder);
 
   // ── Derived getters ───────────────────────────────────────────────────────
   get step():        WizardStep { return this.steps[this.currentStep]; }
@@ -101,12 +101,11 @@ export class WizardFormModalComponent implements OnChanges, OnDestroy {
   }
 
   private checkSpacer(): void {
-    const el = this.bodyRef?.nativeElement;
+    const el      = this.bodyRef?.nativeElement;
     const hasOpen = this.datePickerOpen || this.openDropdown !== null;
     if (!hasOpen) { this.spacerActive = false; return; }
-    if (!el) { this.spacerActive = true; return; }
-    const remainingSpace = el.clientHeight - el.scrollHeight;
-    this.spacerActive = remainingSpace < 290;
+    if (!el)      { this.spacerActive = true;  return; }
+    this.spacerActive = el.clientHeight - el.scrollHeight < 290;
   }
 
   optionLabel(field: FormField): string {
@@ -216,6 +215,7 @@ export class WizardFormModalComponent implements OnChanges, OnDestroy {
     this.form?.reset();
     this.currentStep  = 0;
     this.openDropdown = null;
+    this.spacerActive = false;
     this.buildRows();
   }
 

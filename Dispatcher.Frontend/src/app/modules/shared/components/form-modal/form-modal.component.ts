@@ -20,13 +20,14 @@ export interface FormField {
   placeholder?: string;
   required?:    boolean;
   validators?:  ValidatorFn[];
-  options?:     FormFieldOption[];     // for type === 'select' (can be updated dynamically)
-  halfWidth?:   boolean;               // pair with adjacent halfWidth field → 2-col row
-  phoneFormat?: string;                // e.g. '+XXX XX XXX XXX' — auto-formats tel input on type
-  phonePrefix?: string;               // digit-only country code e.g. '387' — kept fixed/undeletable
-  // Dynamic select support
-  isLoadingOptions?: boolean;          // show spinner in dropdown while fetching options
-  disabled?:         boolean;          // disable the field entirely
+  options?:     FormFieldOption[];
+  halfWidth?:   boolean;
+  phoneFormat?: string;
+  phonePrefix?: string;
+  value?:        any;
+  sectionTitle?: string;
+  isLoadingOptions?: boolean;
+  disabled?:         boolean;
   onValueChange?:    (value: string | number, form: FormGroup) => void;
 }
 
@@ -48,24 +49,30 @@ export class FormModalComponent implements OnChanges, OnDestroy {
   @Input() submitError:    string | null = null;
   @Input() groupValidators: ValidatorFn[] = [];
 
+  // Photo panel (opt-in)
+  @Input() showPhotoPanel = false;
+  @Input() photoUrl:       string | null = null;
+
   // ── Outputs ───────────────────────────────────────────────────────────────
-  @Output() closed    = new EventEmitter<void>();
-  @Output() submitted = new EventEmitter<Record<string, any>>();
+  @Output() closed       = new EventEmitter<void>();
+  @Output() submitted    = new EventEmitter<Record<string, any>>();
+  @Output() photoChanged = new EventEmitter<File>();
 
   // ── Internal state ────────────────────────────────────────────────────────
-  form!:             FormGroup;
-  openDropdown:      string | null = null;  // name of the currently open select field
-  rows:              FormField[][] = [];
+  form!:        FormGroup;
+  openDropdown: string | null = null;
+  rows:         FormField[][] = [];
 
-  private lastFieldKey              = '';
-  private readonly destroyed$       = new Subject<void>();
-  private readonly fb               = inject(FormBuilder);
+  previewUrl: string | null = null;
+  private blobUrl: string | null = null;
+
+  private lastFieldKey        = '';
+  private readonly destroyed$ = new Subject<void>();
+  private readonly fb         = inject(FormBuilder);
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['fields'] && this.fields) {
-      // Only rebuild the form (resetting values) when the field structure changes.
-      // When only options/isLoadingOptions update, skip buildForm so values are preserved.
       const key = this.fields.map(f => f.name).join(',');
       if (key !== this.lastFieldKey) {
         this.lastFieldKey = key;
@@ -81,6 +88,7 @@ export class FormModalComponent implements OnChanges, OnDestroy {
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
+    this.revokeBlobUrl();
   }
 
   // ── Dropdown ──────────────────────────────────────────────────────────────
@@ -97,14 +105,12 @@ export class FormModalComponent implements OnChanges, OnDestroy {
     this.form.get(fieldName)?.setValue(value);
     this.form.get(fieldName)?.markAsTouched();
     this.openDropdown = null;
-
-    const field = this.fields.find(f => f.name === fieldName);
-    field?.onValueChange?.(value, this.form);
+    this.fields.find(f => f.name === fieldName)?.onValueChange?.(value, this.form);
   }
 
   optionLabel(field: FormField): string {
     const val = this.form.get(field.name)?.value;
-    if (!val) return '';
+    if (val === null || val === undefined || val === '') return '';
     return field.options?.find(o => o.value === val)?.label ?? String(val);
   }
 
@@ -123,9 +129,8 @@ export class FormModalComponent implements OnChanges, OnDestroy {
   }
 
   onTelInput(fieldName: string, format: string, prefix: string, e: Event): void {
-    const input    = e.target as HTMLInputElement;
+    const input     = e.target as HTMLInputElement;
     const allDigits = input.value.replace(/\D/g, '');
-    // Ensure prefix digits are always present
     const safe      = allDigits.length <= prefix.length
       ? prefix
       : prefix + allDigits.slice(prefix.length);
@@ -157,6 +162,30 @@ export class FormModalComponent implements OnChanges, OnDestroy {
     this.form.get(fieldName)?.markAsTouched();
   }
 
+  // ── Photo panel ───────────────────────────────────────────────────────────
+  onFileSelected(e: Event): void {
+    const input = e.target as HTMLInputElement;
+    const file  = input.files?.[0];
+    if (!file) return;
+    input.value = '';
+    this.revokeBlobUrl();
+    this.blobUrl    = URL.createObjectURL(file);
+    this.previewUrl = this.blobUrl;
+    this.photoChanged.emit(file);
+  }
+
+  clearPhoto(): void {
+    this.revokeBlobUrl();
+    this.previewUrl = null;
+  }
+
+  private revokeBlobUrl(): void {
+    if (this.blobUrl) {
+      URL.revokeObjectURL(this.blobUrl);
+      this.blobUrl = null;
+    }
+  }
+
   // ── Actions ───────────────────────────────────────────────────────────────
   close(): void { this.closed.emit(); }
 
@@ -178,28 +207,37 @@ export class FormModalComponent implements OnChanges, OnDestroy {
     for (const field of this.fields) {
       const validators: ValidatorFn[] = [...(field.validators ?? [])];
       if (field.required) validators.unshift(Validators.required);
-      controls[field.name] = ['', validators];
+      controls[field.name] = [field.value ?? '', validators];
     }
     this.form = this.fb.group(controls, { validators: this.groupValidators });
   }
 
   private buildRows(): void {
     this.rows = [];
-    const fields = [...this.fields];
     let i = 0;
-    while (i < fields.length) {
-      if (fields[i].halfWidth && fields[i + 1]?.halfWidth) {
-        this.rows.push([fields[i], fields[i + 1]]);
+    while (i < this.fields.length) {
+      const next    = this.fields[i + 1];
+      const canPair = this.fields[i].halfWidth && next?.halfWidth && !next?.sectionTitle;
+      if (canPair) {
+        this.rows.push([this.fields[i], next]);
         i += 2;
       } else {
-        this.rows.push([fields[i]]);
+        this.rows.push([this.fields[i]]);
         i++;
       }
     }
   }
 
   private reset(): void {
-    this.form?.reset();
+    if (this.form && this.fields) {
+      const patch: Record<string, any> = {};
+      for (const field of this.fields) {
+        patch[field.name] = field.value ?? '';
+      }
+      this.form.reset(patch);
+    }
     this.openDropdown = null;
+    this.revokeBlobUrl();
+    this.previewUrl = this.photoUrl ?? null;
   }
 }

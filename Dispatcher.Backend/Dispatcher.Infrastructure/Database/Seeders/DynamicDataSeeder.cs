@@ -171,72 +171,146 @@ public static class DynamicDataSeeder
         // Get Sarajevo city for users
         var sarajevo = await context.City.FirstOrDefaultAsync(c => c.Name == "Sarajevo");
 
+        // Placeholder admin reference for UploadedByUserId — resolved after insert via navigation
+        // Using inline photo objects; EF Core resolves the self-referencing FK automatically.
+        var adminUser = new UserEntity
+        {
+            FirstName = "Admin",
+            LastName = "User",
+            DisplayName = "Admin User",
+            NormalizedDisplayName = "ADMIN USER",
+            Email = "admin@dispatcher.local",
+            PhoneNumber = "+387 61 123 456",
+            DateOfBirth = new DateTime(1980, 1, 1),
+            PasswordHash = hasher.HashPassword(null!, "Admin123!"),
+            Role = UserRole.Admin,
+            IsEnabled = true,
+            TwoFactorEnabled = false,
+            AccessFailedCount = 0,
+            CityId = sarajevo?.Id,
+            ProfilePhotoUrl = "https://res.cloudinary.com/demo/image/upload/cld-sample-5.jpg",
+        };
+        adminUser.ProfilePhoto = new PhotoEntity
+        {
+            OriginalFileName = "admin-user.jpg",
+            StoredFileName = "profiles/admin-user",
+            FilePath = "profiles",
+            Url = "https://res.cloudinary.com/demo/image/upload/cld-sample-5.jpg",
+            ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample-5.jpg",
+            ContentType = "image/jpeg",
+            FileSizeBytes = 102400,
+            Width = 400,
+            Height = 400,
+            PhotoCategory = "ProfilePhoto",
+            AltText = "Admin User profile photo",
+            UploadedBy = adminUser,
+        };
+
+        var dispatcherUser = new UserEntity
+        {
+            FirstName = "John",
+            LastName = "Dispatcher",
+            DisplayName = "John Dispatcher",
+            NormalizedDisplayName = "JOHN DISPATCHER",
+            Email = "dispatcher@dispatcher.local",
+            PhoneNumber = "+387 61 234 567",
+            DateOfBirth = new DateTime(1985, 5, 15),
+            PasswordHash = hasher.HashPassword(null!, "Dispatcher123!"),
+            Role = UserRole.Dispatcher,
+            IsEnabled = true,
+            TwoFactorEnabled = false,
+            AccessFailedCount = 0,
+            CityId = sarajevo?.Id,
+            ProfilePhotoUrl = "https://res.cloudinary.com/demo/image/upload/cld-sample-4.jpg",
+        };
+        dispatcherUser.ProfilePhoto = new PhotoEntity
+        {
+            OriginalFileName = "john-dispatcher.jpg",
+            StoredFileName = "profiles/john-dispatcher",
+            FilePath = "profiles",
+            Url = "https://res.cloudinary.com/demo/image/upload/cld-sample-4.jpg",
+            ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample-4.jpg",
+            ContentType = "image/jpeg",
+            FileSizeBytes = 98304,
+            Width = 400,
+            Height = 400,
+            PhotoCategory = "ProfilePhoto",
+            AltText = "John Dispatcher profile photo",
+            UploadedBy = adminUser,
+        };
+
+        var mikeDriver = new UserEntity
+        {
+            FirstName = "Mike",
+            LastName = "Driver",
+            DisplayName = "Mike Driver",
+            NormalizedDisplayName = "MIKE DRIVER",
+            Email = "driver@dispatcher.local",
+            PhoneNumber = "+387 61 345 678",
+            DateOfBirth = new DateTime(1990, 8, 20),
+            PasswordHash = hasher.HashPassword(null!, "Driver123!"),
+            Role = UserRole.Driver,
+            IsEnabled = true,
+            TwoFactorEnabled = false,
+            AccessFailedCount = 0,
+            CityId = sarajevo?.Id,
+            ProfilePhotoUrl = "https://res.cloudinary.com/demo/image/upload/cld-sample-3.jpg",
+        };
+        mikeDriver.ProfilePhoto = new PhotoEntity
+        {
+            OriginalFileName = "mike-driver.jpg",
+            StoredFileName = "profiles/mike-driver",
+            FilePath = "profiles",
+            Url = "https://res.cloudinary.com/demo/image/upload/cld-sample-3.jpg",
+            ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample-3.jpg",
+            ContentType = "image/jpeg",
+            FileSizeBytes = 94208,
+            Width = 400,
+            Height = 400,
+            PhotoCategory = "ProfilePhoto",
+            AltText = "Mike Driver profile photo",
+            UploadedBy = adminUser,
+        };
+
+        var sarahDriver = new UserEntity
+        {
+            FirstName = "Sarah",
+            LastName = "Driver",
+            DisplayName = "Sarah Driver",
+            NormalizedDisplayName = "SARAH DRIVER",
+            Email = "sarah@dispatcher.local",
+            PhoneNumber = "+387 61 567 890",
+            DateOfBirth = new DateTime(1992, 3, 25),
+            PasswordHash = hasher.HashPassword(null!, "Driver123!"),
+            Role = UserRole.Driver,
+            IsEnabled = true,
+            TwoFactorEnabled = false,
+            AccessFailedCount = 0,
+            CityId = sarajevo?.Id,
+            ProfilePhotoUrl = "https://res.cloudinary.com/demo/image/upload/cld-sample-2.jpg",
+        };
+        sarahDriver.ProfilePhoto = new PhotoEntity
+        {
+            OriginalFileName = "sarah-driver.jpg",
+            StoredFileName = "profiles/sarah-driver",
+            FilePath = "profiles",
+            Url = "https://res.cloudinary.com/demo/image/upload/cld-sample-2.jpg",
+            ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample-2.jpg",
+            ContentType = "image/jpeg",
+            FileSizeBytes = 90112,
+            Width = 400,
+            Height = 400,
+            PhotoCategory = "ProfilePhoto",
+            AltText = "Sarah Driver profile photo",
+            UploadedBy = adminUser,
+        };
+
         var users = new List<UserEntity>
         {
-            new UserEntity
-            {
-                FirstName = "Admin",
-                LastName = "User",
-                DisplayName = "Admin User",
-                NormalizedDisplayName = "ADMIN USER",
-                Email = "admin@dispatcher.local",
-                PhoneNumber = "+387 61 123 456",
-                DateOfBirth = new DateTime(1980, 1, 1),
-                PasswordHash = hasher.HashPassword(null!, "Admin123!"),
-                Role = UserRole.Admin,
-                IsEnabled = true,
-                TwoFactorEnabled = false,
-                AccessFailedCount = 0,
-                CityId = sarajevo?.Id
-            },
-            new UserEntity
-            {
-                FirstName = "John",
-                LastName = "Dispatcher",
-                DisplayName = "John Dispatcher",
-                NormalizedDisplayName = "JOHN DISPATCHER",
-                Email = "dispatcher@dispatcher.local",
-                PhoneNumber = "+387 61 234 567",
-                DateOfBirth = new DateTime(1985, 5, 15),
-                PasswordHash = hasher.HashPassword(null!, "Dispatcher123!"),
-                Role = UserRole.Dispatcher,
-                IsEnabled = true,
-                TwoFactorEnabled = false,
-                AccessFailedCount = 0,
-                CityId = sarajevo?.Id
-            },
-            new UserEntity
-            {
-                FirstName = "Mike",
-                LastName = "Driver",
-                DisplayName = "Mike Driver",
-                NormalizedDisplayName = "MIKE DRIVER",
-                Email = "driver@dispatcher.local",
-                PhoneNumber = "+387 61 345 678",
-                DateOfBirth = new DateTime(1990, 8, 20),
-                PasswordHash = hasher.HashPassword(null!, "Driver123!"),
-                Role = UserRole.Driver,
-                IsEnabled = true,
-                TwoFactorEnabled = false,
-                AccessFailedCount = 0,
-                CityId = sarajevo?.Id
-            },
-            new UserEntity
-            {
-                FirstName = "Sarah",
-                LastName = "Driver",
-                DisplayName = "Sarah Driver",
-                NormalizedDisplayName = "SARAH DRIVER",
-                Email = "sarah@dispatcher.local",
-                PhoneNumber = "+387 61 567 890",
-                DateOfBirth = new DateTime(1992, 3, 25),
-                PasswordHash = hasher.HashPassword(null!, "Driver123!"),
-                Role = UserRole.Driver,
-                IsEnabled = true,
-                TwoFactorEnabled = false,
-                AccessFailedCount = 0,
-                CityId = sarajevo?.Id
-            },
+            adminUser,
+            dispatcherUser,
+            mikeDriver,
+            sarahDriver,
             new UserEntity
             {
                 FirstName = "Test",
@@ -279,94 +353,186 @@ public static class DynamicDataSeeder
 
     #endregion
 
-    // <summary>
-    /// Seeds inventory items
+    /// <summary>
+    /// Seeds inventory items with their associated photos
     /// </summary>
     private static async Task SeedInventoryAsync(DatabaseContext context)
     {
         if (await context.Inventory.AnyAsync())
             return;
 
+        var admin = await context.Users.FirstAsync(u => u.Role == UserRole.Admin);
+
         var inventory = new List<InventoryEntity>
-    {
-        new InventoryEntity
         {
-            SKU = "ELEC-001",
-            Name = "Laptop Dell XPS 15",
-            Description = "15.6\" laptop with Intel i7 processor, 16GB RAM, 512GB SSD",
-            Category = "Electronics",
-            UnitOfMeasure = "pcs",
-            UnitPrice = 1500.00m,
-            UnitWeight = 2.5m,
-            UnitVolume = 0.015m,
-            IsActive = true
-        },
-        new InventoryEntity
-        {
-            SKU = "ELEC-002",
-            Name = "Smartphone Samsung Galaxy S23",
-            Description = "Latest Samsung flagship phone",
-            Category = "Electronics",
-            UnitOfMeasure = "pcs",
-            UnitPrice = 800.00m,
-            UnitWeight = 0.3m,
-            UnitVolume = 0.001m,
-            IsActive = true
-        },
-        new InventoryEntity
-        {
-            SKU = "FOOD-001",
-            Name = "Olive Oil Extra Virgin",
-            Description = "1L bottle premium olive oil",
-            Category = "Food",
-            UnitOfMeasure = "liters",
-            UnitPrice = 15.00m,
-            UnitWeight = 1.0m,
-            UnitVolume = 0.001m,
-            IsActive = true
-        },
-        new InventoryEntity
-        {
-            SKU = "AUTO-001",
-            Name = "Car Battery 12V 60Ah",
-            Description = "Standard car battery for most vehicles",
-            Category = "Automotive",
-            UnitOfMeasure = "pcs",
-            UnitPrice = 120.00m,
-            UnitWeight = 15.0m,
-            UnitVolume = 0.025m,
-            IsActive = true
-        },
-        new InventoryEntity
-        {
-            SKU = "AUTO-002",
-            Name = "Engine Oil 5W-30",
-            Description = "Synthetic engine oil, 5L canister",
-            Category = "Automotive",
-            UnitOfMeasure = "liters",
-            UnitPrice = 45.00m,
-            UnitWeight = 5.0m,
-            UnitVolume = 0.005m,
-            IsActive = true
-        },
-        new InventoryEntity
-        {
-            SKU = "FURN-001",
-            Name = "Office Chair Ergonomic",
-            Description = "Adjustable ergonomic office chair with lumbar support",
-            Category = "Furniture",
-            UnitOfMeasure = "pcs",
-            UnitPrice = 350.00m,
-            UnitWeight = 18.0m,
-            UnitVolume = 0.45m,
-            IsActive = true
-        }
-    };
+            new InventoryEntity
+            {
+                SKU = "ELEC-001",
+                Name = "Laptop Dell XPS 15",
+                Description = "15.6\" laptop with Intel i7 processor, 16GB RAM, 512GB SSD",
+                Category = "Electronics",
+                UnitOfMeasure = "pcs",
+                UnitPrice = 1500.00m,
+                UnitWeight = 2.5m,
+                UnitVolume = 0.015m,
+                IsActive = true,
+                Photo = new PhotoEntity
+                {
+                    OriginalFileName = "laptop-dell-xps-15.jpg",
+                    StoredFileName = "inventory/electronics/inv-elec-001-laptop-dell-xps15",
+                    FilePath = "inventory/electronics",
+                    Url = "https://res.cloudinary.com/demo/image/upload/cld-sample-5.jpg",
+                    ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample-5.jpg",
+                    ContentType = "image/jpeg",
+                    FileSizeBytes = 1843200,
+                    Width = 1200,
+                    Height = 800,
+                    PhotoCategory = "InventoryPhoto",
+                    AltText = "Laptop Dell XPS 15",
+                    UploadedByUserId = admin.Id
+                }
+            },
+            new InventoryEntity
+            {
+                SKU = "ELEC-002",
+                Name = "Smartphone Samsung Galaxy S23",
+                Description = "Latest Samsung flagship phone with 5G connectivity",
+                Category = "Electronics",
+                UnitOfMeasure = "pcs",
+                UnitPrice = 800.00m,
+                UnitWeight = 0.3m,
+                UnitVolume = 0.001m,
+                IsActive = true,
+                Photo = new PhotoEntity
+                {
+                    OriginalFileName = "samsung-galaxy-s23.jpg",
+                    StoredFileName = "inventory/electronics/inv-elec-002-samsung-galaxy-s23",
+                    FilePath = "inventory/electronics",
+                    Url = "https://res.cloudinary.com/demo/image/upload/cld-sample-4.jpg",
+                    ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample-4.jpg",
+                    ContentType = "image/jpeg",
+                    FileSizeBytes = 921600,
+                    Width = 800,
+                    Height = 1000,
+                    PhotoCategory = "InventoryPhoto",
+                    AltText = "Samsung Galaxy S23",
+                    UploadedByUserId = admin.Id
+                }
+            },
+            new InventoryEntity
+            {
+                SKU = "FOOD-001",
+                Name = "Olive Oil Extra Virgin",
+                Description = "1L bottle premium olive oil from the Mediterranean",
+                Category = "Food",
+                UnitOfMeasure = "liters",
+                UnitPrice = 15.00m,
+                UnitWeight = 1.0m,
+                UnitVolume = 0.001m,
+                IsActive = true,
+                Photo = new PhotoEntity
+                {
+                    OriginalFileName = "olive-oil-extra-virgin.jpg",
+                    StoredFileName = "inventory/food/inv-food-001-olive-oil",
+                    FilePath = "inventory/food",
+                    Url = "https://res.cloudinary.com/demo/image/upload/cld-sample-3.jpg",
+                    ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample-3.jpg",
+                    ContentType = "image/jpeg",
+                    FileSizeBytes = 614400,
+                    Width = 800,
+                    Height = 800,
+                    PhotoCategory = "InventoryPhoto",
+                    AltText = "Olive Oil Extra Virgin 1L",
+                    UploadedByUserId = admin.Id
+                }
+            },
+            new InventoryEntity
+            {
+                SKU = "AUTO-001",
+                Name = "Car Battery 12V 60Ah",
+                Description = "Standard car battery for most vehicles",
+                Category = "Automotive",
+                UnitOfMeasure = "pcs",
+                UnitPrice = 120.00m,
+                UnitWeight = 15.0m,
+                UnitVolume = 0.025m,
+                IsActive = true,
+                Photo = new PhotoEntity
+                {
+                    OriginalFileName = "car-battery-12v-60ah.jpg",
+                    StoredFileName = "inventory/automotive/inv-auto-001-car-battery",
+                    FilePath = "inventory/automotive",
+                    Url = "https://res.cloudinary.com/demo/image/upload/cld-sample-2.jpg",
+                    ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample-2.jpg",
+                    ContentType = "image/jpeg",
+                    FileSizeBytes = 737280,
+                    Width = 900,
+                    Height = 750,
+                    PhotoCategory = "InventoryPhoto",
+                    AltText = "Car Battery 12V 60Ah",
+                    UploadedByUserId = admin.Id
+                }
+            },
+            new InventoryEntity
+            {
+                SKU = "AUTO-002",
+                Name = "Engine Oil 5W-30",
+                Description = "Synthetic engine oil, 5L canister",
+                Category = "Automotive",
+                UnitOfMeasure = "liters",
+                UnitPrice = 45.00m,
+                UnitWeight = 5.0m,
+                UnitVolume = 0.005m,
+                IsActive = true,
+                Photo = new PhotoEntity
+                {
+                    OriginalFileName = "engine-oil-5w30.jpg",
+                    StoredFileName = "inventory/automotive/inv-auto-002-engine-oil-5w30",
+                    FilePath = "inventory/automotive",
+                    Url = "https://res.cloudinary.com/demo/image/upload/cld-sample.jpg",
+                    ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample.jpg",
+                    ContentType = "image/jpeg",
+                    FileSizeBytes = 552960,
+                    Width = 800,
+                    Height = 800,
+                    PhotoCategory = "InventoryPhoto",
+                    AltText = "Engine Oil 5W-30 5L",
+                    UploadedByUserId = admin.Id
+                }
+            },
+            new InventoryEntity
+            {
+                SKU = "FURN-001",
+                Name = "Office Chair Ergonomic",
+                Description = "Adjustable ergonomic office chair with lumbar support",
+                Category = "Furniture",
+                UnitOfMeasure = "pcs",
+                UnitPrice = 350.00m,
+                UnitWeight = 18.0m,
+                UnitVolume = 0.45m,
+                IsActive = true,
+                Photo = new PhotoEntity
+                {
+                    OriginalFileName = "office-chair-ergonomic.jpg",
+                    StoredFileName = "inventory/furniture/inv-furn-001-office-chair",
+                    FilePath = "inventory/furniture",
+                    Url = "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+                    ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/sample.jpg",
+                    ContentType = "image/jpeg",
+                    FileSizeBytes = 1105920,
+                    Width = 1000,
+                    Height = 1000,
+                    PhotoCategory = "InventoryPhoto",
+                    AltText = "Ergonomic Office Chair",
+                    UploadedByUserId = admin.Id
+                }
+            }
+        };
 
         context.Inventory.AddRange(inventory);
         await context.SaveChangesAsync();
 
-        Console.WriteLine("✅ Seeded inventory items.");
+        Console.WriteLine("✅ Seeded inventory items with photos.");
     }
 
     /// <summary>
@@ -1306,14 +1472,14 @@ public static class DynamicDataSeeder
             new PhotoEntity
             {
                 OriginalFileName = "truck-mercedes-actros.jpg",
-                StoredFileName = "a1b2c3d4-e5f6-7890-abcd-ef1234567890.jpg",
-                FilePath = "photos/vehicles/trucks/2024/",
-                Url = "https://cdn.dispatcher.local/photos/vehicles/trucks/2024/a1b2c3d4.jpg",
+                StoredFileName = "vehicles/trucks/truck-mercedes-actros",
+                FilePath = "vehicles/trucks",
+                Url = "https://res.cloudinary.com/demo/image/upload/cld-sample-2.jpg",
                 ContentType = "image/jpeg",
                 FileSizeBytes = 2456789,
                 Width = 1920,
                 Height = 1080,
-                ThumbnailUrl = "https://cdn.dispatcher.local/photos/vehicles/trucks/2024/thumbs/a1b2c3d4.jpg",
+                ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample-2.jpg",
                 PhotoCategory = "VehiclePhoto",
                 AltText = "Mercedes-Benz Actros 1851",
                 UploadedByUserId = admin.Id
@@ -1321,14 +1487,14 @@ public static class DynamicDataSeeder
             new PhotoEntity
             {
                 OriginalFileName = "trailer-schmitz.jpg",
-                StoredFileName = "b2c3d4e5-f6g7-8901-bcde-fg2345678901.jpg",
-                FilePath = "photos/vehicles/trailers/2024/",
-                Url = "https://cdn.dispatcher.local/photos/vehicles/trailers/2024/b2c3d4e5.jpg",
+                StoredFileName = "vehicles/trailers/trailer-schmitz",
+                FilePath = "vehicles/trailers",
+                Url = "https://res.cloudinary.com/demo/image/upload/cld-sample-3.jpg",
                 ContentType = "image/jpeg",
                 FileSizeBytes = 1987654,
                 Width = 1920,
                 Height = 1080,
-                ThumbnailUrl = "https://cdn.dispatcher.local/photos/vehicles/trailers/2024/thumbs/b2c3d4e5.jpg",
+                ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample-3.jpg",
                 PhotoCategory = "VehiclePhoto",
                 AltText = "Schmitz Cargobull Refrigerated Trailer",
                 UploadedByUserId = admin.Id
@@ -1336,14 +1502,14 @@ public static class DynamicDataSeeder
             new PhotoEntity
             {
                 OriginalFileName = "warehouse-sarajevo.jpg",
-                StoredFileName = "c3d4e5f6-g7h8-9012-cdef-gh3456789012.jpg",
-                FilePath = "photos/locations/warehouses/2024/",
-                Url = "https://cdn.dispatcher.local/photos/locations/warehouses/2024/c3d4e5f6.jpg",
+                StoredFileName = "locations/warehouses/warehouse-sarajevo",
+                FilePath = "locations/warehouses",
+                Url = "https://res.cloudinary.com/demo/image/upload/cld-sample-4.jpg",
                 ContentType = "image/jpeg",
                 FileSizeBytes = 3124567,
                 Width = 2560,
                 Height = 1440,
-                ThumbnailUrl = "https://cdn.dispatcher.local/photos/locations/warehouses/2024/thumbs/c3d4e5f6.jpg",
+                ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample-4.jpg",
                 PhotoCategory = "LocationPhoto",
                 AltText = "Sarajevo Warehouse District",
                 UploadedByUserId = dispatcher.Id
@@ -1351,14 +1517,14 @@ public static class DynamicDataSeeder
             new PhotoEntity
             {
                 OriginalFileName = "damage-report-001.jpg",
-                StoredFileName = "d4e5f6g7-h8i9-0123-defg-hi4567890123.jpg",
-                FilePath = "photos/reports/damage/2024/11/",
-                Url = "https://cdn.dispatcher.local/photos/reports/damage/2024/11/d4e5f6g7.jpg",
+                StoredFileName = "reports/damage/damage-report-001",
+                FilePath = "reports/damage",
+                Url = "https://res.cloudinary.com/demo/image/upload/cld-sample-5.jpg",
                 ContentType = "image/jpeg",
                 FileSizeBytes = 1543210,
                 Width = 1280,
                 Height = 720,
-                ThumbnailUrl = "https://cdn.dispatcher.local/photos/reports/damage/2024/11/thumbs/d4e5f6g7.jpg",
+                ThumbnailUrl = "https://res.cloudinary.com/demo/image/upload/w_150,h_150,c_fill,q_auto,f_auto/cld-sample-5.jpg",
                 PhotoCategory = "DocumentScan",
                 AltText = "Minor damage report - rear bumper",
                 UploadedByUserId = dispatcher.Id
