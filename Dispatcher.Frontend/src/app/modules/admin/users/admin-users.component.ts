@@ -284,6 +284,8 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     this.isRegisterSubmitting.set(true);
     this.registerSubmitError.set(null);
 
+    const photoFile = values['photoFile'] as File | null | undefined;
+
     this.authService.register({
       firstName:       values['firstName'].trim(),
       lastName:        values['lastName'].trim(),
@@ -296,6 +298,11 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       role:            Number(values['role']),
       cityId:          values['city'] ? Number(values['city']) : null,
     }).pipe(
+      switchMap(result =>
+        photoFile
+          ? this.userService.uploadUserPhoto(Number(result.userId), photoFile)
+          : of(null)
+      ),
       takeUntil(this.destroyed$),
     ).subscribe({
       next: () => {

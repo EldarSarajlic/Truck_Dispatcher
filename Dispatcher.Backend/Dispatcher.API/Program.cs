@@ -15,6 +15,18 @@ public partial class Program
             .WriteTo.Console() // minimal sink so we see startup errors
             .CreateBootstrapLogger();
 
+        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+        {
+            Log.Fatal((Exception)args.ExceptionObject, "PROCESS CRASH – unhandled exception on background thread");
+            Log.CloseAndFlush();
+        };
+
+        TaskScheduler.UnobservedTaskException += (_, args) =>
+        {
+            Log.Error(args.Exception, "Unobserved task exception (swallowed)");
+            args.SetObserved();
+        };
+
         try
         {
             Log.Information("Starting Dispatcher API...");

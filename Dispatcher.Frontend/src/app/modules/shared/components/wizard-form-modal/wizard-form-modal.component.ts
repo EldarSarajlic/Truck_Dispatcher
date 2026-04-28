@@ -43,6 +43,8 @@ export class WizardFormModalComponent implements OnChanges, OnDestroy {
   rows:           FormField[][] = [];
   datePickerOpen = false;
   spacerActive   = false;
+  selectedFile:   File | null = null;
+  previewUrl:     string | null = null;
 
   private lastStepsKey        = '';
   private readonly destroyed$ = new Subject<void>();
@@ -171,10 +173,24 @@ export class WizardFormModalComponent implements OnChanges, OnDestroy {
     }
   }
 
+  onFileSelected(e: Event): void {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    if (this.previewUrl) URL.revokeObjectURL(this.previewUrl);
+    this.selectedFile = file;
+    this.previewUrl   = URL.createObjectURL(file);
+  }
+
+  clearPhoto(): void {
+    if (this.previewUrl) URL.revokeObjectURL(this.previewUrl);
+    this.selectedFile = null;
+    this.previewUrl   = null;
+  }
+
   submit(): void {
     this.form.markAllAsTouched();
     if (this.form.invalid || this.isSubmitting) return;
-    this.submitted.emit(this.form.getRawValue());
+    this.submitted.emit({ ...this.form.getRawValue(), photoFile: this.selectedFile });
   }
 
   close(): void { this.closed.emit(); }
@@ -216,6 +232,7 @@ export class WizardFormModalComponent implements OnChanges, OnDestroy {
     this.currentStep  = 0;
     this.openDropdown = null;
     this.spacerActive = false;
+    this.clearPhoto();
     this.buildRows();
   }
 

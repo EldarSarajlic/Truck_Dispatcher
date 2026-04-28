@@ -316,6 +316,33 @@
 }
 
 
+// ── First-step split layout ───────────────────────────────────────────────
+.wiz-split-layout {
+  display:     flex;
+  gap:         20px;
+  align-items: start;
+}
+
+.wiz-fields-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.wiz-photo-col {
+  flex-shrink: 0;
+  width:       160px;
+}
+
+.wiz-photo-label {
+  font-size:      0.72rem;
+  font-weight:    600;
+  color:          var(--c-text-sec);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom:  8px;
+}
+
+
 // ── Photo drop zone ───────────────────────────────────────────────────────
 .rum-photo-drop {
   position:        relative;

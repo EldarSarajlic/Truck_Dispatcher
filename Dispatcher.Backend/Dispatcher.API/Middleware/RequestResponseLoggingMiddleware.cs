@@ -1,31 +1,26 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text;
 
 namespace Dispatcher.API.Middleware;
 
-/// <summary>
-/// Middleware that logs incoming HTTP requests and outgoing responses,
-/// including duration, method, path, and status code.
-/// </summary>
 public sealed class RequestResponseLoggingMiddleware(
     RequestDelegate next,
     ILogger<RequestResponseLoggingMiddleware> logger)
 {
-    private const int SlowRequestThresholdMs = 400; // 400 ms
+    private const int SlowRequestThresholdMs = 400;
 
     public async Task InvokeAsync(HttpContext context)
     {
         var stopwatch = Stopwatch.StartNew();
-        var request = context.Request;
+        var request   = context.Request;
 
-        // Read request body (only for POST/PUT with text-based content types)
         string? requestBody = null;
-        var contentType = request.ContentType ?? string.Empty;
-        var isTextBody = request.Method is "POST" or "PUT"
+        var contentType     = request.ContentType ?? string.Empty;
+        var captureBody     = request.Method is "POST" or "PUT"
             && !contentType.StartsWith("multipart/")
             && !contentType.StartsWith("application/octet-stream");
 
-        if (isTextBody)
+        if (captureBody)
         {
             request.EnableBuffering();
             using var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true);
@@ -33,61 +28,47 @@ public sealed class RequestResponseLoggingMiddleware(
             request.Body.Position = 0;
         }
 
-        // Capture original response stream
-        var originalBodyStream = context.Response.Body;
-        await using var responseBody = new MemoryStream();
-        context.Response.Body = responseBody;
-
+        Exception? caughtException = null;
         try
         {
             await next(context);
         }
+        catch (Exception ex)
+        {
+            caughtException = ex;
+            throw;
+        }
         finally
         {
-            stopwatch.Stop();
-
-            // read response text for logging
-            responseBody.Seek(0, SeekOrigin.Begin);
-            var responseText = await new StreamReader(responseBody).ReadToEndAsync();
-            responseBody.Seek(0, SeekOrigin.Begin);
-
-            var logMessage = new StringBuilder()
-                .AppendLine("HTTP Request/Response Log:")
-                .AppendLine($"  Path: {request.Path}")
-                .AppendLine($"  Method: {request.Method}")
-                .AppendLine($"  Status: {context.Response.StatusCode}")
-                .AppendLine($"  Duration: {stopwatch.ElapsedMilliseconds} ms");
-
-            if (!string.IsNullOrWhiteSpace(requestBody))
-                logMessage.AppendLine($"  Request Body: {requestBody}");
-
-            if (!string.IsNullOrWhiteSpace(responseText))
-                logMessage.AppendLine($"  Response Body: {responseText}");
-
-            var elapsed = stopwatch.ElapsedMilliseconds;
-            if (elapsed > SlowRequestThresholdMs)
+            // No await here — avoids async state-machine interaction with the
+            // in-flight exception from the catch block above.
+            try
             {
-                logger.LogWarning("[SLOW REQUEST] {Path} took {Elapsed} ms", request.Path, elapsed);
+                stopwatch.Stop();
+                var elapsed = stopwatch.ElapsedMilliseconds;
 
-                // >>> Bugfix 27.10.2025: sigurno pisanje na disk (ne ruši response ako folder ne postoji)
-                try
-                {
-                    var logDir = Path.Combine(AppContext.BaseDirectory, "Logs");
-                    Directory.CreateDirectory(logDir);
-                    var logPath = Path.Combine(logDir, "slow-requests.log");
-                    await File.AppendAllTextAsync(logPath, $"{DateTime.UtcNow:u} | {request.Path} | {elapsed} ms{Environment.NewLine}");
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Failed writing slow-request log.");
-                }
+                var logMessage = new StringBuilder()
+                    .AppendLine("HTTP Request/Response Log:")
+                    .AppendLine($"  Path:     {request.Path}")
+                    .AppendLine($"  Method:   {request.Method}")
+                    .AppendLine($"  Status:   {context.Response.StatusCode}")
+                    .AppendLine($"  Duration: {elapsed} ms");
+
+                if (!string.IsNullOrWhiteSpace(requestBody))
+                    logMessage.AppendLine($"  Request Body: {requestBody}");
+
+                if (caughtException is not null)
+                    logMessage.AppendLine($"  Exception: {caughtException.GetType().Name}: {caughtException.Message}");
+
+                if (elapsed > SlowRequestThresholdMs)
+                    logger.LogWarning("[SLOW REQUEST] {Path} took {Elapsed} ms", request.Path, elapsed);
+
+                logger.LogInformation("{Log}", logMessage.ToString());
             }
-
-            logger.LogInformation("{Log}", logMessage.ToString());
-
-            // >>> Bugfix 27.10.2025: KLJUČNO: vrati originalni stream i kopiraj tijelo nazad da se vidi json error poruka
-            context.Response.Body = originalBodyStream;
-            await responseBody.CopyToAsync(originalBodyStream);
+            catch
+            {
+                // Swallow logging errors — never let finally throw and mask the real exception.
+            }
         }
     }
 }
